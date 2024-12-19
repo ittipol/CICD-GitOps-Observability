@@ -1,0 +1,54 @@
+pipeline {
+    agent any
+
+    tools {
+        go 'go-sdk'
+    }
+
+    environment {
+        APP_VERSION = "1.0.0"
+        REGISTRY_URL = 'https://registry.mydomain.com'
+    }
+
+    parameters {
+        string(name: 'Text', defaultValue: '', description: 'Version to deploy')
+        choice(name: 'VERSION', choices: ['1.1.0', '1.2.0', '1.3.0'], description: '')
+        booleanParam(name: 'executeTest', defaultValue: true, description: '')
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                echo "Version:::: ${params.VERSION}"
+                sh '''                
+                pwd
+                echo "Test..." > test.txt
+                ls -ls
+                '''
+            }
+        }
+        stage('Test') {     
+            when {
+                expression {
+                    params.executeTest == true
+                }
+            }       
+            steps {
+                echo "App >>>>> ${env.APP_VERSION}"                
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sh '''
+                echo "Build ID: ${BUILD_ID}"
+                '''
+            }
+        }
+        stage('Docker') {     
+            steps {
+                echo "App >>>>> ${env.APP_VERSION}"    
+                echo "Go version ${go version}"                  
+            }
+        }
+    }
+}

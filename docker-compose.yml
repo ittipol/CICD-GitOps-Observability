@@ -1,0 +1,56 @@
+services:
+
+  jenkins:
+    build: .
+    container_name: jenkins
+    ports:
+      - 8080:8080
+      - 50000:50000
+    environment: 
+      DOCKER_HOST: "tcp://docker:2376"
+      DOCKER_CERT_PATH: "/certs/client"
+      DOCKER_TLS_VERIFY: 1
+    volumes:
+      # - /var/run/docker.sock:/var/run/docker.sock
+      - jenkins-data:/var/jenkins_home
+      - jenkins-docker-certs:/certs/client:ro
+    depends_on:
+      - docker-dind
+    networks:
+      - jenkins
+
+  # jenkins-data:
+  #   build: ./jenkins_data
+  #   container_name: jenkins-data
+  #   volumes:
+  #     - jenkins-volume:/var/log/jenkins
+  #     - jenkins-volume:/var/jenkins_home
+  #   networks:
+  #     - jenkins-network
+
+  docker-dind:
+    image: docker:dind
+    container_name: docker-in-docker
+    privileged: true
+    volumes:
+      - jenkins-data:/var/jenkins_home
+      - jenkins-docker-certs:/certs/client
+    networks:
+      jenkins:
+        aliases:
+          - docker
+      
+  # app:
+  #   image: node:16-alpine
+  #   container_name: busybox-c
+  #   command: tail -F /dev/null
+    
+networks:
+  jenkins:
+    driver: bridge
+
+volumes:
+  jenkins-data:
+    external: false
+  jenkins-docker-certs:
+    external: false
