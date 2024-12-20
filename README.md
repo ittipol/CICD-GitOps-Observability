@@ -1,4 +1,6 @@
 # Jenkins
+- Pipeline syntax https://www.jenkins.io/doc/book/pipeline/syntax/
+- variables http://localhost:8080/env-vars.html
 
 ## Password
 ``` bash
@@ -18,18 +20,17 @@ cat /var/jenkins_home/secrets/initialAdminPassword
 docker exec -it jenkins bash
 ```
 
-## variables
-- http://localhost:8080/env-vars.html
-
 ## Plugin
 - Pipeline: Stage View
 - Docker Pipeline
+- Workspace Cleanup
 
 ## Jenkins Snippet Generator
 1. Click "Pipeline Syntax" in job page
 2. Click "Snippet Generator"
-3. Input an options
-4. Click "Generate Pipeline Script"
+3. Select an options (ex. git: Git, tool: Use a tool from a predefined Tool Installation)
+4. Input an option data
+5. Click "Generate Pipeline Script"
 
 ## Docker
 - https://www.jenkins.io/doc/book/installing/docker/
@@ -78,6 +79,8 @@ tools {
 }
 ```
 
+## SSH Credentials
+- Go to Jenkins > Credentials > System > Global credentials (unrestricted) > Add Credentials
 
 ## Go Plugin
 ### Download plugin
