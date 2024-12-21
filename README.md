@@ -35,14 +35,19 @@ docker exec -it jenkins bash
 ## Docker
 - https://www.jenkins.io/doc/book/installing/docker/
 
-## Docker daemon
-### Mount host machine /var/run/docker.sock in your container
+```
+Jenkin (Docker client) --> dind (Docker daemon) --> registry (Docker registry)
+```
+
+## Jenkin (Docker client)
+### Connect Jenkins (Docker client) to Docker daemon
+### Solution 1: Mount host machine /var/run/docker.sock in your container
 ``` yaml
 volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 ```
 
-### Use docker-in-docker (DinD) image
+### Solution 2: Use docker-in-docker (DinD) image
 ``` bash
 # Pull image
 docker pull docker:dind
@@ -54,6 +59,34 @@ docker run --name jenkins --link=docker-dind -d jenkins/jenkins:latest
 
 # Test list Docker images
 docker exec jenkins docker -H docker-dind images
+```
+
+### Setup docker-in-docker (DinD) hostname and certificates
+``` yaml
+environment:
+    DOCKER_HOST: "tcp://{docker_daemon_hostname}:{docker_daemon_port}"
+    DOCKER_CERT_PATH: "/certs/client"
+    DOCKER_TLS_VERIFY: 1
+volumes:
+    - jenkins-docker-certs:/certs/client:ro
+```
+
+## Docker daemon
+### Verify register server certificates
+1. Generate Self Signed SSL Certificate
+2. Add ca.crt to path /etc/docker/certs.d/{docker_registry_hostname}:{docker_registry_port}/
+    - ca.crt: Certificate Authority trust certificate
+
+## Docker registry
+### Set Self Signed SSL Certificate
+1. Generate Self Signed SSL Certificate
+2. Add {filename}.crt and {filename}.pem
+    - {filename}.crt: Server certificate signed by the CA
+    - {filename}.pem: Conversion of server.key into a base64-encoded format
+``` yaml
+environment:
+    REGISTRY_HTTP_TLS_CERTIFICATE: "/tls/server.crt"
+    REGISTRY_HTTP_TLS_KEY: "/tls/server.pem"
 ```
 
 ## Use Docker Agent in Jenkins
@@ -105,4 +138,9 @@ tools {
 ## Docker daemon
 ``` bash
 curl --unix-socket /var/run/docker.sock http://localhost/version
+```
+
+``` bash
+docker tag <SOME IMAGE ID FROM DOCKER PS> <IP ADDRESS>:5000/test:tag1
+docker push <IP ADDRESS>:5000/test:tag1
 ```
