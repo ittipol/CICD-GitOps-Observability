@@ -1,6 +1,9 @@
 # Jenkins
 - Pipeline syntax https://www.jenkins.io/doc/book/pipeline/syntax/
 - variables http://localhost:8080/env-vars.html
+- http://localhost:8080/job/{job_name}/pipeline-syntax/
+- http://localhost:8080/job/{job_name}/directive-generator/
+- http://localhost:8080/job/{job_name}/pipeline-syntax/globals
 
 ## Password
 ``` bash
@@ -24,6 +27,11 @@ docker exec -it jenkins bash
 - Pipeline: Stage View
 - Docker Pipeline
 - Workspace Cleanup
+- OWASP Dependency-Check
+- SonarQube Scanner
+
+## Add Credentials
+- Go to Jenkins > Credentials > System > Global credentials (unrestricted) > Add Credentials
 
 ## Jenkins Snippet Generator
 1. Click "Pipeline Syntax" in job page
@@ -102,7 +110,7 @@ docker run --rm --entrypoint htpasswd httpd:2 -Bbn test dockerpassword >> {outpu
 2. Search "Docker Pipeline"
 3. Install Docker Pipeline plugin
 
-### Add Docker as tool
+### Add Docker tool
 1. Go to "Manage Jenkins" > "Tools"
 2. Click "Add Docker"
 3. Input *name
@@ -119,16 +127,13 @@ tools {
 }
 ```
 
-## SSH Credentials
-- Go to Jenkins > Credentials > System > Global credentials (unrestricted) > Add Credentials
-
 ## Go Plugin
 ### Download plugin
 1. Go to "Manage Jenkins" > "Plugins"
 2. Search "Go"
 3. Install Go plugin
 
-### Add Go as tool
+### Add Go tool
 1. Go to "Manage Jenkins" > "Tools"
 2. Click "Add Go"
 3. Input *name
@@ -140,6 +145,90 @@ tools {
 tools {
     go '{*name}'
 }
+```
+
+## SonarQube
+### Download plugin
+1. Go to "Manage Jenkins" > "Plugins"
+2. Search "SonarQube Scanner"
+3. Install SonarQube Scanner plugin
+
+### Generate SonarQube Token
+1. Go to Administration > Security > Users
+2. In column Tokens, click "Update Token"
+3. Input Token Name
+4. Click Generate
+5. Copy token
+
+### Add Server authentication token
+1. Go to Manage Jenkins Credentials > System > Global credentials (unrestricted) > Add Credentials
+2. Select "Secret text"
+3. Input Secret (SonarQube token) from [Generate SonarQube Token]
+4. Input Description
+5. Click Create
+
+### Add SonarQube servers
+1. Go to "Manage Jenkins" > "System"
+2. Click "Add SonarQube"
+3. Input *name
+4. Input Server URL (http://sonarqube:9000)
+5. Input Server authentication token from [Add Server authentication token]
+
+### Add SonarQube tool
+1. Go to "Manage Jenkins" > "Tools"
+2. Click "Add SonarQube Scanner"
+3. Input **name
+4. Click "Install automatically"
+5. Click "Add Installer"
+6. Click "Install from Maven Central"
+7. Select Version (ex. SonarQube Scanner 4.8.0.2856)
+8. Click Save
+
+## Using SonarQube with Pipeline
+``` groovy
+environment { 
+    SCANNER_HOME = tool '{**name}';
+}
+
+stage('Sonarqube scan') {      
+    steps {
+        withSonarQubeEnv('{*name}') {
+            sh '''
+            $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Go-App \
+            -Dsonar.java.binary=. \
+            -Dsonar.projectKey=Go-App
+            '''
+        }
+    }
+}
+```
+
+
+## OWASP Dependency-Check plugin
+### Download plugin
+1. Go to "Manage Jenkins" > "Plugins"
+2. Search "OWASP Dependency-Check"
+3. Install OWASP Dependency-Check plugin
+
+### Add OWASP Dependency-Check tool
+1. Go to "Manage Jenkins" > "Tools"
+2. Click "Add Dependency-Check"
+3. Input *name
+4. Click "Install automatically"
+5. Click "Add Installer"
+6. Click "Install from github.com"
+7. Select Version (ex. 8.0.1)
+8. Click Save
+
+## Using OWASP Dependency-Check with Pipeline
+``` groovy
+dependencyCheck additionalArguments: ''' 
+            -o './'
+            -s './'
+            -f 'ALL' 
+            --prettyPrint''', odcInstallation: '{*name}'
+
+dependencyCheckPublisher pattern: 'dependency-check-report.xml'
 ```
 
 ## Docker daemon

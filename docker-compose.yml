@@ -50,6 +50,38 @@ services:
       jenkins:
         aliases:
           - registry
+  
+  sonarqube:
+    image: sonarqube:9-community
+    container_name: sonarqube
+    restart: unless-stopped
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://postgres:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    depends_on:
+      - postgres
+    ports:
+      - "9000:9000"
+    networks:
+      - jenkins
+
+  postgres:
+    image: postgres:15.2-alpine3.17
+    container_name: postgresql
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+      POSTGRES_DB: sonar
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+    networks:
+      - jenkins
 
   # app:
   #   image: node:16-alpine
@@ -64,4 +96,14 @@ volumes:
   jenkins-data:
     external: false
   jenkins-docker-certs:
+    external: false
+  sonarqube_data:
+    external: false
+  sonarqube_extensions:
+    external: false
+  sonarqube_logs:
+    external: false
+  postgresql:
+    external: false
+  postgresql_data:
     external: false
