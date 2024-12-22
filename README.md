@@ -36,10 +36,10 @@ docker exec -it jenkins bash
 - https://www.jenkins.io/doc/book/installing/docker/
 
 ```
-Jenkin (Docker client) --> dind (Docker daemon) --> registry (Docker registry)
+Jenkins (Docker client) --[tcp://docker:2376]--> dind (Docker daemon) --[registry:5000]--> registry (Docker registry)
 ```
 
-## Jenkin (Docker client)
+## Jenkins (Docker client)
 ### Connect Jenkins (Docker client) to Docker daemon
 ### Solution 1: Mount host machine /var/run/docker.sock in your container
 ``` yaml
@@ -82,11 +82,18 @@ volumes:
 1. Generate Self Signed SSL Certificate
 2. Add {filename}.crt and {filename}.pem
     - {filename}.crt: Server certificate signed by the CA
-    - {filename}.pem: Conversion of server.key into a base64-encoded format
+    - {filename}.pem: Privacy Enhanced Mail (PEM) Conversion of server.key (private key) into a base64 encoding format
 ``` yaml
 environment:
     REGISTRY_HTTP_TLS_CERTIFICATE: "/tls/server.crt"
     REGISTRY_HTTP_TLS_KEY: "/tls/server.pem"
+```
+
+### Create user and password for authentication
+``` bash
+# Use httpd:2 image for creating username and password
+# Create username = test, password = dockerpassword
+docker run --rm --entrypoint htpasswd httpd:2 -Bbn test dockerpassword >> {output_path}
 ```
 
 ## Use Docker Agent in Jenkins
