@@ -19,8 +19,9 @@ pipeline {
       agent any
 
       steps {
-        sh "whoami"
         sh '''
+        whoami
+        env
         go version
         '''
       }
@@ -38,6 +39,7 @@ pipeline {
         steps {
             echo 'Yarn Install'
             echo '******************************'  
+            sh 'env'
             sh 'node --version'
             sh 'yarn --version'
         }

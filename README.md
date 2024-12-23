@@ -5,6 +5,11 @@
 - http://localhost:8080/job/{job_name}/directive-generator/
 - http://localhost:8080/job/{job_name}/pipeline-syntax/globals
 
+## Start Jenkins
+``` bash
+docker-compose up -d --build
+```
+
 ## Password
 ``` bash
 docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
@@ -97,12 +102,22 @@ environment:
     REGISTRY_HTTP_TLS_KEY: "/tls/server.pem"
 ```
 
-### Create user and password for authentication
+### Create username and password for authentication
 ``` bash
 # Use httpd:2 image for creating username and password
+docker pull httpd:2
+
 # Create username = test, password = dockerpassword
 docker run --rm --entrypoint htpasswd httpd:2 -Bbn test dockerpassword >> {output_path}
 ```
+
+### Add Docker registry credential
+1. Go to Manage Jenkins Credentials > System > Global credentials (unrestricted) > Add Credentials
+2. Select "Username with password"
+3. Input Username
+4. Input Password
+5. Input Description
+6. Click Create
 
 ## Use Docker Agent in Jenkins
 ### Download plugin
@@ -203,7 +218,6 @@ stage('Sonarqube scan') {
 }
 ```
 
-
 ## OWASP Dependency-Check plugin
 ### Download plugin
 1. Go to "Manage Jenkins" > "Plugins"
@@ -221,11 +235,18 @@ stage('Sonarqube scan') {
 8. Click Save
 
 ## Using OWASP Dependency-Check with Pipeline
+- https://www.jenkins.io/doc/pipeline/steps/dependency-check-jenkins-plugin
+- additionalArguments
+    - --project	The name of the Jenkins job
+    - --scan	The build workspace
+    - --format	The output format to write to (HTML, XML, CSV, JSON, JUNIT, SARIF, JENKINS, GITLAB, ALL). Multiple formats can be specified by specifying the parameter multiple times. The default is HTML
+    - --out     The folder to write reports to. This defaults to the current directory. If the format is not set to ALL one could specify a specific file name
+    - --prettyPrint When specified the JSON and XML report formats will be pretty printed.
 ``` groovy
 dependencyCheck additionalArguments: ''' 
             -o './'
             -s './'
-            -f 'ALL' 
+            -f 'XML' 
             --prettyPrint''', odcInstallation: '{*name}'
 
 dependencyCheckPublisher pattern: 'dependency-check-report.xml'

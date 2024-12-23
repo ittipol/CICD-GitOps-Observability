@@ -1,7 +1,7 @@
 services:
 
   jenkins:
-    build: .
+    build: ./docker
     container_name: jenkins
     ports:
       - 8080:8080
@@ -82,11 +82,6 @@ services:
       - postgresql_data:/var/lib/postgresql/data
     networks:
       - jenkins
-
-  # app:
-  #   image: node:16-alpine
-  #   container_name: app
-  #   command: tail -F /dev/null
     
 networks:
   jenkins:

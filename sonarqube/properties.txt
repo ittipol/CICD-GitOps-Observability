@@ -1,0 +1,30 @@
+# ห้ามซ้ำกันในแต่ละ server
+sonar.projectKey=demo:insecureapp
+# project metadata (ถ้าไม่ใส่จะใช้ project key แทน)
+sonar.projectName=Insecure Application Demo
+# ระบุ project Version
+sonar.projectVersion=1.2
+# path ที่มี source code
+sonar.sources=./src/main/java
+# บอก sonar-scanner ว่า path ไหนเป็น test
+# จะไม่ scan source code ที่ใช้เขียน test case
+sonar.tests=./src/test/java
+# path ที่ไม่ต้องการให้ scan เช่น html
+sonar.exclusions=./src/view
+# ที่อยู่ของ SonarQube Server
+sonar.host.url=http://localhost:9000
+# ถ้าเป็น Java ต้องระบุ path ของ Java ที่ติดตั้งไว้ในเครื่อง
+sonar.java.binaries=/Library/Java/JavaVirtualMachines/openjdk.jdk/Contents/Home
+# รอจนกว่า server จะตอบกลับมาว่า ผ่าน quality gate หรือไม่
+sonar.qualitygate.wait=true
+# Encoding of the source code. Default is default system encoding
+#sonar.sourceEncoding=UTF-8
+# Define the language
+sonar.language=go
+# Define the Go import path (optional)
+sonar.go.goroot=/usr/local/go
+sonar.go.gopath=/path/to/your/gopath
+
+# Additional configuration options (optional)
+# sonar.go.tests=./path/to/tests
+# sonar.go.coverage.reportPaths=./path/to/coverage_reports

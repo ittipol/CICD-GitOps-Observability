@@ -6,7 +6,7 @@ pipeline {
     // AN_ACCESS_KEY = credentials('eebb88dd-be42-429e-b685-2c4904c65f7f') 
     GIT_URL = "https://github.com/ittipol/Jenkins.git"
     DOCKER_REGISTER = "https://registry:5000"
-    DOCKER_REGISTER_CREDENTIAL = "f255e9a3-a6f7-4980-ae1c-a2226a342f6a"
+    DOCKER_REGISTER_CREDENTIAL = "8a0ba98b-130f-4ee6-b41b-af423112fd4c"
     SCANNER_HOME = tool 'sonarqube-scanner-tool';
   }
   parameters {
@@ -64,7 +64,7 @@ pipeline {
         steps {
             dependencyCheck additionalArguments: ''' 
                         -o './'
-                        -s './'
+                        -s './src'
                         -f 'ALL' 
                         --prettyPrint''', odcInstallation: 'Dependency-Check'
             
@@ -75,11 +75,14 @@ pipeline {
       steps {
         withSonarQubeEnv('sonarqube-server') {
             sh '''
-            $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Go-App \
+            $SCANNER_HOME/bin/sonar-scanner \
+            -Dsonar.projectName=GoApp \
             -Dsonar.java.binary=. \
-            -Dsonar.projectKey=Go-App
+            -Dsonar.projectKey=go-app:project \
+            -Dsonar.projectVersion=1.0 \
+            -Dsonar.sources=./src
             '''
-        }
+        }    
       }
     }
     stage('Build image') {      
@@ -90,8 +93,12 @@ pipeline {
         // '''
         script {
           dir('src') {
-            echo "Tag name: ${params.tagVersion}"
-            customImage = docker.build("go-app:v1")
+            if(params.tagVersion.isEmpty()) {
+                error("tagVersion is empty")
+            }else {
+                echo "Tag version: ${params.tagVersion}"
+                customImage = docker.build("go-app:${params.tagVersion}")
+            }
           }
         }
       }
@@ -115,15 +122,25 @@ pipeline {
       }
     }
   }
-  // post {
-  //     // Clean after build
-  //     always {
-  //         cleanWs(cleanWhenNotBuilt: false,
-  //                 deleteDirs: true,
-  //                 disableDeferredWipeout: true,
-  //                 notFailBuild: true,
-  //                 patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
-  //                             [pattern: '.propsfile', type: 'EXCLUDE']])
-  //     }
-  // }
+  post {      
+    // always {
+    //     // Clean after build
+    //     cleanWs(cleanWhenNotBuilt: false,
+    //             deleteDirs: true,
+    //             disableDeferredWipeout: true,
+    //             notFailBuild: true,
+    //             patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
+    //                         [pattern: '.propsfile', type: 'EXCLUDE']])
+    // }
+    success {
+        echo "Build ID: ${BUILD_ID}, ${JOB_NAME} succeeded"
+    }
+    failure {
+        // mail to: team@example.com, subject: 'The Pipeline failed :('
+        echo "Build ID: ${BUILD_ID}, ${JOB_NAME} failed"
+    }
+    aborted {
+        echo "Build ID: ${BUILD_ID}, ${JOB_NAME} aborted"
+    }
+  }
 }
