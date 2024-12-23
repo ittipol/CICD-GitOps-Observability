@@ -119,7 +119,7 @@ docker run --rm --entrypoint htpasswd httpd:2 -Bbn test dockerpassword >> {outpu
 5. Input Description
 6. Click Create
 
-## Use Docker Agent in Jenkins
+## Docker plugin
 ### Download plugin
 1. Go to "Manage Jenkins" > "Plugins"
 2. Search "Docker Pipeline"
@@ -135,7 +135,7 @@ docker run --rm --entrypoint htpasswd httpd:2 -Bbn test dockerpassword >> {outpu
 7. Input Docker version
 8. Click Save
 
-## Using Docker with Pipeline
+### Using Docker in pipeline
 ``` groovy
 tools {
     dockerTool '{*name}'
@@ -155,14 +155,14 @@ tools {
 4. Input Go version
 8. Click Save
 
-## Using Go with Pipeline
+### Using Go in pipeline
 ``` groovy
 tools {
     go '{*name}'
 }
 ```
 
-## SonarQube
+## SonarQube plugin
 ### Download plugin
 1. Go to "Manage Jenkins" > "Plugins"
 2. Search "SonarQube Scanner"
@@ -199,7 +199,7 @@ tools {
 7. Select Version (ex. SonarQube Scanner 4.8.0.2856)
 8. Click Save
 
-## Using SonarQube with Pipeline
+### Using SonarQube in pipeline
 ``` groovy
 environment { 
     SCANNER_HOME = tool '{**name}';
@@ -234,14 +234,14 @@ stage('Sonarqube scan') {
 7. Select Version (ex. 8.0.1)
 8. Click Save
 
-## Using OWASP Dependency-Check with Pipeline
+### Using OWASP Dependency-Check in pipeline
 - https://www.jenkins.io/doc/pipeline/steps/dependency-check-jenkins-plugin
 - additionalArguments
-    - --project	The name of the Jenkins job
-    - --scan	The build workspace
-    - --format	The output format to write to (HTML, XML, CSV, JSON, JUNIT, SARIF, JENKINS, GITLAB, ALL). Multiple formats can be specified by specifying the parameter multiple times. The default is HTML
-    - --out     The folder to write reports to. This defaults to the current directory. If the format is not set to ALL one could specify a specific file name
-    - --prettyPrint When specified the JSON and XML report formats will be pretty printed.
+    - **--project**	The name of the Jenkins job
+    - **--scan**	The build workspace
+    - **--format**	The output format to write to (HTML, XML, CSV, JSON, JUNIT, SARIF, JENKINS, GITLAB, ALL). Multiple formats can be specified by specifying the parameter multiple times. The default is HTML
+    - **--out**     The folder to write reports to. This defaults to the current directory. If the format is not set to ALL one could specify a specific file name
+    - **--prettyPrint** When specified the JSON and XML report formats will be pretty printed.
 ``` groovy
 dependencyCheck additionalArguments: ''' 
             -o './'
@@ -257,7 +257,8 @@ dependencyCheckPublisher pattern: 'dependency-check-report.xml'
 curl --unix-socket /var/run/docker.sock http://localhost/version
 ```
 
+## Push image
 ``` bash
-docker tag <SOME IMAGE ID FROM DOCKER PS> <IP ADDRESS>:5000/test:tag1
-docker push <IP ADDRESS>:5000/test:tag1
+docker tag [SOME IMAGE ID FROM DOCKER PS] [IP ADDRESS]:[PORT]/[IMAGE]:[TAG]
+docker push [IP ADDRESS]:[PORT]/[IMAGE]:[TAG]
 ```
