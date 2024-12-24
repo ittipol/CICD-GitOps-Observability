@@ -22,6 +22,8 @@ pipeline {
         sh '''
         whoami
         env
+        which go
+        which docker
         go version
         '''
       }

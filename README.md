@@ -6,6 +6,8 @@
 - http://localhost:8080/job/{job_name}/pipeline-syntax/globals
 
 ## Start Jenkins
+- Jenkins http://localhost:8080
+- SonarQube http://localhost:9000
 ``` bash
 docker-compose up -d --build
 ```
@@ -36,7 +38,7 @@ docker exec -it jenkins bash
 - SonarQube Scanner
 
 ## Add Credentials
-- Go to Jenkins > Credentials > System > Global credentials (unrestricted) > Add Credentials
+- Go to Manage Jenkins > Credentials > System > Global credentials (unrestricted) > Add Credentials
 
 ## Jenkins Snippet Generator
 1. Click "Pipeline Syntax" in job page
@@ -202,7 +204,7 @@ tools {
 ### Using SonarQube in pipeline
 ``` groovy
 environment { 
-    SCANNER_HOME = tool '{**name}';
+    SCANNER_HOME = tool '{**name}'
 }
 
 stage('Sonarqube scan') {      
@@ -251,6 +253,120 @@ dependencyCheck additionalArguments: '''
 
 dependencyCheckPublisher pattern: 'dependency-check-report.xml'
 ```
+
+## SonarQube
+- https://docs.sonarsource.com/sonarqube-server/latest/analyzing-source-code/analysis-parameters/
+
+### Username & Password
+- Username: admin
+- Password: admin
+
+### Language-specific properties
+- Go to Administration > Configuration > General Settings > Languages > Go
+
+## Quality Gate
+### Configure SonarQube webhook for quality gate
+- Set webhooks at the project level in
+    - {projectName} > Project Settings > Webhooks > Create
+- Set webhooks at the global level in
+    - Administration > Configuration > Webhooks > Create
+
+### Webhook secret
+- Secret will be used as the key to generate the HMAC hex (lowercase) digest value in the 'X-Sonar-Webhook-HMAC-SHA256' header
+### Create webhook secret
+1. Generate HMAC with SHA-256
+``` bash
+echo -n "message" | openssl dgst -sha256 -hmac secret_key
+```
+2. Copy hashed message (*secret)
+
+### Create webhook (SonarQube)
+1. Go to {projectName} > Project Settings > Webhooks > Create
+2. Input name
+3. Input URL (ex. http://jenkins:8080/sonarqube-webhook/)
+4. Input *secret
+5. Click Create
+
+### Add webhook secret credential (Jenkins)
+1. Go to Manage Jenkins Credentials > System > Global credentials (unrestricted) > Add Credentials
+2. Select "Secret text"
+3. Input *secret
+4. Input Description
+5. Click Create
+
+### Add webhook secret credential to SonarQube servers (Jenkins)
+1. Go to "Manage Jenkins" > "System"
+2. Go to SonarQube servers section
+3. Click Advanced
+4. Webhook Secret dropdown list
+5. Select webhook secret credential
+5. Click save
+
+### Using Quality gate in pipeline
+``` groovy
+environment { 
+    WEBHOOK_SECRET_ID= "6641b7ca-2507-4f23-bfce-f5fc86136b2f"
+}
+
+stage("Quality Gate") {
+    steps {
+        timeout(time: 1, unit: 'HOURS') {
+            // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+            // true = set pipeline to UNSTABLE, false = don't
+            waitForQualityGate abortPipeline: true, webhookSecretId: env.WEBHOOK_SECRET_ID
+        }
+    }
+}
+```
+
+### Create Quality Gate
+1. Click menu "Quality Gates"
+2. Click Create
+3. Input Name
+4. Click Save
+
+### Select Quality Gate will be used with project
+1. Go to {projectName} > Project Settings > Quality Gate
+2. Select "Always use a specific Quality Gate"
+3. Select Quality Gate name
+4. Click save
+
+## Quality Profile
+### Create Quality Profile
+1. Click menu "Quality Profiles"
+2. Click Create
+3. Select "What type of profile do you want to create?" option
+    - Option 1: Extend an existing quality profile
+        1. Select Language
+        2. Select Profile to extend
+        3. Input Name
+    - Option 2: Copy an existing quality profile
+        1. Select Language
+        2. Profile to copy
+        3. Input Name
+    - Option 3: Create a blank quality profile
+        1. Select Language
+        2. Input Name
+6. Click Create
+
+### Add a language to project
+1. Go to {projectName} > Project Settings > Quality Profile
+2. Click "Add language"
+3. Choose a language
+4. Choose a profile
+5. Click save
+
+### Select Quality Profile will be used with project
+1. Go to {projectName} > Project Settings > Quality Profile
+2. Click "Change profile"
+3. Select "Always use a specific Quality Profile" option
+4. Select quality profile name
+5. Click save
+
+## Rule
+### View rules
+1. Click menu "Rules"
+2. Select a language
 
 ## Docker daemon
 ``` bash

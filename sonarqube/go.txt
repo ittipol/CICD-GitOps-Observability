@@ -1,0 +1,23 @@
+# Project identification
+sonar.projectKey=my_project_key
+sonar.projectName=My Golang Project
+sonar.projectVersion=1.0
+
+sonar.sources=.
+sonar.exclusions=**/*_test.go,**/vendor/**,**/testdata/*
+
+sonar.tests=.
+sonar.test.inclusions=**/*_test.go
+sonar.test.exclusions=**/vendor/**
+sonar.go.coverage.reportPaths=bin/cov.out
+
+# Define the language
+sonar.language=go
+
+# Define the Go import path (optional)
+sonar.go.goroot=/usr/local/go
+sonar.go.gopath=/path/to/your/gopath
+
+# Additional configuration options (optional)
+# sonar.go.tests=./path/to/tests
+# sonar.go.coverage.reportPaths=./path/to/coverage_reports

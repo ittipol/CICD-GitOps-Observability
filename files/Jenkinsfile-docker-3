@@ -13,6 +13,7 @@ pipeline {
       steps {
         sh "whoami"
         sh '''
+        which docker
         docker version
         docker info
         docker images

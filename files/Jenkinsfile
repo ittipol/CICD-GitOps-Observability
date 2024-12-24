@@ -23,7 +23,7 @@ pipeline {
                 sh '''                
                 pwd
                 echo "Test..." > test.txt
-                ls -ls
+                ls -l
                 '''
             }
         }
