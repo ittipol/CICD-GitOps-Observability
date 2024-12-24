@@ -1,5 +1,5 @@
 def newPath(path, newPath) {
-   return "${path}:${newPath}"
+   return "$path:$newPath"
 }
 
 pipeline {
