@@ -1,0 +1,87 @@
+def newPath(path, newPath) {
+   return "${path}:${newPath}"
+}
+
+pipeline {
+  agent any
+  environment { 
+    SCANNER_HOME = tool 'sonarqube-scanner-tool'
+    WEBHOOK_SECRET_ID = "6641b7ca-2507-4f23-bfce-f5fc86136b2f"
+    GIT_URL = "https://github.com/ittipol/React-Go-Nginx-SSL.git"
+    GIT_BRANCH = "develop"    
+    PROJECT_KEY = "NextJS"
+    SCANNER_PATH = "./nextjs"
+    TOOL_NAME = 'nodejs'
+    TOOL_PATH = tool "$TOOL_NAME"
+    TOOL_BINARY_PATH = "/bin"
+    PATH = newPath("$PATH", "$TOOL_PATH$TOOL_BINARY_PATH")
+    // PARAM_TEST = "${params.executeQualityGate}"
+  }
+  parameters {
+    booleanParam(name: 'executeQualityGate', defaultValue: true, description: '')
+  }
+  // tools {
+  //   nodejs "$TOOL_NAME"
+  // }
+  options {
+      // This is required if you want to clean before build
+      skipDefaultCheckout(true)
+  }
+  stages {
+    stage('Init') {
+      steps {
+        echo '******************************'
+        // Clean before build
+        cleanWs()        
+        echo "Building ${env.JOB_NAME}..."
+        sh 'env'
+
+        sh 'node -v'
+      }
+    }
+    stage('Git checkout') {
+      steps {
+        echo '******************************'
+        git branch: env.GIT_BRANCH, changelog: false, poll: false, url: env.GIT_URL
+        // sh 'env'
+      }
+    }
+    stage('Sonarqube analysis') {            
+      steps {
+        echo '******************************'
+        withSonarQubeEnv('sonarqube-server') {
+            sh '''
+            $SCANNER_HOME/bin/sonar-scanner \
+            -Dsonar.projectKey=$PROJECT_KEY \
+            -Dsonar.projectVersion=1.0 \
+            -Dsonar.projectName=$PROJECT_KEY \
+            -Dsonar.sources=$SCANNER_PATH
+            '''
+        }    
+      }
+    }
+    stage("Quality Gate") {
+      when {
+        expression {
+          params.executeQualityGate
+        }
+      }
+      steps {
+        echo '******************************'
+        timeout(time: 1, unit: 'HOURS') {
+            // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+            // true = set pipeline to UNSTABLE, false = don't
+            waitForQualityGate abortPipeline: true, webhookSecretId: env.WEBHOOK_SECRET_ID
+        }
+      }
+    }
+  }
+  post {      
+    success {
+        echo "Build ID: ${BUILD_ID}, ${JOB_NAME} succeeded"
+    }
+    failure {
+        echo "Build ID: ${BUILD_ID}, ${JOB_NAME} failed"
+    }
+  }
+}

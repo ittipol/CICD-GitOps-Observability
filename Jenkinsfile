@@ -8,8 +8,8 @@ pipeline {
     DOCKER_REGISTER = "https://registry:5000"
     DOCKER_REGISTER_CREDENTIAL = "8a0ba98b-130f-4ee6-b41b-af423112fd4c"
     SCANNER_HOME = tool 'sonarqube-scanner-tool'
-    WEBHOOK_SECRET_ID= "6641b7ca-2507-4f23-bfce-f5fc86136b2f"
-    PROJECT_KEY= "Go-App"
+    WEBHOOK_SECRET_ID = "6641b7ca-2507-4f23-bfce-f5fc86136b2f"
+    PROJECT_KEY = "Go-App"
   }
   parameters {
     string(name: 'tagVersion', defaultValue: '', description: 'Tag version')
@@ -72,9 +72,9 @@ pipeline {
     }
     stage('OWASP Dependency-Check Vulnerabilities') {     
         when {
-            expression {
-                params.owaspScan == true
-            }
+          expression {
+            params.owaspScan == true
+          }
         }
         steps {
           echo '******************************'
