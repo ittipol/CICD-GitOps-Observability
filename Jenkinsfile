@@ -5,8 +5,9 @@ pipeline {
   environment { 
     // AN_ACCESS_KEY = credentials('eebb88dd-be42-429e-b685-2c4904c65f7f') 
     GIT_URL = "https://github.com/ittipol/Jenkins.git"
-    DOCKER_REGISTER = "https://registry:5000"
-    DOCKER_REGISTER_CREDENTIAL = "8a0ba98b-130f-4ee6-b41b-af423112fd4c"
+    DOCKER_REGISTRY = "https://registry:5000"
+    DOCKER_REGISTRY_CREDENTIAL = "8a0ba98b-130f-4ee6-b41b-af423112fd4c"
+    REGISTRY_REPO = "go-app"
     SCANNER_HOME = tool 'sonarqube-scanner-tool'
     WEBHOOK_SECRET_ID = "6641b7ca-2507-4f23-bfce-f5fc86136b2f"
     PROJECT_KEY = "Go-App"
@@ -26,7 +27,7 @@ pipeline {
   stages {
     stage('Init') {
       steps {
-        echo '******************************'
+        echo '************************************************************'
         // Clean before build
         cleanWs()        
         echo "Building ${env.JOB_NAME}..."
@@ -40,7 +41,7 @@ pipeline {
     }
     stage('Git checkout') {
       steps {
-        echo '******************************'
+        echo '************************************************************'
         // We need to explicitly checkout from SCM here
         // ‘checkout scm’ is only available when using “Multibranch Pipeline” or “Pipeline script from SCM”
         // checkout scm
@@ -58,7 +59,7 @@ pipeline {
           }
       }
       steps {
-        echo '******************************'
+        echo '************************************************************'
         // sh '''
         // cd src
         // go test ./...
@@ -77,7 +78,7 @@ pipeline {
           }
         }
         steps {
-          echo '******************************'
+          echo '************************************************************'
           dependencyCheck additionalArguments: ''' 
                       -o './'
                       -s './src'
@@ -89,7 +90,7 @@ pipeline {
     }
     stage('Sonarqube analysis') {            
       steps {
-        echo '******************************'
+        echo '************************************************************'
         withSonarQubeEnv('sonarqube-server') {
             sh '''
             $SCANNER_HOME/bin/sonar-scanner \
@@ -103,7 +104,7 @@ pipeline {
     }
     stage("Quality Gate") {
       steps {
-        echo '******************************'
+        echo '************************************************************'
         timeout(time: 1, unit: 'HOURS') {
             // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
             // true = set pipeline to UNSTABLE, false = don't
@@ -113,7 +114,7 @@ pipeline {
     }
     stage('Build image') {      
       steps {
-        echo '******************************'
+        echo '************************************************************'
         // sh '''
         // cd src
         // docker build -t go-app:v1 .
@@ -127,41 +128,52 @@ pipeline {
             //     customImage = docker.build("go-app:${params.tagVersion}")
             // }
             echo "Tag version: ${params.tagVersion}"
-            customImage = docker.build("go-app:${params.tagVersion}")
+            customImage = docker.build("${env.REGISTRY_REPO}:${params.tagVersion}")
           }
         }
       }
     }
     stage('Push image') {      
       steps {
-        echo '******************************'
+        echo '************************************************************'
         // sh '''
         // docker login -u docker -p 1234 https://registry:5000
         // docker tag go-app:v1 registry:5000/go-app:v1
         // docker push registry:5000/go-app:v1
         // '''
         script {
-          docker.withRegistry(env.DOCKER_REGISTER, env.DOCKER_REGISTER_CREDENTIAL) {
+          docker.withRegistry(env.DOCKER_REGISTRY, env.DOCKER_REGISTRY_CREDENTIAL) {
             // sh '''
             // docker tag go-app:v1 registry:5000/go-app:v1
             // docker push registry:5000/go-app:v1
             // '''
-            customImage.push()
+            customImage.push()            
           }
         }
       }
     }
+    // stage('Delete image') {      
+    //   steps {
+    //     echo '************************************************************'
+    //     // sh 'docker system prune --force --all --volumes'
+    //     sh "docker rmi -f ${customImage.id}"
+    //     // sh '''
+    //     // export IMAGE_ID=$(docker images --filter=reference=$REGISTRY_REPO:$tagVersion --format "{{.ID}}")
+    //     // docker rmi -f $IMAGE_ID
+    //     // '''
+    //   }
+    // }
   }
   post {      
-    // always {
-    //     // Clean after build
-    //     cleanWs(cleanWhenNotBuilt: false,
-    //             deleteDirs: true,
-    //             disableDeferredWipeout: true,
-    //             notFailBuild: true,
-    //             patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
-    //                         [pattern: '.propsfile', type: 'EXCLUDE']])
-    // }
+    always {
+      // Clean after build
+      cleanWs(cleanWhenNotBuilt: false,
+              deleteDirs: true,
+              disableDeferredWipeout: true,
+              notFailBuild: true,
+              patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
+                          [pattern: '.propsfile', type: 'EXCLUDE']])
+    }
     success {
         echo "Build ID: ${BUILD_ID}, ${JOB_NAME} succeeded"
     }

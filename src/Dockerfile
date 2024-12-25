@@ -1,4 +1,4 @@
-FROM golang:1.23.0 AS build
+FROM golang:1.23.0-bookworm AS build
 
 WORKDIR /go-app
 
@@ -10,7 +10,7 @@ COPY . ./
 RUN go build -o ./app
 
 # =================================================
-FROM golang:1.23.0 AS production
+FROM gcr.io/distroless/base-debian12 AS production
 
 WORKDIR /go-app
 
@@ -18,5 +18,7 @@ COPY --from=build /go-app/app ./
 COPY --from=build /go-app/config.yaml ./
 
 EXPOSE 5000
+
+USER 1000
 
 ENTRYPOINT ["./app"]

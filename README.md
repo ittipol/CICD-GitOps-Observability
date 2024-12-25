@@ -104,6 +104,12 @@ environment:
     REGISTRY_HTTP_TLS_KEY: "/tls/server.pem"
 ```
 
+### Test connection and validate TLS
+``` bash
+# Use the curl command
+curl https://registry:5000 -kv
+```
+
 ### Create username and password for authentication
 ``` bash
 # Use httpd:2 image for creating username and password
