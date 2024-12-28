@@ -1,7 +1,7 @@
 services:
 
   jenkins:
-    build: ./docker
+    build: ./docker/dockerfiles/jenkins
     container_name: jenkins
     ports:
       - 8080:8080
@@ -13,20 +13,25 @@ services:
     volumes:
       # - /var/run/docker.sock:/var/run/docker.sock
       - jenkins-data:/var/jenkins_home
-      - jenkins-docker-certs:/certs/client:ro            
+      - jenkins-docker-certs:/certs/client:ro     
+      # - ./docker/docker_registry/tls/ca.crt:/docker_registry/cert/ca.crt:ro
+      - ./docker/docker_registry/tls/server.crt:/docker_registry/cert/server.crt:ro
     depends_on:
       - docker-dind
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - jenkins
 
   docker-dind:
     # image: docker:dind
-    build: ./docker/dind
+    build: ./docker/dockerfiles/dind
     container_name: docker-in-docker
     privileged: true
     volumes:
       - jenkins-data:/var/jenkins_home
       - jenkins-docker-certs:/certs/client
+      - ./docker/docker_registry/tls/ca.crt:/docker_registry/cert/ca.crt:ro
     networks:
       jenkins:
         aliases:
@@ -44,8 +49,12 @@ services:
       REGISTRY_AUTH_HTPASSWD_PATH: "/auth/htpasswd"
       REGISTRY_STORAGE_DELETE_ENABLED: "true"
     volumes:
-      - ./docker/dind/tls:/tls
-      - ./registry_auth:/auth
+      - ./docker/docker_registry/tls:/tls:ro
+      - ./docker/docker_registry/auth:/auth:ro
+    # ports:
+    #   - "5000:5000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       jenkins:
         aliases:

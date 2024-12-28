@@ -29,6 +29,10 @@ cat /var/jenkins_home/secrets/initialAdminPassword
 ``` bash
 docker exec -it jenkins bash
 ```
+``` bash
+kubectl exec -it [POD_NAME] -- bash
+kubectl exec -it [POD_NAME] -- sh
+```
 
 ## Plugin
 - Pipeline: Stage View
@@ -36,6 +40,15 @@ docker exec -it jenkins bash
 - Workspace Cleanup
 - OWASP Dependency-Check
 - SonarQube Scanner
+
+## Jenkins API Token
+### Get API Token
+1. Go to {user} > Security
+2. Go to API Token section
+3. Click Add new Token
+4. Input Name
+5. Click Generate
+6. Copy Token
 
 ## Add Credentials
 - Go to Manage Jenkins > Credentials > System > Global credentials (unrestricted) > Add Credentials

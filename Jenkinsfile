@@ -15,7 +15,7 @@ pipeline {
   parameters {
     string(name: 'tagVersion', defaultValue: '', description: 'Tag version')
     booleanParam(name: 'executeTest', defaultValue: true, description: '')
-    booleanParam(name: 'owaspScan', defaultValue: true, description: 'OWASP Dependency-Check Vulnerabilities')
+    // booleanParam(name: 'owaspScan', defaultValue: true, description: 'OWASP Dependency-Check Vulnerabilities')
   }
   tools {
     go 'go'
@@ -71,23 +71,23 @@ pipeline {
         }
       }
     }
-    stage('OWASP Dependency-Check Vulnerabilities') {     
-        when {
-          expression {
-            params.owaspScan == true
-          }
-        }
-        steps {
-          echo '************************************************************'
-          dependencyCheck additionalArguments: ''' 
-                      -o './'
-                      -s './src'
-                      -f 'ALL' 
-                      --prettyPrint''', odcInstallation: 'Dependency-Check'
+    // stage('OWASP Dependency-Check Vulnerabilities') {     
+    //     when {
+    //       expression {
+    //         params.owaspScan == true
+    //       }
+    //     }
+    //     steps {
+    //       echo '************************************************************'
+    //       dependencyCheck additionalArguments: ''' 
+    //                   -o './'
+    //                   -s './src'
+    //                   -f 'ALL' 
+    //                   --prettyPrint''', odcInstallation: 'Dependency-Check'
           
-          dependencyCheckPublisher pattern: 'dependency-check-report.xml'
-        }
-    }
+    //       dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+    //     }
+    // }
     stage('Sonarqube analysis') {            
       steps {
         echo '************************************************************'

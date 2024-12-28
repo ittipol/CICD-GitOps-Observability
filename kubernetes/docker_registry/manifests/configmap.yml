@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  htpasswd: |+
+    docker:$2y$05$nWBgl07Wiu6L14x/T0Lvh.lUjJNijCTQVgKzazf0m/oYC5nOgXGru
+
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2024-12-28T04:55:32Z"
+  name: docker-registry-auth
+  namespace: registry
+  resourceVersion: "3359"
+  uid: 89c99359-0f4d-45bf-abee-14f95728f1ba
