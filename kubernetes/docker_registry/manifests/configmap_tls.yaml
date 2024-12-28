@@ -1,0 +1,1 @@
+# kubectl create configmap -n registry docker-registry-tls --from-file=server.crt --from-file=server.pem

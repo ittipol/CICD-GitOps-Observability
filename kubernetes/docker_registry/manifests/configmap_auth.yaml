@@ -1,3 +1,4 @@
+# kubectl create configmap -n registry docker-registry-auth --from-file=path/to/htpasswd
 apiVersion: v1
 data:
   htpasswd: |+

@@ -24,6 +24,10 @@ spec:
         image: registry:2.8.3
         imagePullPolicy: Always
         env:
+        - name: REGISTRY_HTTP_TLS_CERTIFICATE
+          value: "/tls/tls.crt"
+        - name: REGISTRY_HTTP_TLS_KEY  
+          value: "/tls/tls.key"
         - name: REGISTRY_AUTH
           value: "htpasswd"
         - name: REGISTRY_AUTH_HTPASSWD_REALM
@@ -34,7 +38,7 @@ spec:
           value: "true"
         ports:
         - containerPort: 5000
-          name: docker-registry
+          name: docker-registry-http
         resources:
           limits:
             memory: 200Mi
@@ -42,10 +46,16 @@ spec:
             cpu: 100m
             memory: 200Mi
         volumeMounts:
-        - name: auth
+        - name: auth-volume
           mountPath: /auth
           readOnly: true
+        - name: tls-volume
+          mountPath: /tls
+          readOnly: true
       volumes:
-      - name: auth
+      - name: auth-volume
         configMap:
           name: docker-registry-auth
+      - name: tls-volume
+        secret:
+          secretName: secret-tls

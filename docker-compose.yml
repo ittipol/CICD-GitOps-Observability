@@ -14,12 +14,12 @@ services:
       # - /var/run/docker.sock:/var/run/docker.sock
       - jenkins-data:/var/jenkins_home
       - jenkins-docker-certs:/certs/client:ro     
-      # - ./docker/docker_registry/tls/ca.crt:/docker_registry/cert/ca.crt:ro
       - ./docker/docker_registry/tls/server.crt:/docker_registry/cert/server.crt:ro
-    depends_on:
-      - docker-dind
+      - ./kubernetes/docker_registry/tls/server.crt:/docker_registry/kubernetes/cert/server.crt:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    depends_on:
+      - docker-dind
     networks:
       - jenkins
 
@@ -32,6 +32,9 @@ services:
       - jenkins-data:/var/jenkins_home
       - jenkins-docker-certs:/certs/client
       - ./docker/docker_registry/tls/ca.crt:/docker_registry/cert/ca.crt:ro
+      - ./kubernetes/docker_registry/tls/ca.crt:/docker_registry/kubernetes/cert/ca.crt:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       jenkins:
         aliases:
@@ -51,10 +54,6 @@ services:
     volumes:
       - ./docker/docker_registry/tls:/tls:ro
       - ./docker/docker_registry/auth:/auth:ro
-    # ports:
-    #   - "5000:5000"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     networks:
       jenkins:
         aliases:

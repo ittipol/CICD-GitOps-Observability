@@ -5,7 +5,8 @@ pipeline {
   environment { 
     // AN_ACCESS_KEY = credentials('eebb88dd-be42-429e-b685-2c4904c65f7f') 
     GIT_URL = "https://github.com/ittipol/Jenkins.git"
-    DOCKER_REGISTRY = "https://registry:5000"
+    // DOCKER_REGISTRY = "https://registry:5000"
+    DOCKER_REGISTRY = "https://host.docker.internal:5050"
     DOCKER_REGISTRY_CREDENTIAL = "8a0ba98b-130f-4ee6-b41b-af423112fd4c"
     REGISTRY_REPO = "go-app"
     SCANNER_HOME = tool 'sonarqube-scanner-tool'
@@ -47,9 +48,6 @@ pipeline {
         // checkout scm
         git branch: 'main', changelog: false, poll: false, url: env.GIT_URL
         // sh 'env'
-        // sh '''
-        // ls -l
-        // '''
       }
     }
     stage('Test') {      
