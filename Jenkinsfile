@@ -3,7 +3,7 @@ def customImage
 pipeline {
   agent any
   environment { 
-    GIT_URL = "https://github.com/ittipol/Gitops.git"
+    GIT_URL = "https://github.com/ittipol/GitOps-Code.git"
     GIT_CREDENTIAL = "gitops-cred"
     DOCKER_REGISTRY = "https://registry:5000"
     DOCKER_REGISTRY_CREDENTIAL = "8a0ba98b-130f-4ee6-b41b-af423112fd4c"
@@ -63,7 +63,7 @@ pipeline {
         // go test ./...
         // '''
         script {
-          dir('src') {
+          dir('go') {
             sh 'go test ./...'
           }
         }
@@ -95,7 +95,7 @@ pipeline {
             -Dsonar.projectKey=$PROJECT_KEY \
             -Dsonar.projectVersion=$tagVersion \
             -Dsonar.projectName="Go App" \
-            -Dsonar.sources=./src
+            -Dsonar.sources=./go
             '''
         }    
       }
@@ -118,7 +118,7 @@ pipeline {
         // docker build -t go-app:v1 .
         // '''
         script {
-          dir('src') {
+          dir('go') {
             // if(params.tagVersion.isEmpty()) {
             //     error("tagVersion is empty")
             // }else {
