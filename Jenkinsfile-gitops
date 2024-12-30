@@ -1,22 +1,27 @@
+def replace(data) {
+   return data.replace("/", "\\/")
+}
+
 pipeline {
   agent any
   environment { 
-    GIT_URL = "https://github.com/ittipol/Jenkins.git"
-    REGISTRY_REPO = "host.docker.internal:5050/go-app"
+    GIT_URL = "https://github.com/ittipol/Gitops.git"
+    GIT_CREDENTIAL = "gitops-cred"
+    REGISTRY_REPO = "host.minikube.internal:5000/go-app"
   }
   parameters {
-    string(name: 'TAG', defaultValue: '', description: 'Tag version')
+    string(name: 'TAG', defaultValue: '1.0.0', description: 'Tag version')
   }
-//   options {
-//       // This is required if you want to clean before build
-//       skipDefaultCheckout(true)
-//   }
+  options {
+      // This is required if you want to clean before build
+      skipDefaultCheckout(true)
+  }
   stages {
     stage('Clear workspace') {
       steps {
         echo '************************************************************'
         // Clean before build
-        // cleanWs()        
+        cleanWs()        
       }
     }
     stage('Git checkout') {
@@ -25,24 +30,43 @@ pipeline {
         // We need to explicitly checkout from SCM here
         // ‘checkout scm’ is only available when using “Multibranch Pipeline” or “Pipeline script from SCM”
         // checkout scm
-        git branch: 'main', changelog: false, poll: false, url: env.GIT_URL
+        git branch: 'main', changelog: false, credentialsId: 'gitops-cred', poll: false, url: env.GIT_URL
         // sh 'env'
-        // sh '''
-        // ls -l
+        // sh 'which git'
         // '''
       }
     }
     stage("Update the deployment tag") {
       steps {
         echo '************************************************************'
-        sh '''
-        cat kubernetes/dev/deployment.yaml
-        host.docker.internal:5050/go-app:1.0.0
-        sed -i "s/$REGISTRY_REPO.*/$REGISTRY_REPO:${TAG}/g" kubernetes/dev/deployment.yaml
-        cat kubernetes/dev/deployment.yaml
-        '''
-        
+
+        script {
+          def registryRepo = replace("${env.REGISTRY_REPO}")
+
+          sh """
+          cat dev/deployment.yaml
+          sed -i \'s/$registryRepo.*/$registryRepo:$TAG/g\' dev/deployment.yaml
+          cat dev/deployment.yaml
+          """
+        }        
       }
     } 
+    stage("UpPush the deployment file to Git") {
+      steps {
+        echo '************************************************************'
+
+        sh """        
+        git config --global user.name "Name"
+        git config --global user.email ""
+        git add dev/deployment.yaml
+        git commit -m "Update tag version $TAG in deployment manifest"
+        git log
+        """
+
+        withCredentials([gitUsernamePassword(credentialsId: GIT_CREDENTIAL, gitToolName: 'Default')]) {
+          sh "git push $GIT_URL main"
+        }
+      }
+    }
   }
 }

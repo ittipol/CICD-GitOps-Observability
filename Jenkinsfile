@@ -4,9 +4,9 @@ pipeline {
   agent any
   environment { 
     // AN_ACCESS_KEY = credentials('eebb88dd-be42-429e-b685-2c4904c65f7f') 
-    GIT_URL = "https://github.com/ittipol/Jenkins.git"
-    // DOCKER_REGISTRY = "https://registry:5000"
-    DOCKER_REGISTRY = "https://host.docker.internal:5050"
+    GIT_URL = "https://github.com/ittipol/Gitops.git"
+    DOCKER_REGISTRY = "https://registry:5000"
+    // DOCKER_REGISTRY = "https://host.docker.internal:5050"
     DOCKER_REGISTRY_CREDENTIAL = "8a0ba98b-130f-4ee6-b41b-af423112fd4c"
     REGISTRY_REPO = "go-app"
     SCANNER_HOME = tool 'sonarqube-scanner-tool'
@@ -46,7 +46,7 @@ pipeline {
         // We need to explicitly checkout from SCM here
         // ‘checkout scm’ is only available when using “Multibranch Pipeline” or “Pipeline script from SCM”
         // checkout scm
-        git branch: 'main', changelog: false, poll: false, url: env.GIT_URL
+        git branch: 'main', changelog: false, credentialsId: 'gitops-cred', poll: false, url: env.GIT_URL
         // sh 'env'
       }
     }
@@ -159,6 +159,15 @@ pipeline {
     //     // export IMAGE_ID=$(docker images --filter=reference=$REGISTRY_REPO:$tagVersion --format "{{.ID}}")
     //     // docker rmi -f $IMAGE_ID
     //     // '''
+    //   }
+    // }
+    // stage('Trigger CD Pipeline') {   
+    //   steps {
+    //     echo '************************************************************'
+
+    //     script {
+          
+    //     }
     //   }
     // }
   }

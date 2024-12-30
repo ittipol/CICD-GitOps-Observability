@@ -35,6 +35,7 @@ services:
       - ./kubernetes/docker_registry/tls/ca.crt:/docker_registry/kubernetes/cert/ca.crt:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
+      # - "host.minikube.internal:host-gateway"
     networks:
       jenkins:
         aliases:
@@ -88,6 +89,17 @@ services:
     volumes:
       - postgresql:/var/lib/postgresql
       - postgresql_data:/var/lib/postgresql/data
+    networks:
+      - jenkins
+
+  nginx:
+    build: ./docker/nginx
+    container_name: nginx_proxy
+    ports:
+      - 5000:5000
+    restart: unless-stopped
+    volumes:
+      - ./docker/docker_registry/tls/server.crt:/docker_registry/cert/server.crt:ro
     networks:
       - jenkins
     

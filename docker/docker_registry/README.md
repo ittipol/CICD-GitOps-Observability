@@ -14,11 +14,11 @@ curl -u docker:1234 --cacert /docker_registry/cert/server.crt -X GET https://reg
 curl -u docker:1234 --cacert /docker_registry/cert/server.crt -X GET https://registry:5000/v2/go-app/manifests/1.0.0
 ```
 
-## Pull an image from private registry
+## Pull an image from private registry (Docker)
 ``` bash
 # Login
-docker login -u docker -p 1234 host.docker.internal:5050
+docker login -u docker -p 1234 registry:5000
 
 # docker image pull {repo}:{tag} 
-docker image pull host.docker.internal:5050/go-app:1.0.0
+docker image pull registry:5000/go-app:1.0.0
 ```
