@@ -3,7 +3,7 @@
 ## Add GitHub Credentials In Jenkins
 
 ### Generate GitHub Token
-1. Goto Settings > Developer Settings > Personal access tokens > Tokens (classic)
+1. Navigate to Settings > Developer Settings > Personal access tokens > Tokens (classic)
 2. Click Generate new token (classic)
 3. Input Note
 4. Select Expiration
@@ -12,7 +12,7 @@
 6. Click Generate token
 
 ### Add GitHub Credentials
-1. Go to Manage Jenkins Credentials > System > Global credentials (unrestricted) > Add Credentials
+1. Navigate to Manage Jenkins Credentials > System > Global credentials (unrestricted) > Add Credentials
 2. Select "Username with password"
 3. Input Username (GitHub username, email)
 4. Check "Treat username as secret" checkbox

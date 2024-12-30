@@ -30,7 +30,7 @@ pipeline {
         // We need to explicitly checkout from SCM here
         // ‘checkout scm’ is only available when using “Multibranch Pipeline” or “Pipeline script from SCM”
         // checkout scm
-        git branch: 'main', changelog: false, credentialsId: 'gitops-cred', poll: false, url: env.GIT_URL
+        git branch: 'main', changelog: false, credentialsId: env.GIT_CREDENTIAL, poll: false, url: env.GIT_URL
         // sh 'env'
         // sh 'which git'
         // '''
@@ -51,7 +51,7 @@ pipeline {
         }        
       }
     } 
-    stage("UpPush the deployment file to Git") {
+    stage("Push the deployment file to Git") {
       steps {
         echo '************************************************************'
 
@@ -60,7 +60,6 @@ pipeline {
         git config --global user.email ""
         git add dev/deployment.yaml
         git commit -m "Update tag version $TAG in deployment manifest"
-        git log
         """
 
         withCredentials([gitUsernamePassword(credentialsId: GIT_CREDENTIAL, gitToolName: 'Default')]) {

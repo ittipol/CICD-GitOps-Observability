@@ -3,15 +3,15 @@ def customImage
 pipeline {
   agent any
   environment { 
-    // AN_ACCESS_KEY = credentials('eebb88dd-be42-429e-b685-2c4904c65f7f') 
     GIT_URL = "https://github.com/ittipol/Gitops.git"
+    GIT_CREDENTIAL = "gitops-cred"
     DOCKER_REGISTRY = "https://registry:5000"
-    // DOCKER_REGISTRY = "https://host.docker.internal:5050"
     DOCKER_REGISTRY_CREDENTIAL = "8a0ba98b-130f-4ee6-b41b-af423112fd4c"
     REGISTRY_REPO = "go-app"
     SCANNER_HOME = tool 'sonarqube-scanner-tool'
     WEBHOOK_SECRET_ID = "6641b7ca-2507-4f23-bfce-f5fc86136b2f"
     PROJECT_KEY = "Go-App"
+    JENKINS_API_TOKEN = credentials('jenkins-api-token')
   }
   parameters {
     string(name: 'tagVersion', defaultValue: '', description: 'Tag version')
@@ -46,7 +46,7 @@ pipeline {
         // We need to explicitly checkout from SCM here
         // ‘checkout scm’ is only available when using “Multibranch Pipeline” or “Pipeline script from SCM”
         // checkout scm
-        git branch: 'main', changelog: false, credentialsId: 'gitops-cred', poll: false, url: env.GIT_URL
+        git branch: 'main', changelog: false, credentialsId: env.GIT_CREDENTIAL, poll: false, url: env.GIT_URL
         // sh 'env'
       }
     }
@@ -161,15 +161,16 @@ pipeline {
     //     // '''
     //   }
     // }
-    // stage('Trigger CD Pipeline') {   
-    //   steps {
-    //     echo '************************************************************'
+    stage('Trigger CD Pipeline') {   
+      steps {
+        echo '************************************************************'
 
-    //     script {
-          
-    //     }
-    //   }
-    // }
+        script {
+          // Trigger builds remotely
+          sh "curl -kv --user test:$JENKINS_API_TOKEN -X POST -H 'Cache-Control: no-cache' -H 'Content-Type: application/x-www-form-urlencoded' --data 'TAG=$tagVersion' --location 'http://localhost:8080/job/cd-pipeline/buildWithParameters'"
+        }
+      }
+    }
   }
   post {      
     always {

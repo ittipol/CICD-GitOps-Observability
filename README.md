@@ -41,17 +41,25 @@ kubectl exec -it [POD_NAME] -- sh
 - OWASP Dependency-Check
 - SonarQube Scanner
 
+## Add Credentials
+- Navigate to Manage Jenkins > Credentials > System > Global credentials (unrestricted) > Add Credentials
+
 ## Jenkins API Token
 ### Get API Token
-1. Go to {user} > Security
-2. Go to API Token section
+1. Navigate to {user} > Security
+2. Navigate to API Token section
 3. Click Add new Token
 4. Input Name
 5. Click Generate
 6. Copy Token
 
-## Add Credentials
-- Go to Manage Jenkins > Credentials > System > Global credentials (unrestricted) > Add Credentials
+### Add Jenkins API Token
+1. Navigate to Manage Jenkins > Credentials > System > Global credentials (unrestricted) > Add Credentials
+2. Select "Secret text"
+3. Input Secret (Jenkins API Token)
+4. Input ID
+5. Input Description
+6. Click Create
 
 ## Jenkins Snippet Generator
 1. Click "Pipeline Syntax" in job page
@@ -133,7 +141,7 @@ docker run --rm --entrypoint htpasswd httpd:2 -Bbn test dockerpassword >> {outpu
 ```
 
 ### Add Docker registry credential
-1. Go to Manage Jenkins Credentials > System > Global credentials (unrestricted) > Add Credentials
+1. Navigate to Manage Jenkins Credentials > System > Global credentials (unrestricted) > Add Credentials
 2. Select "Username with password"
 3. Input Username
 4. Input Password
@@ -142,12 +150,12 @@ docker run --rm --entrypoint htpasswd httpd:2 -Bbn test dockerpassword >> {outpu
 
 ## Docker plugin
 ### Download plugin
-1. Go to "Manage Jenkins" > "Plugins"
+1. Navigate to "Manage Jenkins" > "Plugins"
 2. Search "Docker Pipeline"
 3. Install Docker Pipeline plugin
 
 ### Add Docker tool
-1. Go to "Manage Jenkins" > "Tools"
+1. Navigate to "Manage Jenkins" > "Tools"
 2. Click "Add Docker"
 3. Input *name
 4. Click "Install automatically" checkbox
@@ -165,12 +173,12 @@ tools {
 
 ## Go Plugin
 ### Download plugin
-1. Go to "Manage Jenkins" > "Plugins"
+1. Navigate to "Manage Jenkins" > "Plugins"
 2. Search "Go"
 3. Install Go plugin
 
-### Add Go tool
-1. Go to "Manage Jenkins" > "Tools"
+### Add Navigate tool
+1. Navigate to "Manage Jenkins" > "Tools"
 2. Click "Add Go"
 3. Input *name
 4. Input Go version
@@ -185,33 +193,33 @@ tools {
 
 ## SonarQube plugin
 ### Download plugin
-1. Go to "Manage Jenkins" > "Plugins"
+1. Navigate to "Manage Jenkins" > "Plugins"
 2. Search "SonarQube Scanner"
 3. Install SonarQube Scanner plugin
 
 ### Generate SonarQube Token
-1. Go to Administration > Security > Users
+1. Navigate to Administration > Security > Users
 2. In column Tokens, click "Update Token"
 3. Input Token Name
 4. Click Generate
 5. Copy token
 
 ### Add Server authentication token
-1. Go to Manage Jenkins Credentials > System > Global credentials (unrestricted) > Add Credentials
+1. Navigate to Manage Jenkins Credentials > System > Global credentials (unrestricted) > Add Credentials
 2. Select "Secret text"
 3. Input Secret (SonarQube token) from [Generate SonarQube Token]
 4. Input Description
 5. Click Create
 
 ### Add SonarQube servers
-1. Go to "Manage Jenkins" > "System"
+1. Navigate to "Manage Jenkins" > "System"
 2. Click "Add SonarQube"
 3. Input *name
 4. Input Server URL (http://sonarqube:9000)
 5. Input Server authentication token from [Add Server authentication token]
 
 ### Add SonarQube tool
-1. Go to "Manage Jenkins" > "Tools"
+1. Navigate to "Manage Jenkins" > "Tools"
 2. Click "Add SonarQube Scanner"
 3. Input **name
 4. Click "Install automatically"
@@ -241,12 +249,12 @@ stage('Sonarqube scan') {
 
 ## OWASP Dependency-Check plugin
 ### Download plugin
-1. Go to "Manage Jenkins" > "Plugins"
+1. Navigate to "Manage Jenkins" > "Plugins"
 2. Search "OWASP Dependency-Check"
 3. Install OWASP Dependency-Check plugin
 
 ### Add OWASP Dependency-Check tool
-1. Go to "Manage Jenkins" > "Tools"
+1. Navigate to "Manage Jenkins" > "Tools"
 2. Click "Add Dependency-Check"
 3. Input *name
 4. Click "Install automatically"
@@ -281,7 +289,7 @@ dependencyCheckPublisher pattern: 'dependency-check-report.xml'
 - Password: admin
 
 ### Language-specific properties
-- Go to Administration > Configuration > General Settings > Languages > Go
+- Navigate to Administration > Configuration > General Settings > Languages > Go
 
 ## Quality Gate
 ### Configure SonarQube webhook for quality gate
@@ -300,22 +308,22 @@ echo -n "message" | openssl dgst -sha256 -hmac secret_key
 2. Copy hashed message (*secret)
 
 ### Create webhook (SonarQube)
-1. Go to {projectName} > Project Settings > Webhooks > Create
+1. Navigate to {projectName} > Project Settings > Webhooks > Create
 2. Input name
 3. Input URL (ex. http://jenkins:8080/sonarqube-webhook/)
 4. Input *secret
 5. Click Create
 
 ### Add webhook secret credential (Jenkins)
-1. Go to Manage Jenkins Credentials > System > Global credentials (unrestricted) > Add Credentials
+1. Navigate to Manage Jenkins Credentials > System > Global credentials (unrestricted) > Add Credentials
 2. Select "Secret text"
 3. Input *secret
 4. Input Description
 5. Click Create
 
 ### Add webhook secret credential to SonarQube servers (Jenkins)
-1. Go to "Manage Jenkins" > "System"
-2. Go to SonarQube servers section
+1. Navigate to "Manage Jenkins" > "System"
+2. Navigate to SonarQube servers section
 3. Click Advanced
 4. Webhook Secret dropdown list
 5. Select webhook secret credential
@@ -345,7 +353,7 @@ stage("Quality Gate") {
 4. Click Save
 
 ### Select Quality Gate will be used with project
-1. Go to {projectName} > Project Settings > Quality Gate
+1. Navigate to {projectName} > Project Settings > Quality Gate
 2. Select "Always use a specific Quality Gate"
 3. Select Quality Gate name
 4. Click save
@@ -369,14 +377,14 @@ stage("Quality Gate") {
 6. Click Create
 
 ### Add a language to project
-1. Go to {projectName} > Project Settings > Quality Profile
+1. Navigate to {projectName} > Project Settings > Quality Profile
 2. Click "Add language"
 3. Choose a language
 4. Choose a profile
 5. Click save
 
 ### Select Quality Profile will be used with project
-1. Go to {projectName} > Project Settings > Quality Profile
+1. Navigate to {projectName} > Project Settings > Quality Profile
 2. Click "Change profile"
 3. Select "Always use a specific Quality Profile" option
 4. Select quality profile name

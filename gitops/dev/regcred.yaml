@@ -1,17 +1,9 @@
 # kubectl create secret docker-registry regcred --docker-server=host.minikube.internal:5000 --docker-username=docker --docker-password=1234 -n go-app
 apiVersion: v1
-items:
-- apiVersion: v1
-  data:
-    .dockerconfigjson: eyJhdXRocyI6eyJob3N0Lm1pbmlrdWJlLmludGVybmFsOjUwMDAiOnsidXNlcm5hbWUiOiJkb2NrZXIiLCJwYXNzd29yZCI6IjEyMzQiLCJhdXRoIjoiWkc5amEyVnlPakV5TXpRPSJ9fX0=
-  kind: Secret
-  metadata:
-    creationTimestamp: "2024-12-30T03:37:05Z"
-    name: regcred
-    namespace: go-app
-    resourceVersion: "3782"
-    uid: d95f2ce6-c2d6-4732-870b-fcde1a3040d4
-  type: kubernetes.io/dockerconfigjson
-kind: List
+kind: Secret
 metadata:
-  resourceVersion: ""
+  name: regcred
+  namespace: go-app
+data:
+ .dockerconfigjson: eyJhdXRocyI6eyJob3N0Lm1pbmlrdWJlLmludGVybmFsOjUwMDAiOnsidXNlcm5hbWUiOiJkb2NrZXIiLCJwYXNzd29yZCI6IjEyMzQiLCJhdXRoIjoiWkc5amEyVnlPakV5TXpRPSJ9fX0=
+type: kubernetes.io/dockerconfigjson
