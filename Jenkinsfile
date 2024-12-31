@@ -5,12 +5,17 @@ pipeline {
   environment { 
     GIT_URL = "https://github.com/ittipol/GitOps-Code.git"
     GIT_CREDENTIAL = "gitops-cred"
+    GIT_PATH = "./api/go"
+
     DOCKER_REGISTRY = "https://registry:5000"
-    DOCKER_REGISTRY_CREDENTIAL = "8a0ba98b-130f-4ee6-b41b-af423112fd4c"
+    DOCKER_REGISTRY_CREDENTIAL = "docker-registry-credential"
     REGISTRY_REPO = "go-app"
+
     SCANNER_HOME = tool 'sonarqube-scanner-tool'
-    WEBHOOK_SECRET_ID = "6641b7ca-2507-4f23-bfce-f5fc86136b2f"
+    WEBHOOK_SECRET_ID = "sonar-webhook"
+
     PROJECT_KEY = "Go-App"
+
     JENKINS_API_TOKEN = credentials('jenkins-api-token')
   }
   parameters {
@@ -63,7 +68,7 @@ pipeline {
         // go test ./...
         // '''
         script {
-          dir('go') {
+          dir(GIT_PATH) {
             sh 'go test ./...'
           }
         }
@@ -95,7 +100,7 @@ pipeline {
             -Dsonar.projectKey=$PROJECT_KEY \
             -Dsonar.projectVersion=$tagVersion \
             -Dsonar.projectName="Go App" \
-            -Dsonar.sources=./go
+            -Dsonar.sources=$GIT_PATH
             '''
         }    
       }
@@ -118,7 +123,7 @@ pipeline {
         // docker build -t go-app:v1 .
         // '''
         script {
-          dir('go') {
+          dir(GIT_PATH) {
             // if(params.tagVersion.isEmpty()) {
             //     error("tagVersion is empty")
             // }else {
@@ -172,7 +177,7 @@ pipeline {
       }
     }
   }
-  post {      
+  post {
     always {
       // Clean after build
       cleanWs(cleanWhenNotBuilt: false,

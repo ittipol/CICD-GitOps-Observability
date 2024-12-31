@@ -18,6 +18,20 @@ touch ca.crt
 vi ca.crt
 ```
 
+## Test connection
+``` bash
+# To test connectivity to a specific TCP service listening on your host
+nc -vz host.minikube.internal 5000
+
+# Use the curl command
+curl -kv https://host.minikube.internal:5000
+```
+
+## Verify certificate
+``` bash
+openssl s_client -connect host.minikube.internal:5000 -showcerts </dev/null
+```
+
 ## Pull an image from private registry (Minikube)
 ``` bash
 # Login

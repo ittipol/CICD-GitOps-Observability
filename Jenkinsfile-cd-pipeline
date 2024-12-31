@@ -68,4 +68,12 @@ pipeline {
       }
     }
   }
+  post {
+    success {
+        echo "$JOB_NAME [Update tag version $TAG in deployment manifest] succeeded"
+    }
+    failure {
+        echo "$JOB_NAME [Update tag version $TAG in deployment manifest] failed"
+    }
+  }
 }

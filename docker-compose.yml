@@ -35,7 +35,6 @@ services:
       - ./kubernetes/docker_registry/tls/ca.crt:/docker_registry/kubernetes/cert/ca.crt:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
-      # - "host.minikube.internal:host-gateway"
     networks:
       jenkins:
         aliases:
