@@ -46,7 +46,7 @@ docker_stop() {
 }
 
 minikube_start() {
-  minikube start
+  minikube start --cpus 2 --memory 4000
   minikube status
   minikube ip
 }
@@ -77,7 +77,7 @@ if [ "$start_flag" = "true" ]; then
           usage_info
           exit 1
           ;;
-        -a)
+        -a | all)
           docker_start
           minikube_start
           exit 1
@@ -107,7 +107,7 @@ if [ "$stop_flag" = "true" ]; then
           usage_info
           exit 1
           ;;
-        -a)
+        -a | all)
           docker_stop
           minikube_stop
           exit 1

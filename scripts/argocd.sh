@@ -5,9 +5,23 @@ install() {
     terraform apply
 }
 
-while getopts "i" opt; do
-  case $opt in
-    i | --install) install exit 1 ;;
+password() {
+  echo "$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)"
+}
+
+startPortForward() {
+  local port="$1"
+  kubectl port-forward svc/argocd-server -n argocd $port:80
+}
+
+while getopts 'ips:' flag; do
+  case "${flag}" in
+    i) install exit 1 ;;
+    p) password exit 1 ;;
+    s) 
+      startPortForward "$OPTARG"
+      exit 1 
+      ;;
     *) echo "Invalid option" exit 1 ;;
   esac
 done

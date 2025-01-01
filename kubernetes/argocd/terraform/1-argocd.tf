@@ -11,5 +11,5 @@ resource "helm_release" "argocd" {
   version          = "7.7.11"
   create_namespace = true
 
-  values = [file("values/value.yaml")]
+  values = [file("values/argocd_value.yaml")]
 }
