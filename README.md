@@ -12,6 +12,11 @@
 docker-compose up -d --build
 ```
 
+## Start Minikube
+``` bash
+./run.sh start minikube
+```
+
 ## Password
 ``` bash
 docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
