@@ -9,7 +9,7 @@
 - Jenkins http://localhost:8080
 - SonarQube http://localhost:9000
 ``` bash
-docker-compose up -d --build
+./run.sh start docker
 ```
 
 ## Start Minikube
