@@ -6,9 +6,7 @@ minikube ssh
 
 cd /etc/docker/
 
-mkdir certs.d
-
-mkdir host.minikube.internal:5000
+mkdir -p certs.d/host.minikube.internal:5000
 
 cd /etc/docker/certs.d/host.minikube.internal:5000
 
@@ -20,6 +18,8 @@ vi ca.crt
 
 ## Test connection
 ``` bash
+minikube ssh
+
 # To test connectivity to a specific TCP service listening on your host
 nc -vz host.minikube.internal 5000
 
@@ -29,6 +29,8 @@ curl -kv https://host.minikube.internal:5000
 
 ## Verify certificate
 ``` bash
+minikube ssh
+
 openssl s_client -connect host.minikube.internal:5000 -showcerts </dev/null
 ```
 

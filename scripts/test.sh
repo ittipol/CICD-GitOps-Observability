@@ -1,5 +1,3 @@
-# docker-compose up -d --build
-
 # if [ "$#" -eq 0 ]; then
 #     echo "Usage: $0 <username> <age> <fullname>"
 #     exit 1
@@ -59,55 +57,10 @@
 arg0=$(basename "$0" .sh)
 blnk=$(echo "$arg0" | sed 's/./ /g')
 
-usage_info()
-{
-    echo "Usage: $arg0 [{-s|--source} source] [{-d|--destination} destination] \\"
-    echo "       $blnk [{-c|--credentials} credentials] [{-b|--bandwidth} bandwidth] \\"
-    echo "       $blnk [{-t|--timeout} timeout] [{-p|--port} port] \\"
-    echo "       $blnk [-h|--help] [{-l|--compression-level} level]"
-}
-
-# echo "Usage: $arg0 | $1"
-usage_info
-
-# sets colors for output logs
-BLUE='\033[34m'
-RED='\033[31m'
-CLEAR='\033[0m'
-
-# pre-configured log levels
-INFO="(${BLUE}INFO${CLEAR})"
-ERROR="(${RED}ERROR${CLEAR})"
-
 docker_flag=''
 minikube_flag=''
 files=''
 verbose='false'
-
-log_info() {
-  echo -e "$script:$INFO $1"
-}
-
-log_error() {
-  echo -e "$script:$ERROR $1" >&
-  exit 1
-}
-
-docker_start() {
-  echo "docker-compose up -d --build"
-}
-
-docker_stop() {
-  echo "docker-compose up -d --build"
-}
-
-minikube_start() {
-  echo "docker-compose up -d --build"
-}
-
-minikube_stop() {
-  printf "docker-compose down"
-}
 
 while getopts 'd:m:f:v' flag; do
   case "${flag}" in
@@ -115,36 +68,17 @@ while getopts 'd:m:f:v' flag; do
     m | --minikube) minikube_flag="${OPTARG}" ;;
     f) files="${OPTARG}" ;;
     v) verbose='true' ;;
-    *) log_error "Invalid option" 
+    *) echo "Invalid option" 
         exit 1 ;;
   esac
 done
-
-case "${docker_flag}" in
-  start)
-    docker_start
-    exit 1
-    ;;
-  stop)
-    log_info "ABCD.."
-    exit 1
-    ;;
-  *)
-    log_error "Invalid -d option"
-    ;;
-esac
-
-# if [ "$docker_flag" = "start" ]; then
-#     log_info "ABCD.."
-#     exit 1
-# fi
 
 # while getopts "r:" opt; do
 #   case $opt in
 #     r | --run)
 #       echo "-r was triggered, Parameter: $OPTARG"
 #       if [ "$OPTARG" = "docker" ]; then
-#           echo "xxxx"
+#           echo ""
 #       fi
 #       exit 1
 #       ;;

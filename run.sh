@@ -3,7 +3,7 @@ blnk=$(echo "$arg0" | sed 's/./ /g')
 
 usage_info()
 {
-    echo "Usage: start|stop [{-a} all] \\"
+    echo "Usage: start|stop|delete [{-a} all] \\"
     echo "       [{-d|docker} docker] [{-m|minikube} minikube] \\"
     echo "       [-h|--help]"
     echo ""
@@ -22,8 +22,7 @@ CLEAR='\033[0m'
 INFO="(${BLUE}INFO${CLEAR})"
 ERROR="(${RED}ERROR${CLEAR})"
 
-start_flag=''
-stop_flag=''
+flag=''
 
 log_info() {
   local message=$1
@@ -45,6 +44,10 @@ docker_stop() {
   docker-compose stop
 }
 
+docker_delete() {
+  docker-compose down
+}
+
 minikube_start() {
   minikube start --cpus 2 --memory 4000
   minikube status
@@ -55,21 +58,28 @@ minikube_stop() {
   minikube stop
 }
 
+minikube_delete() {
+  minikube delete
+}
+
 case "$1" in
   -h | --help)
     usage_info
     exit 1
     ;;
   start)
-      start_flag='true'
+      flag='start'
     ;;
   stop)
-      stop_flag='true'
+      flag='stop'
+    ;;
+  delete)
+      flag='delete'
     ;;
   *) log_error "Invalid option" exit 1 ;;
 esac
 
-if [ "$start_flag" = "true" ]; then 
+if [ "$flag" = "start" ]; then 
     while test $# -gt 0
     do
       case "$2" in
@@ -99,7 +109,7 @@ if [ "$start_flag" = "true" ]; then
     done
 fi
 
-if [ "$stop_flag" = "true" ]; then 
+if [ "$flag" = "stop" ]; then 
     while test $# -gt 0
     do
       case "$2" in
@@ -129,3 +139,32 @@ if [ "$stop_flag" = "true" ]; then
     done
 fi
 
+if [ "$flag" = "delete" ]; then 
+    while test $# -gt 0
+    do
+      case "$2" in
+        -h | --help)
+          usage_info
+          exit 1
+          ;;
+        -a | all)
+          docker_delete
+          minikube_delete
+          exit 1
+          ;; 
+        -d | docker) 
+          docker_delete
+          exit 1
+          ;;
+        -m | minikube)
+          minikube_delete
+          exit 1
+          ;;
+        *)
+          log_error "Invalid option: $1"
+          # shift
+          exit 1
+          ;;
+      esac
+    done
+fi

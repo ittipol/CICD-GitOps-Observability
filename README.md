@@ -142,7 +142,8 @@ curl https://registry:5000 -kv
 docker pull httpd:2
 
 # Create username = test, password = dockerpassword
-docker run --rm --entrypoint htpasswd httpd:2 -Bbn test dockerpassword >> {output_path}
+# docker run --rm --entrypoint htpasswd httpd:2 -Bbn test dockerpassword > ./htpasswd
+docker run --rm --entrypoint htpasswd httpd:2 -Bbn test dockerpassword > {output_path}
 ```
 
 ### Add Docker registry credential
