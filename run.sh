@@ -1,5 +1,14 @@
-arg0=$(basename "$0" .sh)
-blnk=$(echo "$arg0" | sed 's/./ /g')
+# arg0=$(basename "$0" .sh)
+# blnk=$(echo "$arg0" | sed 's/./ /g')
+
+# sets colors for output logs
+BLUE='\033[34m'
+RED='\033[31m'
+CLEAR='\033[0m'
+
+# pre-configured log levels
+INFO="(${BLUE}INFO${CLEAR})"
+ERROR="(${RED}ERROR${CLEAR})"
 
 usage_info()
 {
@@ -13,16 +22,11 @@ usage_info()
     echo ""
 }
 
-# sets colors for output logs
-BLUE='\033[34m'
-RED='\033[31m'
-CLEAR='\033[0m'
-
-# pre-configured log levels
-INFO="(${BLUE}INFO${CLEAR})"
-ERROR="(${RED}ERROR${CLEAR})"
-
-flag=''
+find_home() {
+  local script=$0
+  [ -h "$script" ] && script="$(readlink "$script")"
+  echo "$(cd -P "$(dirname "$script")" && pwd)"
+}
 
 log_info() {
   local message=$1
@@ -33,7 +37,6 @@ log_error() {
   local message=$1
   echo -e "$script:$ERROR $message"
   # echo -e "$script:$ERROR $1" >&2 > err.log
-  exit 1
 }
 
 docker_start() {
@@ -62,6 +65,10 @@ minikube_delete() {
   minikube delete
 }
 
+flag=''
+script=${0##*/}
+home=$(find_home)
+
 case "$1" in
   -h | --help)
     usage_info
@@ -76,7 +83,11 @@ case "$1" in
   delete)
       flag='delete'
     ;;
-  *) log_error "Invalid option" exit 1 ;;
+  "")   
+      usage_info
+      exit 1
+   ;;
+  *) log_error "Invalid option" ; usage_info ; exit 1 ;;
 esac
 
 if [ "$flag" = "start" ]; then 
