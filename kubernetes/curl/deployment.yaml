@@ -19,10 +19,10 @@ spec:
     spec:
       containers:
       - name: curl
-        image: curlimages/curl
+        image: nginx:stable-alpine3.19
         imagePullPolicy: Always      
         ports:
-        - containerPort: 3000
+        - containerPort: 80
           name: http
         resources:
           limits:
