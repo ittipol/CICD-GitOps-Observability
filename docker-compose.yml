@@ -33,6 +33,7 @@ services:
       - jenkins-docker-certs:/certs/client
       - ./docker/docker_registry/tls/ca.crt:/docker_registry/cert/ca.crt:ro
       - ./kubernetes/docker_registry/tls/ca.crt:/docker_registry/kubernetes/cert/ca.crt:ro
+      - ./docker/dockerfiles:/dockerfiles:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:

@@ -16,6 +16,7 @@ pipeline {
 
     PROJECT_KEY = "Go-App"
 
+    JENKINS_USERNAME = "test"
     JENKINS_API_TOKEN = credentials('jenkins-api-token')
   }
   parameters {
@@ -172,7 +173,7 @@ pipeline {
 
         script {
           // Trigger builds remotely
-          sh "curl -kv --user test:$JENKINS_API_TOKEN -X POST -H 'Cache-Control: no-cache' -H 'Content-Type: application/x-www-form-urlencoded' --data 'TAG=$tagVersion' --location 'http://localhost:8080/job/cd-pipeline/buildWithParameters'"
+          sh "curl -kv --user $JENKINS_USERNAME:$JENKINS_API_TOKEN -X POST -H 'Cache-Control: no-cache' -H 'Content-Type: application/x-www-form-urlencoded' --data 'TAG=$tagVersion' --location 'http://localhost:8080/job/cd-pipeline/buildWithParameters'"
         }
       }
     }

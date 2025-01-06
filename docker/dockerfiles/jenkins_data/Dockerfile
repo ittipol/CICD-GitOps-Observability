@@ -5,4 +5,4 @@ RUN chown -R jenkins:jenkins /var/log/jenkins
 # VOLUME ["/var/log/jenkins", "/var/jenkins_home"]
 USER jenkins
 # CMD ["echo", ""]
-CMD ["tail", "-F", "/dev/null"]
+CMD ["tail", "-f", "/dev/null"]

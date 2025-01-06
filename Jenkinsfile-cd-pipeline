@@ -5,7 +5,7 @@ def replace(data) {
 pipeline {
   agent any
   environment { 
-    GIT_URL = "https://github.com/ittipol/Gitops.git"
+    GIT_URL = "https://github.com/ittipol/GitOps-Config.git"
     GIT_CREDENTIAL = "gitops-cred"
     REGISTRY_REPO = "host.minikube.internal:5000/go-app"
   }
@@ -43,10 +43,12 @@ pipeline {
         script {
           def registryRepo = replace("${env.REGISTRY_REPO}")
 
+          // sed command matching characters
+          // /^.*$/
+          // Matches an entire line whatever it is
+
           sh """
-          cat dev/deployment.yaml
           sed -i \'s/$registryRepo.*/$registryRepo:$TAG/g\' dev/deployment.yaml
-          cat dev/deployment.yaml
           """
         }        
       }

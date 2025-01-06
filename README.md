@@ -33,6 +33,9 @@ cat /var/jenkins_home/secrets/initialAdminPassword
 ## Shell into container
 ``` bash
 docker exec -it jenkins bash
+
+# Command will depend on shells available in your image
+docker exec -it mycontainer [bash|sh|zsh|ash|...]
 ```
 ``` bash
 kubectl exec -it [POD_NAME] -- bash
