@@ -8,7 +8,7 @@ spec:
   project: default
 
   source:
-    repoURL: https://github.com/ittipol/Gitops.git
+    repoURL: https://github.com/ittipol/GitOps-Config.git
     targetRevision: HEAD
     path: phpmyadmin
     # directory:
