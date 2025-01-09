@@ -23,7 +23,7 @@ log_info() {
 
 log_error() {
   local message=$1
-  echo -e "$script:$ERROR $message"
+  echo -e "$script:$ERROR $message" >&2
   # echo -e "$script:$ERROR $1" >&2 > err.log
   exit 1
 }

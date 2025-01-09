@@ -35,7 +35,15 @@ log_info() {
 
 log_error() {
   local message=$1
-  echo -e "$script:$ERROR $message"
+  echo -e "$script:$ERROR $message" >&2
+
+  # >&2
+  # > redirect standard output
+  # & what comes next is a file descriptor, not a file (only for right hand side of >)
+  # 2 stderr file descriptor number
+  # Redirect stdout from echo command to stderr. (If you were to useecho "hey" >2 you would output hey to a file called 2)
+  # File descriptor 1 is stdout and File descriptor 2 is stderr
+
   # echo -e "$script:$ERROR $1" >&2 > err.log
 }
 
