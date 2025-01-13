@@ -1,5 +1,6 @@
 #!/bin/bash
 # set -e tells the shell to exit the script if any command returns a non-zero exit status
+# -e  Exit immediately if a command exits with a non-zero status
 
 # if [[ "$certificate_details" == *"string"* ]]; then
 #     echo "message"
