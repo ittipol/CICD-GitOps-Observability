@@ -102,6 +102,7 @@ services:
       - ./docker/docker_registry/tls/server.crt:/docker_registry/cert/server.crt:ro
     healthcheck:
       test: ["CMD", "cat", "/docker_registry/cert/server.crt"]
+      # test: ["CMD-SHELL", "cat", "/docker_registry/cert/server.crt"]
       interval: 15s
       timeout: 10s
       retries: 5

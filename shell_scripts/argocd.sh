@@ -1,3 +1,6 @@
+#!/bin/bash
+set -e
+
 install() {
     cd ../kubernetes/argocd/terraform
 

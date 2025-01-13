@@ -1,3 +1,5 @@
+# set -ex
+set -e
 # arg0=$(basename "$0" .sh)
 # blnk=$(echo "$arg0" | sed 's/./ /g')
 

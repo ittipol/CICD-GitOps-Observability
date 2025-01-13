@@ -17,11 +17,17 @@ pipeline {
       skipDefaultCheckout(true)
   }
   stages {
-    stage('Clear workspace') {
+    stage('Init') {
       steps {
         echo '************************************************************'
         // Clean before build
-        cleanWs()        
+        cleanWs()
+
+        script {
+          if(params.TAG.isEmpty()) {
+            error("TAG parameter is empty")
+          }
+        }   
       }
     }
     stage('Git checkout') {

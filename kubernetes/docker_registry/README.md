@@ -14,6 +14,14 @@ touch ca.crt
 
 # Copy key from /docker/nginx/certs/ca.crt and paste to /etc/docker/certs.d/host.minikube.internal:5000/ca.crt file
 vi ca.crt
+
+# Save and quit
+# 1. Pressing Esc if you are in insert mode
+# 2. Enter :wq command
+
+# Quit without save
+# 1. Pressing Esc if you are in insert mode
+# 2. Enter :q! command
 ```
 
 ## Test connection

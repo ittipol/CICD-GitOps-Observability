@@ -1,3 +1,6 @@
+#!/bin/bash
+set -e
+
 str=
 
 # sets colors for output logs

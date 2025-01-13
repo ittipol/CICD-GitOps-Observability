@@ -1,77 +1,32 @@
-# if [ "$#" -eq 0 ]; then
-#     echo "Usage: $0 <username> <age> <fullname>"
+#!/bin/bash
+# set -e tells the shell to exit the script if any command returns a non-zero exit status
+
+# if [[ "$certificate_details" == *"string"* ]]; then
+#     echo "message"
+#     exit 1
+# elif [[ "$certificate_details" == *""* ]]; then
+#     echo "message"
+#     exit 0
+# else
+#     echo "message"
 #     exit 1
 # fi
 
-# if [ $var -eq 12 ]; then 
-#     echo "This is a numeric comparison if example"
-# fi
+# docker_flag=''
+# minikube_flag=''
+# files=''
+# verbose='false'
 
-# if [ "$var" = "12" ]; then
-#     echo "This is a string if comparison example"
-# fi
-
-# if [[ "$var" = *12* ]]; then
-#     echo "This is a string regular expression if comparison example"
-# fi
-
-# if [ "$1" = "docker" ]; then
-
-#     if [ "$#" -eq 1 ]; then
-#         echo "docker-compose up -d --build"
-#         exit 1
-#     fi
-    
-#     if [ "$2" = "start" ]; then
-#         echo "docker-compose up -d --build"
-#         exit 1
-#     fi
-
-#     if [ "$2" = "stop" ]; then
-#         echo "docker-compose stop"
-#         exit 1
-#     fi
-    
-#     exit 1
-# fi
-
-# if [ "$1" = "minikube" ]; then
-
-#     if [ "$#" -eq 1 ]; then
-#         echo "minikube start"
-#         exit 1
-#     fi
-    
-#     if [ "$2" = "start" ]; then
-#         echo "minikube start"
-#         exit 1
-#     fi
-
-#     if [ "$2" = "stop" ]; then
-#         minikube stop
-#     fi
-
-#     exit 1
-# fi
-
-arg0=$(basename "$0" .sh)
-blnk=$(echo "$arg0" | sed 's/./ /g')
-
-docker_flag=''
-minikube_flag=''
-files=''
-verbose='false'
-
-while getopts 'd:m:f:v' flag; do
-  case "${flag}" in
-    d | --docker) docker_flag="${OPTARG}" ;;
-    m | --minikube) minikube_flag="${OPTARG}" ;;
-    f) files="${OPTARG}" ;;
-    v) verbose='true' ;;
-    *) echo "Invalid option" 
-        exit 1 ;;
-  esac
-done
+# while getopts 'd:m:f:v' flag; do
+#   case "${flag}" in
+#     d | --docker) docker_flag="${OPTARG}" ;;
+#     m | --minikube) minikube_flag="${OPTARG}" ;;
+#     f) files="${OPTARG}" ;;
+#     v) verbose='true' ;;
+#     *) echo "Invalid option" 
+#         exit 1 ;;
+#   esac
+# done
 
 # while getopts "r:" opt; do
 #   case $opt in

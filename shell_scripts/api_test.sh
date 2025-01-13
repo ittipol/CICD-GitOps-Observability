@@ -1,3 +1,6 @@
+#!/bin/bash
+set -e
+
 # sets colors for output logs
 BLUE='\033[34m'
 RED='\033[31m'
