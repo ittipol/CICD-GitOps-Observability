@@ -42,6 +42,20 @@ minikube ssh
 openssl s_client -connect host.minikube.internal:5000 -showcerts </dev/null
 ```
 
+## View a certificate fingerprint as SHA-256, SHA-1 or MD5
+``` bash
+# SHA-256
+openssl x509 -noout -fingerprint -sha256 -inform pem -in [path/to/certificate-file.crt]
+
+# SHA-1
+openssl x509 -noout -fingerprint -sha1 -inform pem -in [path/to/certificate-file.crt]
+
+# MD5
+openssl x509 -noout -fingerprint -md5 -inform pem -in [path/to/certificate-file.crt]
+
+# openssl x509 -noout -fingerprint -sha256 -inform pem -in server.crt
+```
+
 ## Pull an image from private registry (Minikube)
 ``` bash
 # Login
