@@ -39,7 +39,9 @@ curl -kv https://host.minikube.internal:5000
 ``` bash
 minikube ssh
 
-openssl s_client -connect host.minikube.internal:5000 -showcerts </dev/null
+openssl s_client -connect host.minikube.internal:5000 -servername host.minikube.internal -showcerts </dev/null
+
+openssl s_client -showcerts -connect host.minikube.internal:5000 -servername host.minikube.internal </dev/null |  sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > certificate.pem
 ```
 
 ## View a certificate fingerprint as SHA-256, SHA-1 or MD5
