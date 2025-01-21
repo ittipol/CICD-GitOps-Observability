@@ -2,6 +2,7 @@
 # set -e tells the shell to exit the script if any command returns a non-zero exit status
 # -e  Exit immediately if a command exits with a non-zero status
 
+# If Statement
 # if [[ "$certificate_details" == *"string"* ]]; then
 #     echo "message"
 #     exit 1
@@ -13,72 +14,36 @@
 #     exit 1
 # fi
 
-# docker_flag=''
-# minikube_flag=''
-# files=''
-# verbose='false'
+# Just like any other simple command, [ ... ] or test requires spaces between its arguments.
+if [ "$#" -ne 1 ]; then
+    echo "Illegal number of parameters"
+fi
 
-# while getopts 'd:m:f:v' flag; do
-#   case "${flag}" in
-#     d | --docker) docker_flag="${OPTARG}" ;;
-#     m | --minikube) minikube_flag="${OPTARG}" ;;
-#     f) files="${OPTARG}" ;;
-#     v) verbose='true' ;;
-#     *) echo "Invalid option" 
-#         exit 1 ;;
-#   esac
-# done
+if test "$#" -ne 1; then
+    echo "Illegal number of parameters"
+fi
 
-# while getopts "r:" opt; do
-#   case $opt in
-#     r | --run)
-#       echo "-r was triggered, Parameter: $OPTARG"
-#       if [ "$OPTARG" = "docker" ]; then
-#           echo ""
-#       fi
-#       exit 1
-#       ;;
-#     \?)
-#       echo "Invalid option: -$OPTARG"
-#       exit 1
-#       ;;
-#     :)
-#       echo "Option -$OPTARG requires an argument."
-#       if [ "$OPTARG" = "a" ]; then
-#           echo "This is a string if comparison example"
-#       fi
-#       exit 1
-#       ;;
-#     *) print_usage
-#        exit 1 ;;
-      
-#   esac
-# done
+# When in Bash, prefer using [[ ]] instead as it doesn't do word splitting and pathname expansion to its variables that quoting may not be necessary unless it's part of an expression.
+if [[ $# -ne 2 ]]; then
+    echo "Illegal number of parameters" >&2
+    exit 2
+fi
 
-# while getopts "d:m:" opt; do
-#   case $opt in
-#     d | --docker)
-#       echo "docker-compose up -d --build"
-#       # exit 1
-#       ;;
-#     m | --minikube)
-#       # echo "minikube start"
-#       sh minikube_start.sh
-#       # minikube start
-#       # minikube status
-#       # minikube ip
-#       # exit 1
-#       ;;
-    # \?)
-    #   echo "Invalid option: -$OPTARG" >&2
-    #   exit 1
-    #   ;;
-    # :)
-    #   echo "Option -$OPTARG requires an argument." >&2
-    #   if [ "$OPTARG" = "a" ]; then
-    #       echo "This is a string if comparison example"
-    #   fi
-    #   exit 1
-#       ;;
-#   esac
-# done
+# Loop parameters
+while test $# -gt 0
+do
+    case "$1" in
+    flutter)
+        echo "matched with flutter";
+        shift # to move $1 to the next argument
+        ;;
+    nginx)
+        echo "matched with nginx";
+        shift # to move $1 to the next argument
+        ;;
+    *)
+        echo "Invalid option" >&2
+        shift # to move $1 to the next argument
+        ;;
+    esac
+done

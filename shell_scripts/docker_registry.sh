@@ -57,9 +57,7 @@ create_htpasswd() {
     docker run --rm --entrypoint htpasswd httpd:2 -Bbn $username $password > $output_path
 }
 
-while test $# -gt 0
-do
-    case "$1" in
+case "$1" in
     ls)
         list_images
         exit 1
@@ -98,4 +96,3 @@ do
         exit 1
         ;;
     esac
-done

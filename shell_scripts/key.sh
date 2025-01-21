@@ -44,9 +44,7 @@ hmacsha256() {
     echo -n "$str" | openssl dgst -sha256 -hmac secret_key
 }
 
-while test $# -gt 0
-do
-    case "$1" in
+case "$1" in
     hmacsha256)
         hmacsha256
         exit 1
@@ -56,4 +54,3 @@ do
         exit 1
         ;;
     esac
-done

@@ -26,9 +26,7 @@ start_port_forward() {
   kubectl port-forward svc/phpmyadmin-server -n phpmyadmin 3030:80
 }
 
-while test $# -gt 0
-do
-    case "$1" in
+case "$1" in
     -s) 
       start_port_forward
       exit 1 
@@ -38,4 +36,3 @@ do
         exit 1
         ;;
     esac
-done

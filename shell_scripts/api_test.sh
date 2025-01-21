@@ -89,9 +89,7 @@ login() {
     --data "$(generate_post_data_login $email $password)"
 }
 
-while test $# -gt 0
-do
-    case "$1" in
+case "$1" in
     -s) 
       start_port_forward
       exit 1 
@@ -121,4 +119,3 @@ do
         exit 1
         ;;
     esac
-done

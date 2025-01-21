@@ -26,9 +26,7 @@ password() {
     docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 }
 
-while test $# -gt 0
-do
-    case "$1" in
+case "$1" in
     -p | --password)
         password
         exit 1
@@ -39,4 +37,3 @@ do
         exit 1
         ;;
     esac
-done

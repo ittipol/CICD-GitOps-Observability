@@ -1,3 +1,4 @@
+#!/bin/bash
 # set -ex
 set -e
 # arg0=$(basename "$0" .sh)
@@ -101,91 +102,82 @@ case "$1" in
 esac
 
 if [ "$flag" = "start" ]; then 
-    while test $# -gt 0
-    do
-      case "$2" in
-        -h | --help)
-          usage_info
-          exit 1
-          ;;
-        -a | all)
-          docker_start
-          minikube_start
-          exit 1
-          ;; 
-        -d | docker) 
-          docker_start
-          exit 1
-          ;;
-        -m | minikube)
-          minikube_start
-          exit 1
-          ;;
-        *)
-          log_error "Invalid option: $1"
-          # shift
-          exit 1
-          ;;
-      esac
-    done
+  case "$2" in
+    -h | --help)
+      usage_info
+      exit 1
+      ;;
+    -a | all)
+      docker_start
+      minikube_start
+      exit 1
+      ;; 
+    -d | docker) 
+      docker_start
+      exit 1
+      ;;
+    -m | minikube)
+      minikube_start
+      exit 1
+      ;;
+    *)
+      log_error "Invalid option: $1"
+      # shift
+      exit 1
+      ;;
+  esac
 fi
 
 if [ "$flag" = "stop" ]; then 
-    while test $# -gt 0
-    do
-      case "$2" in
-        -h | --help)
-          usage_info
-          exit 1
-          ;;
-        -a | all)
-          docker_stop
-          minikube_stop
-          exit 1
-          ;; 
-        -d | docker) 
-          docker_stop
-          exit 1
-          ;;
-        -m | minikube)
-          minikube_stop
-          exit 1
-          ;;
-        *)
-          log_error "Invalid option: $1"
-          # shift
-          exit 1
-          ;;
-      esac
-    done
+  case "$2" in
+    -h | --help)
+      usage_info
+      exit 1
+      ;;
+    -a | all)
+      docker_stop
+      minikube_stop
+      exit 1
+      ;; 
+    -d | docker) 
+      docker_stop
+      exit 1
+      ;;
+    -m | minikube)
+      minikube_stop
+      exit 1
+      ;;
+    *)
+      log_error "Invalid option: $1"
+      # shift
+      exit 1
+      ;;
+  esac
 fi
 
 if [ "$flag" = "delete" ]; then 
-    while test $# -gt 0
-    do
-      case "$2" in
-        -h | --help)
-          usage_info
-          exit 1
-          ;;
-        -a | all)
-          docker_delete
-          minikube_delete
-          exit 1
-          ;; 
-        -d | docker) 
-          docker_delete
-          exit 1
-          ;;
-        -m | minikube)
-          minikube_delete
-          exit 1
-          ;;
-        *)
-          log_error "Invalid option: $1"
-          # shift
-          exit 1
-          ;;
-      esac
-    done
+  case "$2" in
+    -h | --help)
+      usage_info
+      exit 1
+      ;;
+    -a | all)
+      docker_delete
+      minikube_delete
+      exit 1
+      ;; 
+    -d | docker) 
+      docker_delete
+      exit 1
+      ;;
+    -m | minikube)
+      minikube_delete
+      exit 1
+      ;;
+    *)
+      log_error "Invalid option: $1"
+      # shift
+      exit 1
+      ;;
+  esac
 fi
