@@ -4,15 +4,16 @@ pipeline {
   agent any
   environment { 
     GIT_URL = "https://github.com/ittipol/GitOps-Code.git"
-    GIT_CREDENTIAL = "gitops-cred"
+    GIT_CREDENTIAL = "git-cred"
     GIT_PATH = "./api/go"
 
     DOCKER_REGISTRY = "https://registry:5000"
-    DOCKER_REGISTRY_CREDENTIAL = "docker-registry-credential"
+    DOCKER_REGISTRY_CREDENTIAL = "docker-registry-cred"
     REGISTRY_REPO = "go-app"
 
     SCANNER_HOME = tool 'sonarqube-scanner-tool'
-    WEBHOOK_SECRET_ID = "sonar-webhook"
+    WEBHOOK_SECRET_ID = "sonarqube-webhook"
+    SONARQUBE_SERVER_NAME = "sonarqube-server"
 
     PROJECT_KEY = "Go-App"
 
@@ -25,7 +26,7 @@ pipeline {
     // booleanParam(name: 'owaspScan', defaultValue: true, description: 'OWASP Dependency-Check Vulnerabilities')
   }
   tools {
-    go 'go'
+    go 'go-tool'
   }
   options {
       // This is required if you want to clean before build
@@ -95,7 +96,7 @@ pipeline {
     stage('Sonarqube analysis') {            
       steps {
         echo '************************************************************'
-        withSonarQubeEnv('sonarqube-server') {
+        withSonarQubeEnv(env.SONARQUBE_SERVER_NAME) {
             sh '''
             $SCANNER_HOME/bin/sonar-scanner \
             -Dsonar.projectKey=$PROJECT_KEY \

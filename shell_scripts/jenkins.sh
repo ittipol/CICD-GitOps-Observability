@@ -23,7 +23,8 @@ log_error() {
 }
 
 password() {
-    docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+    # docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+    echo "$(docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword)"
 }
 
 case "$1" in

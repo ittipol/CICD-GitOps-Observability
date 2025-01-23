@@ -6,7 +6,7 @@ pipeline {
   agent any
   environment { 
     GIT_URL = "https://github.com/ittipol/GitOps-Config.git"
-    GIT_CREDENTIAL = "gitops-cred"
+    GIT_CREDENTIAL = "git-cred"
     REGISTRY_REPO = "host.minikube.internal:5000/go-app"
   }
   parameters {

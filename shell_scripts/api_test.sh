@@ -23,11 +23,11 @@ log_error() {
 }
 
 start_port_forward() {
-  kubectl port-forward svc/go-app-server -n go-app 3000:80
+  kubectl port-forward svc/go-app-server -n go-app 5055:80
 }
 
 test_connection() {
-    curl -v http://localhost:3000/health
+    curl -v http://localhost:5055/health
 }
 
 generate_post_data_create_user() {
@@ -49,7 +49,7 @@ create_user() {
     local password="$2"
     local name="$3"
 
-#     curl "http://localhost:3000/register" \
+#     curl "http://localhost:5055/register" \
 #     -H "Accept: application/json" \
 #     -H "Content-Type:application/json" \
 #     --data @<(cat <<EOF
@@ -61,7 +61,7 @@ create_user() {
 # EOF
 #     )
 
-    curl -v "http://localhost:3000/register" \
+    curl -v "http://localhost:5055/register" \
     -H "Accept: application/json" \
     -H "Content-Type:application/json" \
     --data "$(generate_post_data_create_user $email $password $name)"
@@ -83,7 +83,7 @@ login() {
     local email="$1"
     local password="$2"
 
-    curl -v "http://localhost:3000/login" \
+    curl -v "http://localhost:5055/login" \
     -H "Accept: application/json" \
     -H "Content-Type:application/json" \
     --data "$(generate_post_data_login $email $password)"
