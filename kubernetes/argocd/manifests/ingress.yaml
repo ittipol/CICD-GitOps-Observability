@@ -6,6 +6,7 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/use-regex: "true" # Use regular expressions, This can be enabled by setting the nginx.ingress.kubernetes.io/use-regex annotation to true (the default is false) 
 spec:
   ingressClassName: nginx
   rules:
