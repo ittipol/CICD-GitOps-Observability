@@ -97,7 +97,7 @@
             "refId": "A"
           }
         ],
-        "title": "Cluster CPU usage (1m avg)",
+        "title": "Cluster CPU usage % (1m avg)",
         "type": "stat"
       },
       {
@@ -164,7 +164,7 @@
             "refId": "A"
           }
         ],
-        "title": "Cluster memory usage",
+        "title": "Cluster memory usage % ",
         "type": "stat"
       },
       {
@@ -255,12 +255,12 @@
             "editorMode": "code",
             "expr": "sum (rate (container_cpu_usage_seconds_total{id=\"/\",kubernetes_io_hostname=~\"^$Node$\"}[1m])) / sum (machine_cpu_cores{kubernetes_io_hostname=~\"^$Node$\"}) * 100",
             "interval": "30",
-            "legendFormat": "{{pod}}",
+            "legendFormat": "CPU usage",
             "range": true,
             "refId": "A"
           }
         ],
-        "title": "Cluster CPU usage (1m avg)",
+        "title": "Cluster CPU usage % of the limit (1m avg)",
         "type": "timeseries"
       },
       {
@@ -352,12 +352,12 @@
             "editorMode": "code",
             "expr": "sum (container_memory_working_set_bytes{id=\"/\",kubernetes_io_hostname=~\"^$Node$\"}) / sum (machine_memory_bytes{kubernetes_io_hostname=~\"^$Node$\"}) * 100",
             "interval": "15",
-            "legendFormat": "{{pod}}",
+            "legendFormat": "Memory usage",
             "range": true,
             "refId": "A"
           }
         ],
-        "title": "Cluster memory usage",
+        "title": "Cluster memory usage % of the limit",
         "type": "timeseries"
       },
       {
@@ -685,7 +685,8 @@
               "mode": "absolute",
               "steps": [
                 {
-                  "color": "dark-green"
+                  "color": "dark-green",
+                  "value": null
                 }
               ]
             },
@@ -811,7 +812,8 @@
               "mode": "absolute",
               "steps": [
                 {
-                  "color": "dark-red"
+                  "color": "dark-red",
+                  "value": null
                 }
               ]
             },
@@ -898,7 +900,7 @@
         },
         "id": 10,
         "panels": [],
-        "title": "Pod Resource usage",
+        "title": "Pod resource usage",
         "type": "row"
       },
       {
@@ -921,7 +923,7 @@
               "barWidthFactor": 0.6,
               "drawStyle": "line",
               "fillOpacity": 15,
-              "gradientMode": "none",
+              "gradientMode": "opacity",
               "hideFrom": {
                 "legend": false,
                 "tooltip": false,
@@ -944,12 +946,14 @@
                 "mode": "off"
               }
             },
+            "decimals": 2,
             "mappings": [],
             "thresholds": {
               "mode": "absolute",
               "steps": [
                 {
-                  "color": "green"
+                  "color": "green",
+                  "value": null
                 },
                 {
                   "color": "red",
@@ -957,9 +961,68 @@
                 }
               ]
             },
-            "unit": "none"
+            "unit": "short"
           },
-          "overrides": []
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Limit"
+              },
+              "properties": [
+                {
+                  "id": "custom.fillOpacity",
+                  "value": 0
+                },
+                {
+                  "id": "custom.lineStyle",
+                  "value": {
+                    "dash": [
+                      10,
+                      10
+                    ],
+                    "fill": "dash"
+                  }
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "dark-red",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Request"
+              },
+              "properties": [
+                {
+                  "id": "custom.fillOpacity",
+                  "value": 0
+                },
+                {
+                  "id": "custom.lineStyle",
+                  "value": {
+                    "dash": [
+                      10,
+                      10
+                    ],
+                    "fill": "dash"
+                  }
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "dark-green",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            }
+          ]
         },
         "gridPos": {
           "h": 12,
@@ -991,13 +1054,39 @@
               "uid": "prometheus"
             },
             "editorMode": "code",
-            "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",name=~\"^k8s_.*\",kubernetes_io_hostname=~\"^$Node$\",container_label_io_kubernetes_pod_namespace=~\"$pod_namespace$\"}[1m])) by (\n    container_label_io_kubernetes_pod_name\n)",
-            "legendFormat": "__auto",
+            "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",name=~\"^k8s_.*\",kubernetes_io_hostname=~\"^$Node$\",container_label_io_kubernetes_pod_namespace=~\"$pod_namespace$\",container_label_io_kubernetes_pod_name=~\"$pod_name$\"\n}[1m])) by (\n    container_label_io_kubernetes_pod_name\n)",
+            "legendFormat": "{{container_label_io_kubernetes_pod_name}}",
             "range": true,
             "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "prometheus"
+            },
+            "editorMode": "code",
+            "expr": "avg(\n    kube_pod_container_resource_limits{\n        namespace=~\"$pod_namespace$\",\n        pod=~\"$pod_name$\",\n        resource=\"cpu\",\n        unit=\"core\"\n    }\n)",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "Limit",
+            "range": true,
+            "refId": "B"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "prometheus"
+            },
+            "editorMode": "code",
+            "expr": "avg(\n    kube_pod_container_resource_requests{\n        namespace=~\"$pod_namespace$\",\n        pod=~\"$pod_name$\",\n        resource=\"cpu\",\n        unit=\"core\"\n    }\n)",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "Request",
+            "range": true,
+            "refId": "C"
           }
         ],
-        "title": "Pods CPU usage (1m avg)",
+        "title": "Pods CPU usage (1m avg) with requests and limits",
         "type": "timeseries"
       },
       {
@@ -1048,7 +1137,8 @@
               "mode": "absolute",
               "steps": [
                 {
-                  "color": "green"
+                  "color": "green",
+                  "value": null
                 },
                 {
                   "color": "red",
@@ -1058,7 +1148,66 @@
             },
             "unit": "bytes"
           },
-          "overrides": []
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Limit"
+              },
+              "properties": [
+                {
+                  "id": "custom.fillOpacity",
+                  "value": 0
+                },
+                {
+                  "id": "custom.lineStyle",
+                  "value": {
+                    "dash": [
+                      10,
+                      10
+                    ],
+                    "fill": "dash"
+                  }
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "dark-red",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Request"
+              },
+              "properties": [
+                {
+                  "id": "custom.fillOpacity",
+                  "value": 0
+                },
+                {
+                  "id": "custom.lineStyle",
+                  "value": {
+                    "dash": [
+                      10,
+                      10
+                    ],
+                    "fill": "dash"
+                  }
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "dark-green",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            }
+          ]
         },
         "gridPos": {
           "h": 12,
@@ -1086,10 +1235,36 @@
         "targets": [
           {
             "editorMode": "code",
-            "expr": "sum (container_memory_working_set_bytes{image!=\"\",name=~\"^k8s_.*\",kubernetes_io_hostname=~\"^$Node$\",container_label_io_kubernetes_pod_namespace=~\"$pod_namespace$\"}) by (\n    container_label_io_kubernetes_pod_name\n)",
-            "legendFormat": "__auto",
+            "expr": "sum (container_memory_working_set_bytes{image!=\"\",name=~\"^k8s_.*\",kubernetes_io_hostname=~\"^$Node$\",container_label_io_kubernetes_pod_namespace=~\"$pod_namespace$\",\ncontainer_label_io_kubernetes_pod_name=~\"$pod_name$\"\n}) by (\n    container_label_io_kubernetes_pod_name\n)",
+            "legendFormat": "{{container_label_io_kubernetes_pod_name}}",
             "range": true,
             "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "prometheus"
+            },
+            "editorMode": "code",
+            "expr": "avg(\n    kube_pod_container_resource_limits{\n        namespace=~\"$pod_namespace$\",\n        pod=~\"$pod_name$\",\n        resource=\"memory\",\n        unit=\"byte\"\n    }\n)",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "Limit",
+            "range": true,
+            "refId": "B"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "prometheus"
+            },
+            "editorMode": "code",
+            "expr": "avg(\n    kube_pod_container_resource_requests{\n        namespace=~\"$pod_namespace$\",\n        pod=~\"$pod_name$\",\n        resource=\"memory\",\n        unit=\"byte\"\n    }\n)",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "Request",
+            "range": true,
+            "refId": "C"
           }
         ],
         "title": "Pods memory usage",
@@ -1143,7 +1318,8 @@
               "mode": "absolute",
               "steps": [
                 {
-                  "color": "green"
+                  "color": "green",
+                  "value": null
                 },
                 {
                   "color": "red",
@@ -1181,8 +1357,8 @@
         "targets": [
           {
             "editorMode": "code",
-            "expr": "sum (rate (container_network_receive_bytes_total{image!=\"\",name=~\"^k8s_.*\",kubernetes_io_hostname=~\"^$Node$\",container_label_io_kubernetes_pod_namespace=~\"$pod_namespace$\"}[1m])) by (\n    container_label_io_kubernetes_pod_name\n)",
-            "legendFormat": "__auto",
+            "expr": "sum (rate (container_network_receive_bytes_total{image!=\"\",name=~\"^k8s_.*\",kubernetes_io_hostname=~\"^$Node$\",container_label_io_kubernetes_pod_namespace=~\"$pod_namespace$\",container_label_io_kubernetes_pod_name=~\"$pod_name$\"\n}[1m])) by (\n    container_label_io_kubernetes_pod_name\n)",
+            "legendFormat": "{{container_label_io_kubernetes_pod_name}}",
             "range": true,
             "refId": "A"
           }
@@ -1192,6 +1368,7 @@
       }
     ],
     "preload": false,
+    "refresh": "15s",
     "schemaVersion": 40,
     "tags": [],
     "templating": {
@@ -1283,11 +1460,29 @@
           ],
           "query": "http_req_duration,http_req_blocked,http_req_connecting,http_req_looking_up,http_req_receiving,http_req_sending,http_req_waiting",
           "type": "custom"
+        },
+        {
+          "current": {
+            "text": "All",
+            "value": "$__all"
+          },
+          "definition": "label_values({container_label_io_kubernetes_pod_namespace=\"$pod_namespace\"},container_label_io_kubernetes_pod_name)",
+          "includeAll": true,
+          "name": "pod_name",
+          "options": [],
+          "query": {
+            "qryType": 1,
+            "query": "label_values({container_label_io_kubernetes_pod_namespace=\"$pod_namespace\"},container_label_io_kubernetes_pod_name)",
+            "refId": "PrometheusVariableQueryEditor-VariableQuery"
+          },
+          "refresh": 1,
+          "regex": "",
+          "type": "query"
         }
       ]
     },
     "time": {
-      "from": "now-6h",
+      "from": "now-5m",
       "to": "now"
     },
     "timepicker": {
@@ -1305,8 +1500,8 @@
       ]
     },
     "timezone": "browser",
-    "title": "cAdvisor Monitoring Dashboard & k6 load testing",
+    "title": "cAdvisor Monitoring & k6 Load Testing Dashboard",
     "uid": "deb1fne7ni5moe",
-    "version": 60,
+    "version": 79,
     "weekStart": ""
   }

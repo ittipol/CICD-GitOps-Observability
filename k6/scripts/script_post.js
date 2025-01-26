@@ -2,9 +2,9 @@ import http from 'k6/http'
 import { check, sleep } from 'k6';
 
 export let options = {
-    vus: 50,
+    vus: 10,
     stages:[
-        {target: 50, duration: '1m'},
+        {target: 20, duration: '1m'},
         {target: 10, duration: '20s'},
     ]
 }
