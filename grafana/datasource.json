@@ -1,0 +1,68 @@
+[
+    {
+        "id": 2,
+        "uid": "alertmanager",
+        "orgId": 1,
+        "name": "Alertmanager",
+        "type": "alertmanager",
+        "typeName": "Alertmanager",
+        "typeLogoUrl": "public/app/plugins/datasource/alertmanager/img/logo.svg",
+        "access": "proxy",
+        "url": "http://prometheus-kube-prometheus-alertmanager.monitoring:9093/",
+        "user": "",
+        "database": "",
+        "basicAuth": false,
+        "isDefault": false,
+        "jsonData": {
+            "handleGrafanaManagedAlerts": false,
+            "implementation": "prometheus"
+        },
+        "readOnly": true
+    },
+    {
+        "id": 3,
+        "uid": "aeb1mkrd3ihhcc",
+        "orgId": 1,
+        "name": "influxdb",
+        "type": "influxdb",
+        "typeName": "InfluxDB",
+        "typeLogoUrl": "public/app/plugins/datasource/influxdb/img/influxdb_logo.svg",
+        "access": "proxy",
+        "url": "http://influxdb.influxdb.svc:8086",
+        "user": "",
+        "database": "",
+        "basicAuth": false,
+        "isDefault": false,
+        "jsonData": {
+            "dbName": "k6_go_app",
+            "httpMode": "POST",
+            "oauthPassThru": false,
+            "timeInterval": "15s",
+            "timeout": 300,
+            "tlsAuth": false,
+            "tlsAuthWithCACert": false,
+            "tlsSkipVerify": false
+        },
+        "readOnly": false
+    },
+    {
+        "id": 1,
+        "uid": "prometheus",
+        "orgId": 1,
+        "name": "Prometheus",
+        "type": "prometheus",
+        "typeName": "Prometheus",
+        "typeLogoUrl": "public/app/plugins/datasource/prometheus/img/prometheus_logo.svg",
+        "access": "proxy",
+        "url": "http://prometheus-kube-prometheus-prometheus.monitoring:9090/",
+        "user": "",
+        "database": "",
+        "basicAuth": false,
+        "isDefault": true,
+        "jsonData": {
+            "httpMethod": "POST",
+            "timeInterval": "30s"
+        },
+        "readOnly": true
+    }
+]

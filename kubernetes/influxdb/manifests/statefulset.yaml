@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: influxdb
+  namespace: influxdb
+  # labels:
+  #   app: influxdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: influxdb
+  template:
+    metadata:
+      labels:
+        app: influxdb
+    spec:
+      containers:      
+      - image: influxdb:1.8.10
+        name: influxdb
+        env:
+        - name: INFLUXDB_DB
+          value: "k6_go_app"
+        - name: INFLUXDB_HTTP_MAX_BODY_SIZE
+          value: "0"
+        ports:
+        - containerPort: 8086
+          name: http
+        volumeMounts:
+        - name: influxdb-data-persistent-storage
+          mountPath: /var/lib/influxdb
+  volumeClaimTemplates:
+  - metadata:
+      name: influxdb-data-persistent-storage
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      storageClassName: influxdb-sc
+      resources:
+        requests:
+          storage: 1G
+---
+# apiVersion: apps/v1
+# kind: StatefulSet
+# metadata:
+#   name: influxdb
+#   namespace: influxdb
+#   # labels:
+#   #   app: influxdb
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: influxdb
+#   template:
+#     metadata:
+#       labels:
+#         app: influxdb
+#     spec:
+#       containers:      
+#       - image: influxdb:2.7.11-alpine
+#         name: influxdb
+#         env:
+#         - name: DOCKER_INFLUXDB_INIT_MODE
+#           value: "setup"
+#         - name: DOCKER_INFLUXDB_INIT_USERNAME
+#           value: "test"
+#         - name: DOCKER_INFLUXDB_INIT_PASSWORD
+#           value: "1234"
+#         - name: DOCKER_INFLUXDB_INIT_ORG
+#           value: "test-org"
+#         - name: DOCKER_INFLUXDB_INIT_BUCKET
+#           value: "k6"
+#         ports:
+#         - containerPort: 8086
+#           name: http
+#         volumeMounts:
+#         - name: influxdb-data-persistent-storage
+#           mountPath: /var/lib/influxdb2
+#         - name: influxdb-config-persistent-storage
+#           mountPath: /etc/influxdb2
+#   volumeClaimTemplates:
+#   - metadata:
+#       name: influxdb-data-persistent-storage
+#     spec:
+#       accessModes:
+#         - ReadWriteOnce
+#       storageClassName: influxdb-sc
+#       resources:
+#         requests:
+#           storage: 1G
+#   - metadata:
+#       name: influxdb-config-persistent-storage
+#     spec:
+#       accessModes:
+#         - ReadWriteOnce
+#       storageClassName: influxdb-sc
+#       resources:
+#         requests:
+#           storage: 1G
