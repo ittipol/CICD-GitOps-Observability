@@ -5,7 +5,7 @@ export let options = {
     vus: 1,
     stages:[
         {target: 50, duration: '1m'},
-        {target: 50, duration: '1os'},
+        {target: 50, duration: '10s'},
         {target: 5, duration: '20s'},
     ]
 }

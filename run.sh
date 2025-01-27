@@ -63,7 +63,7 @@ docker_delete() {
 }
 
 minikube_start() {
-  minikube start --cpus 2 --memory 4000
+  minikube start --cpus 2 --memory 4g
   minikube status
   minikube ip
 }

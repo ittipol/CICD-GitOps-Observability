@@ -1,5 +1,5 @@
 import http from 'k6/http'
-import { sleep } from 'k6';
+import { check, sleep } from 'k6';
 
 export let options = {
     vus: 50,
@@ -11,6 +11,9 @@ export let options = {
 }
 
 export default function() {
-    http.get("http://host.docker.internal:5055/health")
-    sleep(1);
+    const response = http.get("http://host.docker.internal:5055/health")
+    check(response, {
+        'status = 200': (r) => r.status === 200
+    });
+    sleep(0.5);
 }
