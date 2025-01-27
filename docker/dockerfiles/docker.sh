@@ -1,3 +1,6 @@
+#!/bin/bash
+set -e
+
 # sets colors for output logs
 BLUE='\033[34m'
 RED='\033[31m'
@@ -30,9 +33,7 @@ push() {
     docker push registry:5000/$repo:$tag
 }
 
-while test $# -gt 0
-do
-    case "$1" in
+case "$1" in
     push)
         # ./docker.sh push ansible 1.0 ansible/Dockerfile
         if [ "$#" -eq 4 ]; then
@@ -40,11 +41,9 @@ do
         else 
             log_error "Invalid option: $1"
         fi
-        exit 1
-        ;;
+    ;;
     *)
         log_error "Invalid option: $1"
         exit 1
-        ;;
-    esac
-done
+    ;;
+esac
