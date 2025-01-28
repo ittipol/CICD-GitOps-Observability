@@ -1,4 +1,4 @@
-def customImage
+def dockerImage
 
 pipeline {
   agent any
@@ -37,7 +37,7 @@ pipeline {
       steps {
         echo '************************************************************'
         // Clean before build
-        cleanWs()        
+        cleanWs()
         echo "Building ${env.JOB_NAME}..."
 
         script {
@@ -47,7 +47,7 @@ pipeline {
         }
       }
     }
-    stage('Git checkout') {
+    stage('SCM Checkout') {
       steps {
         echo '************************************************************'
         // We need to explicitly checkout from SCM here
@@ -130,10 +130,10 @@ pipeline {
             //     error("tagVersion is empty")
             // }else {
             //     echo "Tag version: ${params.tagVersion}"
-            //     customImage = docker.build("go-app:${params.tagVersion}")
+            //     dockerImage = docker.build("go-app:${params.tagVersion}")
             // }
             echo "Tag version: ${params.tagVersion}"
-            customImage = docker.build("${env.REGISTRY_REPO}:${params.tagVersion}")
+            dockerImage = docker.build("${env.REGISTRY_REPO}:${params.tagVersion}")
           }
         }
       }
@@ -152,7 +152,7 @@ pipeline {
             // docker tag go-app:v1 registry:5000/go-app:v1
             // docker push registry:5000/go-app:v1
             // '''
-            customImage.push()            
+            dockerImage.push()            
           }
         }
       }
@@ -161,7 +161,7 @@ pipeline {
     //   steps {
     //     echo '************************************************************'
     //     // sh 'docker system prune --force --all --volumes'
-    //     sh "docker rmi -f ${customImage.id}"
+    //     sh "docker rmi -f ${dockerImage.id}"
     //     // sh '''
     //     // export IMAGE_ID=$(docker images --filter=reference=$REGISTRY_REPO:$tagVersion --format "{{.ID}}")
     //     // docker rmi -f $IMAGE_ID

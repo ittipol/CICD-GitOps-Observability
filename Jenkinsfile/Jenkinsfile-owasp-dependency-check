@@ -1,0 +1,101 @@
+pipeline {
+  agent any
+  environment {
+    GIT_CREDENTIAL = "git-cred"
+
+		// go
+    // GIT_URL = "https://github.com/ittipol/GitOps-Code.git"
+		// GIT_BRANCH = "main"
+    // GIT_PATH = "./api/go"
+
+		// nextjs
+		GIT_URL = "https://github.com/ittipol/React-Go-Nginx-SSL.git"
+		GIT_BRANCH = "develop"    
+    GIT_PATH = "./nextjs"
+
+    // Flutter
+    // GIT_URL = "https://github.com/ittipol/Flutter.git"
+		// GIT_BRANCH = "main"    
+    // GIT_PATH = "./"
+
+    CODE_PATH = "./code"
+		OWASP_PATH = "./owasp-dependency-check"
+  }
+  tools {
+    nodejs "nodejs-tool"
+  }
+  options {
+      // This is required if you want to clean before build
+      skipDefaultCheckout(true)
+  }
+  stages {
+    stage('Init') {
+      steps {
+        echo '::: Init ************************************************************'
+        // Clean before build
+        cleanWs()
+
+        sh 'npm -v'
+      }
+    }
+    stage('SCM Checkout') {
+      steps {
+        echo '::: SCM Checkout ************************************************************'
+        script {
+          dir(env.CODE_PATH) {
+            git branch: env.GIT_BRANCH, changelog: false, credentialsId: env.GIT_CREDENTIAL, poll: false, url: env.GIT_URL        
+          }
+        }
+      }
+    }
+    stage('OWASP Dependency-Check Vulnerabilities') {     
+			steps {
+				echo '::: OWASP Dependency-Check Vulnerabilities ************************************************************'
+
+        sh '''        
+				mkdir -p ${OWASP_PATH}
+        ls -l
+        cp -a "${CODE_PATH}/." "${OWASP_PATH}"
+        cd ${OWASP_PATH}
+				pwd
+				ls -l
+        cd ${GIT_PATH}
+        ls -l
+        npm install
+				'''
+
+        script {
+          dir(env.OWASP_PATH) {
+            dependencyCheck additionalArguments: ''' 
+										-o './'
+										-s '${GIT_PATH}'
+										-f 'ALL' 
+										--prettyPrint''', odcInstallation: 'Dependency-Check-Tool'
+				
+				    dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+          }
+        }				
+			}
+    }
+  }
+  post {
+    always {
+      // Clean after build
+      cleanWs(cleanWhenNotBuilt: false,
+              deleteDirs: true,
+              disableDeferredWipeout: true,
+              notFailBuild: true,
+              patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
+                          [pattern: '.propsfile', type: 'EXCLUDE']])
+    }
+    success {
+        echo "Build ID: ${BUILD_ID}, ${JOB_NAME} succeeded"
+    }
+    failure {
+        echo "Build ID: ${BUILD_ID}, ${JOB_NAME} failed"
+    }
+    aborted {
+        echo "Build ID: ${BUILD_ID}, ${JOB_NAME} aborted"
+    }
+  }
+}

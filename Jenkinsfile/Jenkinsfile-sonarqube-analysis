@@ -7,13 +7,17 @@ pipeline {
   environment { 
     SCANNER_HOME = tool 'sonarqube-scanner-tool'
     WEBHOOK_SECRET_ID = "sonar-webhook"
+
     GIT_URL = "https://github.com/ittipol/React-Go-Nginx-SSL.git"
     GIT_BRANCH = "develop"    
+
     PROJECT_KEY = "NextJS"
     SCANNER_PATH = "./nextjs"
+
     TOOL_NAME = 'nodejs'
     TOOL_PATH = tool "$TOOL_NAME"
     TOOL_BINARY_PATH = "/bin"
+    
     PATH = newPath("$PATH", "$TOOL_PATH$TOOL_BINARY_PATH")
     // PARAM_TEST = "${params.executeQualityGate}"
   }

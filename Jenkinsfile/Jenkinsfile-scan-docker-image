@@ -1,0 +1,96 @@
+def dockerImage
+
+pipeline {
+  agent any
+  environment {
+    GIT_CREDENTIAL = "git-cred"
+
+    // go
+    // GIT_URL = "https://github.com/ittipol/GitOps-Code.git"
+    // GIT_BRANCH = "main"
+    // GIT_PATH = "./api/go"
+    // REGISTRY_REPO = "go-app"
+
+    // nextjs
+		GIT_URL = "https://github.com/ittipol/React-Go-Nginx-SSL.git"
+		GIT_BRANCH = "develop"    
+    GIT_PATH = "./nextjs"
+    REGISTRY_REPO = "nextjs-app"
+  }
+  options {
+      // This is required if you want to clean before build
+      skipDefaultCheckout(true)
+  }
+  stages {
+    stage('Init') {
+      steps {
+        echo '::: Init ************************************************************'
+        // Clean before build
+        cleanWs()
+
+				sh '''                
+				trivy --version
+				'''
+      }
+    }
+    stage('SCM Checkout') {
+      steps {
+        echo '::: SCM Checkout ************************************************************'
+        git branch: env.GIT_BRANCH, changelog: false, credentialsId: env.GIT_CREDENTIAL, poll: false, url: env.GIT_URL
+      }
+    }
+    stage('Build image') {      
+      steps {
+        echo '::: Build image ************************************************************'
+        script {
+          dir(GIT_PATH) {
+            dockerImage = docker.build("${REGISTRY_REPO}:1.0.0")
+          }
+        }
+      }
+    }
+    stage('Scan Docker Image') {      
+      steps {
+        echo '::: Scan Docker Image ************************************************************'
+        
+        script {
+					// Run Trivy to scan the Docker image
+					def trivyOutput = sh(script: "trivy image ${REGISTRY_REPO}:1.0.0", returnStdout: true).trim()
+
+					// Display Trivy scan results
+					println trivyOutput
+
+					// Check if vulnerabilities were found
+					if (trivyOutput.contains("Total: 0")) {
+							echo "No vulnerabilities found in the Docker image."
+					} else {
+							echo "Vulnerabilities found in the Docker image."
+							// You can take further actions here based on your requirements
+							// For example, failing the build if vulnerabilities are found
+							error "Vulnerabilities found in the Docker image."
+					}
+        }
+      }
+    }
+  }
+  post {
+    always {
+      // Clean after build
+      cleanWs(cleanWhenNotBuilt: false,
+              deleteDirs: true,
+              disableDeferredWipeout: true,
+              notFailBuild: true,
+              patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
+                          [pattern: '.propsfile', type: 'EXCLUDE']])
+    }
+    success {
+        echo "Build ID: ${BUILD_ID}, ${JOB_NAME} succeeded"
+    }
+    failure {
+        echo "Build ID: ${BUILD_ID}, ${JOB_NAME} failed"
+    }
+    aborted {
+        echo "Build ID: ${BUILD_ID}, ${JOB_NAME} aborted"
+    }
+  }
+}

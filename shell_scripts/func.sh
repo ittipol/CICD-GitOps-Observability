@@ -19,7 +19,14 @@ delete_folder() {
     rm -rf "$folder_name"
 }
 
-copy_folder() {
+copy_all() {
+    local source="$1"
+    local dest="$2"
+    cp -a "${source}/." "${dest}"
+    # cp -a ./code/. ./owasp-dependency-check
+}
+
+copy() {
     local source="$1"
     local dest="$2"
     cp -r "$source" "$dest"

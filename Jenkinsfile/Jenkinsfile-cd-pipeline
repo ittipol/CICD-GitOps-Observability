@@ -30,7 +30,7 @@ pipeline {
         }   
       }
     }
-    stage('Git checkout') {
+    stage('SCM Checkout') {
       steps {
         echo '************************************************************'
         // We need to explicitly checkout from SCM here
