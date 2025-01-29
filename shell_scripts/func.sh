@@ -38,3 +38,23 @@ check_installed_binary() {
     binary_file='openssl'
     which $binary_file > /dev/null 2>&1 || { echo "$binary_file is not installed"; exit 1; }
 }
+
+trivy_image_scan() {    
+    timestamp=$(date "+%Y%m%d_%H%M%S")
+    file_name="scan_${timestamp}.txt"
+    # trivy image --severity HIGH,CRITICAL {your-container-image} > $file_name
+    # trivy image --severity HIGH,CRITICAL {your-container-image} | tee -a $file_name
+}
+
+extract_tar() {
+    local dir="$1"
+    local tar_file="$2"
+    mkdir -p "${dir}" && tar zxf "${tar_file}" -C "${dir}"
+    # mkdir -p $HOME/dotnet && tar zxf dotnet-sdk-8.0.405-osx-arm64.tar.gz -C $HOME/dotnet
+}
+
+unzip() {
+    local zip_file="$2"
+    unzip $zip_file
+    # unzip dependency-check-9.0.10-release.zip
+}

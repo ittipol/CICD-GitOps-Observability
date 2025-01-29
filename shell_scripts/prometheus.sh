@@ -9,7 +9,7 @@ install() {
 }
 
 apply_cadvisor_pod_monitor() {
-    cd ../kubernetes/prometheus/terraform
+    cd ../kubernetes/prometheus
 
     kubectl apply -f cadvisor-pod-monitor.yaml
 }

@@ -81,7 +81,7 @@ script=${0##*/}
 home=$(find_home)
 
 case "$1" in
-  -h | --help)
+  -?|--?|-h|--help|-[Hh]elp)
     usage_info
     exit 1
     ;;

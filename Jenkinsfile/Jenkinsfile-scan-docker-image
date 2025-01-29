@@ -54,21 +54,39 @@ pipeline {
         echo '::: Scan Docker Image ************************************************************'
         
         script {
-					// Run Trivy to scan the Docker image
-					def trivyOutput = sh(script: "trivy image ${REGISTRY_REPO}:1.0.0", returnStdout: true).trim()
+          sh 'curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl > html.tpl'
+          sh 'mkdir -p reports'
 
-					// Display Trivy scan results
-					println trivyOutput
+          sh '''
+          trivy image --format template --template "@html.tpl" -o reports/app-scan.html ${REGISTRY_REPO}:1.0.0
+          '''
+					publishHTML target : [
+							allowMissing: true,
+							alwaysLinkToLastBuild: true,
+							keepAll: true,
+							reportDir: 'reports',
+							reportFiles: 'app-scan.html',
+							reportName: 'Trivy Scan',
+							reportTitles: 'Trivy Scan'
+					]
 
-					// Check if vulnerabilities were found
-					if (trivyOutput.contains("Total: 0")) {
-							echo "No vulnerabilities found in the Docker image."
-					} else {
-							echo "Vulnerabilities found in the Docker image."
-							// You can take further actions here based on your requirements
-							// For example, failing the build if vulnerabilities are found
-							error "Vulnerabilities found in the Docker image."
-					}
+          sh "trivy image --exit-code 1 --severity CRITICAL ${REGISTRY_REPO}:1.0.0"
+
+					// // Run Trivy to scan the Docker image
+					// def trivyOutput = sh(script: "trivy image ${REGISTRY_REPO}:1.0.0", returnStdout: true).trim()        
+
+					// // Display Trivy scan results
+					// println trivyOutput
+
+					// // Check if vulnerabilities were found
+					// if (trivyOutput.contains("Total: 0")) {
+          //   echo "No vulnerabilities found in the Docker image."
+					// } else {
+          //   echo "Vulnerabilities found in the Docker image."
+          //   // You can take further actions here based on your requirements
+          //   // For example, failing the build if vulnerabilities are found
+          //   error "Vulnerabilities found in the Docker image."
+					// }
         }
       }
     }

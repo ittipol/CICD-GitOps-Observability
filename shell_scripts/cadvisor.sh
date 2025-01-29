@@ -10,6 +10,7 @@ install() {
         version="v0.49.2"
     fi
 
+    # Apply parameterized manifest files with -k
     kubectl apply -k https://github.com/google/cadvisor/deploy/kubernetes/base?ref="${version}"
 }
 

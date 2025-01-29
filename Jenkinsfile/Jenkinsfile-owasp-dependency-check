@@ -4,21 +4,21 @@ pipeline {
     GIT_CREDENTIAL = "git-cred"
 
 		// go
-    // GIT_URL = "https://github.com/ittipol/GitOps-Code.git"
-		// GIT_BRANCH = "main"
-    // GIT_PATH = "./api/go"
+    GIT_URL = "https://github.com/ittipol/GitOps-Code.git"
+		GIT_BRANCH = "main"
+    GIT_PATH = "./api/go"
 
 		// nextjs
-		GIT_URL = "https://github.com/ittipol/React-Go-Nginx-SSL.git"
-		GIT_BRANCH = "develop"    
-    GIT_PATH = "./nextjs"
+		// GIT_URL = "https://github.com/ittipol/React-Go-Nginx-SSL.git"
+		// GIT_BRANCH = "develop"    
+    // GIT_PATH = "./nextjs"
 
     // Flutter
     // GIT_URL = "https://github.com/ittipol/Flutter.git"
 		// GIT_BRANCH = "main"    
     // GIT_PATH = "./"
 
-    CODE_PATH = "./code"
+    SOURCE_PATH = "./source"
 		OWASP_PATH = "./owasp-dependency-check"
   }
   tools {
@@ -42,7 +42,7 @@ pipeline {
       steps {
         echo '::: SCM Checkout ************************************************************'
         script {
-          dir(env.CODE_PATH) {
+          dir(env.SOURCE_PATH) {
             git branch: env.GIT_BRANCH, changelog: false, credentialsId: env.GIT_CREDENTIAL, poll: false, url: env.GIT_URL        
           }
         }
@@ -55,17 +55,19 @@ pipeline {
         sh '''        
 				mkdir -p ${OWASP_PATH}
         ls -l
-        cp -a "${CODE_PATH}/." "${OWASP_PATH}"
+        cp -a "${SOURCE_PATH}/." "${OWASP_PATH}"
         cd ${OWASP_PATH}
 				pwd
 				ls -l
         cd ${GIT_PATH}
-        ls -l
-        npm install
+        ls -l        
 				'''
+
+        // sh 'npm install'
 
         script {
           dir(env.OWASP_PATH) {
+            // Software Composition Analysis (SCA)
             dependencyCheck additionalArguments: ''' 
 										-o './'
 										-s '${GIT_PATH}'
