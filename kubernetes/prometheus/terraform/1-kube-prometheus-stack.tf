@@ -11,5 +11,5 @@ resource "helm_release" "prometheus" {
   version          = "67.0.0"
   create_namespace = true
 
-  # values = [file("values/kube-prometheus-stack.yaml")]
+  values = [file("values/kube-prometheus-stack.yaml")]
 }
