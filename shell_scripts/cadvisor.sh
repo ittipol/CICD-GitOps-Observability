@@ -14,6 +14,12 @@ install() {
     kubectl apply -k https://github.com/google/cadvisor/deploy/kubernetes/base?ref="${version}"
 }
 
+apply_cadvisor_pod_monitor() {
+    cd ../kubernetes/cadvisor
+
+    kubectl apply -f cadvisor-pod-monitor.yaml
+}
+
 start_port_forward() {
 		local pod=$(kubectl -n "${NAMESPACE}" get pod -l app=cadvisor -o jsonpath="{.items[0].metadata.name}")
 		local port="$1"
@@ -47,6 +53,9 @@ case "$1" in
 					echo "Invalid option" >&2 exit 1
 			fi
 			;;
+    monitor) 
+			apply_cadvisor_pod_monitor
+      ;;
     -s) 
 			if [ "$#" -lt 3 ]; then
 					start_port_forward "$2"

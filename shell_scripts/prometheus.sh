@@ -2,16 +2,16 @@
 set -e
 
 install() {
-    cd ../kubernetes/prometheus/terraform
+    cd ../kubernetes/kube-prometheus-stack/terraform
 
     terraform init
     terraform apply
 }
 
-apply_cadvisor_pod_monitor() {
-    cd ../kubernetes/prometheus
+destroy() {
+    cd ../kubernetes/kube-prometheus-stack/terraform
 
-    kubectl apply -f cadvisor-pod-monitor.yaml
+    terraform destroy
 }
 
 start_port_forward() {
@@ -19,17 +19,17 @@ start_port_forward() {
 }
 
 case "$1" in
-		install)
-			install
-			;;
-    cadvisor) 
-			apply_cadvisor_pod_monitor
-      ;;
-		-s) 
-			start_port_forward
-      ;;
+	install)
+		install
+	;;
+	destroy)
+		destroy
+	;;
+	-s) 
+		start_port_forward
+    ;;
     *)
-			echo "Invalid option" >&2
-			exit 1
-			;;
+		echo "Invalid option" >&2
+		exit 1
+	;;
 esac

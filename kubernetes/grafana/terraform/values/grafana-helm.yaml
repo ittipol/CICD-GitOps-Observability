@@ -1,0 +1,24 @@
+## Configure grafana datasources
+## ref: http://docs.grafana.org/administration/provisioning/#datasources
+##
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+    - name: influxdb
+      uid: influxdb    
+      type: influxdb
+      access: proxy
+      orgId: 1
+      url: http://influxdb.influxdb.svc:8086
+      basicAuth: false
+      isDefault: false
+      jsonData:
+        dbName: k6_go_app
+        httpMode: POST
+        oauthPassThru: false
+        timeInterval: 15s
+        timeout: 300
+        tlsAuth: false
+        tlsAuthWithCACert: false
+        tlsSkipVerify: false
