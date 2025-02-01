@@ -1,0 +1,15 @@
+alias k=kubectl
+
+kubectl describe nodes
+
+colima start --cpu 4 --memory 12 --disk 200
+
+docker-compose up -d docker-registry
+docker-compose up -d nginx
+
+# Copy key from /docker/nginx/certs/ca.crt
+cd /etc/docker/
+sudo mkdir -p certs.d/host.minikube.internal:5000
+cd /etc/docker/certs.d/host.minikube.internal:5000
+sudo touch ca.crt
+sudo vi ca.crt

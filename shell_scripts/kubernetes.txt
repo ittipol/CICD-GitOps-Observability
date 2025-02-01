@@ -1,7 +1,0 @@
-alias k=kubectl
-
-kubectl describe nodes
-
-colima start --cpu 4 --memory 12 --disk 200
-
-docker-compose up -d docker-registry
