@@ -2,14 +2,16 @@
 set -e
 
 install() {
-    cd ../kubernetes/loki-stack/terraform
+    # cd ../kubernetes/loki-stack/terraform
+    cd ../kubernetes/loki/terraform
 
     terraform init
     terraform apply
 }
 
 destroy() {
-    cd ../kubernetes/loki-stack/terraform
+    # cd ../kubernetes/loki-stack/terraform
+    cd ../kubernetes/loki/terraform
 
     terraform destroy
 }
