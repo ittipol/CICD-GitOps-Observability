@@ -6,10 +6,12 @@ metadata:
   # "namespace" omitted since ClusterRoles are not namespaced
 rules:
   - apiGroups: [""]
+    # resources: ["nodes", "services", "pods"]
     resources:
     - nodes
     - services
     - pods
+    # verbs: ["get", "list", "watch"]
     verbs:
     - get
     - watch

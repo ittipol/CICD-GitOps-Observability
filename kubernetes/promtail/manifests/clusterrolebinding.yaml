@@ -3,10 +3,10 @@ kind: ClusterRoleBinding
 metadata:
   name: promtail-clusterrolebinding
 subjects:
-    - kind: ServiceAccount
-      name: promtail-serviceaccount
-      namespace: promtail
+  - kind: ServiceAccount
+    name: promtail-serviceaccount
+    namespace: promtail
 roleRef:
-    kind: ClusterRole
-    name: promtail-clusterrole
-    apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: promtail-clusterrole
+  apiGroup: rbac.authorization.k8s.io

@@ -11,5 +11,7 @@ resource "helm_release" "loki" {
   version          = "6.25.0"
   create_namespace = true
 
-  values = [file("values/loki-helm.yaml")]
+  values = [file("values/loki-filesystem.yaml")]
+
+  timeout = 360
 }

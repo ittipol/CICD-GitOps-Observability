@@ -1,13 +1,13 @@
 loki:
   schemaConfig:
     configs:
-      - from: 2024-04-01 # The date from which this schema configuration applies.
-        store: tsdb
-        object_store: s3
-        schema: v13
-        index:
-          prefix: loki_index_
-          period: 24h # The time period for creating new index tables, here 24h (daily).
+    - from: 2024-04-01 # The date from which this schema configuration applies.
+      store: tsdb
+      object_store: s3
+      schema: v13
+      index:
+        prefix: loki_index_
+        period: 24h # The time period for creating new index tables, here 24h (daily).
   ingester:
     chunk_encoding: snappy
   tracing:
