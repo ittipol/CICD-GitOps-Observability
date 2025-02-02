@@ -1,3 +1,6 @@
+adminUser: admin
+adminPassword: 1234
+
 ## Configure grafana datasources
 ## ref: http://docs.grafana.org/administration/provisioning/#datasources
 ##
