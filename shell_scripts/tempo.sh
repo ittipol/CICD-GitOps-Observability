@@ -2,14 +2,14 @@
 set -e
 
 install() {
-    cd ../kubernetes/tempo-distributed/terraform
+    cd ../kubernetes/tempo/terraform
 
     terraform init
     terraform apply
 }
 
 destroy() {
-    cd ../kubernetes/tempo-distributed/terraform
+    cd ../kubernetes/tempo/terraform
 
     terraform destroy
 }
