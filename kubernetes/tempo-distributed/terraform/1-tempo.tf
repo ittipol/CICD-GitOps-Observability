@@ -1,14 +1,14 @@
 # Install manually
 # helm repo add grafana https://grafana.github.io/helm-charts
 # helm repo update
-# helm install tempo --namespace tempo --create-namespace --version 1.32.0 --values kubernetes/terraform/values/tempo-helm.yaml grafana/tempo-distributed
+# helm install tempo --namespace tempo --create-namespace --version 1.18.1 --values kubernetes/terraform/values/tempo-helm.yaml grafana/tempo
 resource "helm_release" "tempo" {
   name = "tempo"
 
   repository       = "https://grafana.github.io/helm-charts"
-  chart            = "tempo-distributed"
+  chart            = "tempo"
   namespace        = "tempo"
-  version          = "1.32.0"
+  version          = "1.18.1"
   create_namespace = true
 
   values = [file("values/tempo-helm.yaml")]
