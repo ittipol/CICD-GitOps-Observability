@@ -11,7 +11,7 @@ if [ "$1" = "start" ]; then
     # --cpu        number of CPUs (default 2)
     # --memory     memory in GiB (default 2)
 
-    colima start --cpu 4 --memory 16 --disk 200
+    colima start --cpu 5 --memory 16 --disk 200
 
     # To start Qemu mode
     # colima start --cpu 4 --memory 12 --arch aarch64 --vm-type qemu

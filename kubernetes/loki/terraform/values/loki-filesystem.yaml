@@ -43,6 +43,15 @@ write:
 gateway:
   enabled: false
 
+memcached:
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 4Gi
+    limits:
+      cpu: 2000m
+      memory: 6Gi
+
 memcachedExporter:
   enabled: true
   resources:

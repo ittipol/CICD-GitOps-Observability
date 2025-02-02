@@ -58,3 +58,9 @@ unzip() {
     unzip $zip_file
     # unzip dependency-check-9.0.10-release.zip
 }
+
+basic_auth() {
+    local user="$1"
+    local password="$2"
+    echo -n "$user:$password" | base64
+}
