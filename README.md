@@ -1,4 +1,4 @@
-# CI/CD, GitOps, Monitoring
+# CI/CD, GitOps, Observability
 
 ## Start a Docker (services)
 - Jenkins http://localhost:8080
@@ -18,11 +18,22 @@
 ## GitOps
 - Argo CD
 
-## Monitoring
+## Observability
 - Metric
     - Prometheus
 - Log
     - Loki
+- Trace
+    - Jaeger
+    - Tempo
+ 
+## Visualization
+- Grafana
+
+## Collector
+- Metric
+    - Prometheus Exporter
+- Log
     - Promtail
 - Trace
-    - Tempo
+    - OpenTelemetry
