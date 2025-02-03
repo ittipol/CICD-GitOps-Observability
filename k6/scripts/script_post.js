@@ -25,7 +25,8 @@ export default function() {
     
     const response = http.post(url, payload, params);
     check(response, {
-        'status = 200': (r) => r.status === 200
+        "status = 200": (r) => r.status == 200,
+        "transaction time OK": (r) => r.timings.duration < 200
     });
     sleep(1);
 }
