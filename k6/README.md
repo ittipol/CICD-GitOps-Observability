@@ -1,6 +1,6 @@
 # k6
 
-## Design Goal
+## Define Goal
 - Service level objectives (SLOs)
 - Service level indicators (SLIs)
 - Service level agreements (SLAs)
