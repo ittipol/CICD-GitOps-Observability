@@ -13,7 +13,8 @@ export let options = {
 export default function() {
     const response = http.get("http://host.docker.internal:5055/health")
     check(response, {
-        'status = 200': (r) => r.status === 200
+        "status is 200": (r) => r.status == 200,
+        "transaction time OK": (r) => r.timings.duration < 200
     });
-    sleep(0.5);
+    sleep(1);
 }
