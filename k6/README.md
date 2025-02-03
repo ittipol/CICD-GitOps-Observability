@@ -1,5 +1,10 @@
 # k6
 
+## Design Goal
+Service level objectives (SLOs)
+Service level indicators (SLIs)
+Service level agreements (SLAs)
+
 ## Run k6 script
 ``` bash
 docker-compose run --rm k6 run /k6/scripts/script_get.js
