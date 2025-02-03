@@ -1,9 +1,9 @@
 # k6
 
 ## Design Goal
-Service level objectives (SLOs)
-Service level indicators (SLIs)
-Service level agreements (SLAs)
+- Service level objectives (SLOs)
+- Service level indicators (SLIs)
+- Service level agreements (SLAs)
 
 ## Run k6 script
 ``` bash
