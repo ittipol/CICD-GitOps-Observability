@@ -1,7 +1,7 @@
 # CI/CD • GitOps • Observability
-https://landscape.cncf.io/\
-https://trivy.dev/ Use Trivy to find vulnerabilities (CVE) & misconfigurations\
-https://owasp.org/www-project-top-ten/\
+https://landscape.cncf.io/ \
+https://trivy.dev/ Use Trivy to find vulnerabilities (CVE) & misconfigurations \
+https://owasp.org/www-project-top-ten/ \
 https://roadmap.sh/
 
 ## Start a Docker
