@@ -4,7 +4,7 @@ import { getDataTest } from './scenario/getData.js'
 export const options = {
   // discardResponseBodies: true,
   scenarios: {
-    healthcheck: {
+    "health-check": {
       executor: 'per-vu-iterations',
       exec: 'healthCheck',
       vus: 100,
@@ -12,7 +12,7 @@ export const options = {
       // maxDuration: '1m',
       iterations: 1,
     },
-    getdata: {
+    "get-data": {
       executor: 'per-vu-iterations',
       exec: 'getData',
       vus: 1,
