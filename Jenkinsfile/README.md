@@ -1,4 +1,6 @@
 # Jenkins
+- Jenkins http://localhost:8080
+- SonarQube http://localhost:9000
 - Pipeline syntax https://www.jenkins.io/doc/book/pipeline/syntax/
 - variables http://localhost:8080/env-vars.html
 - http://localhost:8080/job/{job_name}/pipeline-syntax/
