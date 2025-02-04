@@ -1,4 +1,4 @@
-# CI/CD, GitOps, Observability
+# CI/CD • GitOps • Observability
 https://landscape.cncf.io/\
 https://trivy.dev/ Use Trivy to find vulnerabilities (CVE) & misconfigurations\
 https://owasp.org/www-project-top-ten/\
