@@ -1,9 +1,34 @@
 # k6
+- https://grafana.com/load-testing/types-of-load-testing/
+- https://grafana.com/docs/k6/latest/
+- https://grafana.com/docs/k6/latest/testing-guides/automated-performance-testing/
+- https://grafana.com/docs/k6/latest/using-k6/scenarios/advanced-examples/
+- https://grafana.com/docs/k6/latest/javascript-api/
 
-## Define Goal
+## SLOs, SLIs, SLAs
 - Service level objectives (SLOs)
 - Service level indicators (SLIs)
 - Service level agreements (SLAs)
+
+## Type of load testing
+1. Smoke test
+    - Throughput: Low
+    - Duration: Short (seconds or minutes)
+2. Average-load test
+    - Throughput: Average production
+    - Duration: Mid (5-60 minutes)
+3. Stress test
+    - Throughput: High (above average)
+    - Duration: Mid (5-60 minutes)
+4. Spike test
+    - Throughput: Average
+    - Duration: Long (hours)
+5. Breakpoint test
+    - Throughput: Very high
+    - Duration: Short (a few minutes)
+6. Soak test
+    - Throughput: Increases until break
+    - Duration: As long as necessary
 
 ## Run k6 script
 ``` bash
