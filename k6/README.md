@@ -36,15 +36,15 @@ docker-compose run --rm k6 run /scripts/script_get.js
 
 docker-compose run --rm k6 run /scripts/script_post.js
 
-docker-compose run --rm k6 run /scripts/load_testing/average_load_testing.js
+docker-compose run --rm k6 run /scripts/type/average_load_testing.js
 
-docker-compose run --rm k6 run /scripts/load_testing/smoke_testing.js
+docker-compose run --rm k6 run /scripts/type/smoke_testing.js
 
-docker-compose run --rm k6 run /scripts/load_testing/soak_testing.js
+docker-compose run --rm k6 run /scripts/type/soak_testing.js
 
-docker-compose run --rm k6 run /scripts/load_testing/spike_testing.js
+docker-compose run --rm k6 run /scripts/type/spike_testing.js
 
-docker-compose run --rm k6 run /scripts/load_testing/stress_testing.js
+docker-compose run --rm k6 run /scripts/type/stress_testing.js
 
 docker-compose run --rm k6 run path/to/script (in container)
 ```

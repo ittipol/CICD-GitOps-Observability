@@ -5,76 +5,116 @@ https://owasp.org/www-project-top-ten/ \
 https://roadmap.sh/
 
 ## Start a Docker
+**Start a following services** \
+• Jenkins \
+• Docker in Docker \
+• Docker Registry \
+• SonarQube
 ``` bash
-# Start a following services
-# Jenkins
-# Docker in Docker
-# Docker Registry
-# SonarQube
 ./run.sh start docker
 ```
 
 ## Start a Minikube
+**Start a Kubernetes**
 ``` bash
-# Start a Kubernetes
 ./run.sh start minikube
 ```
 
-## GitOps
-``` bash
-# Install Argo CD
-./argocd.sh -i
+## Build Go application Docker image and push to Docker registry
+### CI/CD Pipeline
+**Create CI Pipeline**
+1. Start Jenkins and other services by running "./run.sh start docker"
+2. Navigate to http://localhost:8080
+3. Click "New Item"
+4. Input name and select Pipeline option
+5. Click OK
+6. Navigate to Definition section 
+7. Use pipeline script in Jenkinsfile-ci-pipeline file
+8. Paste pipeline script to textbox
+9. Click Save
 
-# Argo CD password
-./argocd.sh -p
-```
+**Create CD Pipeline**
+1. Start Jenkins and other services by running "./run.sh start docker"
+2. Navigate to http://localhost:8080
+3. Click "New Item"
+4. Input name and select Pipeline option
+5. Click OK
+6. Navigate to Definition section 
+7. Use pipeline script in Jenkinsfile-cd-pipeline file
+8. Paste pipeline script to textbox
+9. Click Save
+
+**Run CI/CD Pipeline**
+1. Navigate to http://localhost:8080
+2. Select CI Pipeline item that created
+3. Click "Build with Parameters"
+4. Input tagVersion
+5. Click Build
+6. Go application will build as a Docker image and push to Docker registry
+
+## Deploy Go application on Kubernetes
+### Pull-based GitOps
+**Install Argo CD**
+1. Install Argo CD by running "./argocd.sh -i"
+2. Argo CD will install on Kubernetes
+
+**Deploy Go application**
+1. Deploy Go application by running "./gitops.sh go"
+2. Go application will deploy on Kubernetes
+
+## Deploy MySQL database on Kubernetes
+1. Deploy MySQL database by running "./gitops.sh mysql"
+2. MySQL database will deploy on Kubernetes
 
 ## Observability
-The Three Pillars of Observability: Logs, Metrics, and Traces
+### Visualization
+**Install Grafana and Prometheus**
+1. Install Grafana and Prometheus by running "./prometheus.sh install"
+2. Grafana and Prometheus will install on Kubernetes
+
+### The Three Pillars of Observability: Logs, Metrics, and Traces
 
 ### Metrics
-``` bash
-# Install Grafana & Prometheus
-./prometheus.sh install
-```
+**Go application container metrics**
+1. Install cAdvisor (Container Advisor) by running "./cadvisor.sh install"
+2. Apply pod monitor for pulling metrics by running "./cadvisor.sh monitor"
+3. Apply Grafana dashboard by running "./grafana.sh dashboard"
+4. Access Grafana by running "./grafana.sh -s"
+5. Go to http://localhost:3000
+6. Navigate to Dashboards > cAdvisor Monitoring & k6 Load Testing Dashboard
+7. This dashboard will display container metrics
 
 ### Logs
-``` bash
-# Install Grafana Loki
-./loki.sh install
-```
+**Go application logs**
+1. Install Grafana Loki by running "./loki.sh install"
+2. Access Go application by running "./api_test.sh -s"
+3. Generate logs by running "./k6.sh logs"
+4. Access Grafana by running "./grafana.sh -s"
+5. Go to http://localhost:3000
+6. Navigate to Explore > Logs
+7. Explore Logs will display logs that created from Go application
 
 ### Traces
-``` bash
-# Install Grafana Tempo
-./tempo.sh install
-
-# Jaeger
-```
-
- 
-## Visualization
-``` bash
-# Install Grafana & Prometheus
-./prometheus.sh install
-```
+**Go application Traces**
+1. Install Grafana Tempo by running "./tempo.sh install"
+2. Access Go application by running "./api_test.sh -s"
+3. Generate traces by running "./k6.sh traces"
+4. Access Grafana by running "./grafana.sh -s"
+5. Go to http://localhost:3000
+6. Navigate to Explore > tempo
+7. Explore tempo will display traces that created from Go application
 
 ## Collector
-``` bash
-# Install OpenTelemetry Collector
-./opentelemetry.sh install
-```
-- Metric
-    - Prometheus Exporter
-- Log
-    - Promtail
-- Trace
-    - OpenTelemetry
+1. Install OpenTelemetry Collector by running "./opentelemetry.sh install"
 
-## load testing
-
-### k6
-``` bash
-# Run k6 script
-docker-compose run --rm k6 run path/to/script (in container)
 ```
+Metric
+- Prometheus Exporter
+Log
+- Promtail
+Trace
+- OpenTelemetry
+```
+
+## OpenTelemetry Language APIs & SDKs
+https://opentelemetry.io/docs/languages/

@@ -46,25 +46,25 @@ get_pod_describe() {
 }
 
 case "$1" in
-		install)
-			if [ "$#" -lt 3 ]; then
-					install "$2"
-			else 
-					echo "Invalid option" >&2 exit 1
-			fi
-			;;
+	install)
+        if [ "$#" -lt 3 ]; then
+                install "$2"
+        else 
+                echo "Invalid option" >&2 exit 1
+        fi
+	;;
     monitor) 
-			apply_cadvisor_pod_monitor
-      ;;
+        apply_cadvisor_pod_monitor
+    ;;
     -s) 
-			if [ "$#" -lt 3 ]; then
-					start_port_forward "$2"
-			else 
-					echo "Invalid option" >&2 exit 1
-			fi
-      ;;
+        if [ "$#" -lt 3 ]; then
+                start_port_forward "$2"
+        else 
+                echo "Invalid option" >&2 exit 1
+        fi
+    ;;
     *)
-			echo "Invalid option" >&2
-			exit 1
-			;;
+        echo "Invalid option" >&2
+        exit 1
+	;;
 esac
