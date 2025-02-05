@@ -24,6 +24,8 @@ pipeline {
     string(name: 'tagVersion', defaultValue: '', description: 'Tag version')
     booleanParam(name: 'executeTest', defaultValue: true, description: '')
     // booleanParam(name: 'owaspScan', defaultValue: true, description: 'OWASP Dependency-Check Vulnerabilities')
+    choice(name: 'IMAGE_SEVERITY_LEVELS', choices:['CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN'])
+    choice(name: 'VULNERABILITY_TYPES', choices:['os,library','os','library'])
   }
   tools {
     go 'go-tool'
@@ -135,6 +137,49 @@ pipeline {
             echo "Tag version: ${params.tagVersion}"
             dockerImage = docker.build("${env.REGISTRY_REPO}:${params.tagVersion}")
           }
+        }
+      }
+    }
+    stage('Scan image') {
+      steps {
+        echo '::: Scan Docker Image ************************************************************'
+        
+        script {
+          // sh "curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.47.0"
+          sh 'curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl > html.tpl'
+          sh 'mkdir -p reports'
+
+          sh '''
+          trivy image --format template --template "@html.tpl" -o reports/app-scan.html $REGISTRY_REPO:$tagVersion
+          '''
+					publishHTML target : [
+							allowMissing: true,
+							alwaysLinkToLastBuild: true,
+							keepAll: true,
+							reportDir: 'reports',
+							reportFiles: 'app-scan.html',
+							reportName: 'Trivy Scan',
+							reportTitles: 'Trivy Scan'
+					]
+
+          // Run Trivy to scan the Docker image
+          // Scan all severity
+					// def trivyOutput = sh(script: "trivy image ${REGISTRY_REPO}:${params.tagVersion}", returnStdout: true).trim()        
+
+					// Display Trivy scan results
+					// println trivyOutput
+
+					// Check if vulnerabilities were found
+					// if (trivyOutput.contains("Total: 0")) {
+          //   echo "No vulnerabilities found in the Docker image."
+					// } else {
+          //   echo "Vulnerabilities found in the Docker image."
+          //   // You can take further actions here based on your requirements
+          //   // For example, failing the build if vulnerabilities are found
+          //   error "Vulnerabilities found in the Docker image."
+					// }
+
+          sh "trivy image --exit-code 1 --severity ${params.IMAGE_SEVERITY_LEVELS} --vuln-type ${params.VULNERABILITY_TYPES} ${REGISTRY_REPO}:${params.tagVersion}"					
         }
       }
     }
