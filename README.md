@@ -101,20 +101,15 @@ https://roadmap.sh/
 3. Generate traces by running "./k6.sh traces"
 4. Access Grafana by running "./grafana.sh -s"
 5. Go to http://localhost:3000
-6. Navigate to Explore > tempo
-7. Explore tempo will display traces that created from Go application
+6. Go to Explore
+7. Select tempo datasource
+8. Select TraceQL
+9. Type {} to input field 
+10. Explore tempo will display traces that created from Go application
 
 ## Collector
+**OpenTelemetry Collector**
 1. Install OpenTelemetry Collector by running "./opentelemetry.sh install"
-
-```
-Metric
-- Prometheus Exporter
-Log
-- Promtail
-Trace
-- OpenTelemetry
-```
 
 ## OpenTelemetry Language APIs & SDKs
 https://opentelemetry.io/docs/languages/

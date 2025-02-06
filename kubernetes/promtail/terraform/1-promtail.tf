@@ -11,5 +11,5 @@ resource "helm_release" "promtail" {
   version          = "6.16.6"
   create_namespace = true
 
-  # values = [file("values/promtail-helm.yaml")]
+  values = [file("values/promtail-helm.yaml")]
 }

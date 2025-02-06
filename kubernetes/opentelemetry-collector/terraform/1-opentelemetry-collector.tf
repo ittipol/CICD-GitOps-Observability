@@ -14,7 +14,7 @@ locals {
 resource "helm_release" "open-telemetry" {
   name = "opentelemetry-collector"
 
-  repository       = "https://grafana.github.io/helm-charts"
+  repository       = "https://open-telemetry.github.io/opentelemetry-helm-charts"
   chart            = "opentelemetry-collector"
   namespace        = "opentelemetry-collector"
   version          = "0.115.0"
