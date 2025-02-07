@@ -1,9 +1,12 @@
 alias k=kubectl
 
 kubectl describe nodes
+kubectl config current-context
+echo $(kubectl get node minikube -o jsonpath='{.status.capacity}')
 
-docker-compose up -d docker-registry
-docker-compose up -d nginx
+minikube config
+
+docker-compose up -d docker-registry && docker-compose up -d nginx
 
 # Copy key from /docker/nginx/certs/ca.crt
 cd /etc/docker/

@@ -1,0 +1,12 @@
+---
+- name: Copy SSL certificate files on node
+  hosts: webservers
+  tasks:
+    - name: Copy SSL certificate files
+      ansible.builtin.copy:
+        src: ./file/ca.crt
+        dest: /cert/ca.crt
+        owner: root
+        group: root
+        mode: "0644"
+        remote_src: true

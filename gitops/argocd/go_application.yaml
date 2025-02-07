@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/ittipol/GitOps-Config.git
     targetRevision: HEAD
-    path: dev
+    path: go
     # directory:
     #   recurse: true
   destination: 

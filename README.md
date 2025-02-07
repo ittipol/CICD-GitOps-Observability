@@ -4,6 +4,9 @@ https://trivy.dev/ Use Trivy to find vulnerabilities (CVE) & misconfigurations \
 https://owasp.org/www-project-top-ten/ \
 https://roadmap.sh/
 
+## SLOs, SLIs, SLAs
+https://aws.amazon.com/th/what-is/sre/
+
 ## Start a Docker
 **Start a following services** \
 • Jenkins \

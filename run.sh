@@ -64,6 +64,7 @@ docker_delete() {
 
 minikube_start() {
   minikube start --cpus 2 --memory 4g
+  # minikube start --cpus 2 --memory 4g --driver=hyperkit
   minikube status
   minikube ip
 }
@@ -74,6 +75,7 @@ minikube_stop() {
 
 minikube_delete() {
   minikube delete
+  # minikube delete --all --purge
 }
 
 flag=''

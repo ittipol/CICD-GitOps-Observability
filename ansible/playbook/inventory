@@ -1,0 +1,15 @@
+webservers:
+  hosts:
+    webserver01:
+      ansible_host: 192.168.49.2
+      # ansible_user: "{{ lookup('env', 'MY_SECRET_ANSIBLE_USER') }}"
+      # ansible_password: "{{ lookup('file', '/path/to/password') }}"
+      ansible_user: my_server_user
+      # ansible_password: password
+      # ansible_password: !vault |
+      #     $ANSIBLE_VAULT;1.2;AES256;dev
+      #     37353631333033333433633463633733646666666133326133313339333932383732663462633238
+      #     3832383532386238343266636532343237646539393562350a613465363132636561633135646463
+      #     35323332306162313233373736653665386631613832363733633930613436333565663666363662
+      #     3536363437376661640a656131623738626338633635396235383263616563306661323433326663
+      #     6535

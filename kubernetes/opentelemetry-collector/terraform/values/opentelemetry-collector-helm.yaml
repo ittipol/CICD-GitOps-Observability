@@ -10,6 +10,8 @@ config:
     # Data sources: traces, metrics, logs
     otlp:
       endpoint: https://tempo.tempo.svc:4318
+      tls:
+        insecure: true
     #   tls:
     #     cert_file: cert.pem
     #     key_file: cert-key.pem
@@ -22,6 +24,9 @@ config:
     # prometheus:
     #   endpoint: 0.0.0.0:8889
     #   namespace: default
+    #   send_timestamps: true
+    #   metric_expiration: 180m
+    #   enable_open_metrics: true
 
   extensions:
     # The health_check extension is mandatory for this chart.

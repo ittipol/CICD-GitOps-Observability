@@ -64,3 +64,12 @@ basic_auth() {
     local password="$2"
     echo -n "$user:$password" | base64
 }
+
+mapDnsWithIp() {
+    # add minikube ip to /etc/hosts
+    echo "`minikube ip` docker.local" | sudo tee -a /etc/hosts > /dev/null
+}
+
+runifconfig() {
+    ifconfig
+}
