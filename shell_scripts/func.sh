@@ -85,3 +85,7 @@ save_firewall_rule() {
 add_env_path() {
     PATH="/path/to/bin:${PATH}"
 }
+
+symbolic_link() {
+    sudo ln -s /usr/bin/python3 /usr/bin/python
+}

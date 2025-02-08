@@ -1,8 +1,11 @@
 alias k=kubectl
 
+kubectl get node -o wide
 kubectl describe nodes
 kubectl config current-context
 echo $(kubectl get node minikube -o jsonpath='{.status.capacity}')
+
+minikube start --driver=parallels
 
 minikube config
 minikube profile list
@@ -27,4 +30,7 @@ ssh -i ~/.minikube/machines/minikube/id_rsa docker@$(minikube ip)
 
 ## Transfer file
 scp -i $(minikube ssh-key) <local-path> docker@$(minikube ip):<remote-path>
-scp -i $(minikube ssh-key) ~/cert/ca.crt docker@$(minikube ip):/home/docker/ca.crt
+scp -i $(minikube ssh-key) ./cert/ca.crt docker@$(minikube ip):/home/docker/ca.crt
+
+## Copy an entire directory
+scp -r ./data/install user@hostname:~/data/install/

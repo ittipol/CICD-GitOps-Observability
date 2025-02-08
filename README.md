@@ -23,6 +23,14 @@ https://aws.amazon.com/th/what-is/sre/
 ./run.sh start minikube
 ```
 
+## Add certificate for connecting to Docker registry
+**Create a directory and add to this directory**
+``` bash
+ping $(minikube ip)
+
+./minikube.sh cert
+```
+
 ## Build Go application Docker image and push to Docker registry
 ### CI/CD Pipeline
 **Create CI Pipeline**
