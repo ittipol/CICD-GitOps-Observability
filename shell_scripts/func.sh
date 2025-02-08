@@ -49,7 +49,7 @@ trivy_image_scan() {
 extract_tar() {
     local dir="$1"
     local tar_file="$2"
-    mkdir -p "${dir}" && tar zxf "${tar_file}" -C "${dir}"
+    mkdir -p "${dir}" && tar zxvf "${tar_file}" -C "${dir}"
     # mkdir -p $HOME/dotnet && tar zxf dotnet-sdk-8.0.405-osx-arm64.tar.gz -C $HOME/dotnet
 }
 
@@ -65,11 +65,23 @@ basic_auth() {
     echo -n "$user:$password" | base64
 }
 
-mapDnsWithIp() {
+map_dns_with_ip() {
     # add minikube ip to /etc/hosts
     echo "`minikube ip` docker.local" | sudo tee -a /etc/hosts > /dev/null
 }
 
-runifconfig() {
+run_ifconfig() {
     ifconfig
+}
+
+allow_port_80() {
+    iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+}
+
+save_firewall_rule() {
+    iptables-save > /etc/iptables/rules.v4
+}
+
+add_env_path() {
+    PATH="/path/to/bin:${PATH}"
 }

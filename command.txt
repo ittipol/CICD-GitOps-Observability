@@ -5,12 +5,26 @@ kubectl config current-context
 echo $(kubectl get node minikube -o jsonpath='{.status.capacity}')
 
 minikube config
+minikube profile list
 
 docker-compose up -d docker-registry && docker-compose up -d nginx
 
-# Copy key from /docker/nginx/certs/ca.crt
+## Copy key from /docker/nginx/certs/ca.crt
 cd /etc/docker/
 sudo mkdir -p certs.d/host.minikube.internal:5000
 cd /etc/docker/certs.d/host.minikube.internal:5000
 sudo touch ca.crt
 sudo vi ca.crt
+
+## sshpass
+sshpass -p my_password ssh username@hostname
+sshpass -p 'YOUR_PASSWORD_HERE' ssh -o StrictHostKeyChecking=no username@hostname
+
+## minikube ssh
+minikube ssh-key
+cat ~/.minikube/machines/minikube/config.json
+ssh -i ~/.minikube/machines/minikube/id_rsa docker@$(minikube ip)
+
+## Transfer file
+scp -i $(minikube ssh-key) <local-path> docker@$(minikube ip):<remote-path>
+scp -i $(minikube ssh-key) ~/cert/ca.crt docker@$(minikube ip):/home/docker/ca.crt

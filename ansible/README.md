@@ -5,6 +5,9 @@ https://docs.ansible.com/ansible/latest/network/getting_started/first_playbook.h
 ``` bash
 ansible-playbook -i inventory ssl_cert_deploy.ansible.yml
 
+# Dry Run
+ansible-playbook -i inventory ssl_cert_deploy.ansible.yml --check
+
 # Ask for connection password
 ansible-playbook -i inventory ssl_cert_deploy.ansible.yml -k
 
