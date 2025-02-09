@@ -89,3 +89,47 @@ add_env_path() {
 symbolic_link() {
     sudo ln -s /usr/bin/python3 /usr/bin/python
 }
+
+check_command_exist() {
+
+    # Use with if statement
+    # if check_command_exist "ssh"; then
+    #     commandExist=true
+    # elif check_command_exist "cat"; then
+    #     commandExist=true
+    # fi
+
+    # Run command with args suppressing the normal shell function lookup. Only builtin commands or commands found in the PATH are executed
+    # -v option is supplied, the exit status is 0 if command was found, and  1  if  not
+    command -v "$1" > /dev/null 2>&1
+
+    # $?-The exit status of the last command executed
+    return $?
+}
+
+to_lowercase() {
+    echo "$1" | tr '[:upper:]' '[:lower:]'
+    return 0
+}
+
+find_home() {
+
+    # how to use
+    # home=$(find_home)
+
+    local script=$0
+    [ -h "$script" ] && script="$(readlink "$script")"
+    echo "$(cd -P "$(dirname "$script")" && pwd)"
+}
+
+remove_trailing_slash() {
+    local input="${1:-}"
+    echo "${input%/}"
+    return 0
+}
+
+remove_beginning_slash() {
+    local input="${1:-}"
+    echo "${input#/}"
+    return 0
+}

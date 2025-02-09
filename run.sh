@@ -1,17 +1,43 @@
 #!/bin/bash
-# set -ex
+
 set -e
+set -u
+set -o pipefail
+
+which docker-compose > /dev/null 2>&1 || { echo "docker-compose is not installed"; exit 1; }
+which minikube > /dev/null 2>&1 || { echo "minikube is not installed"; exit 1; }
+
 # arg0=$(basename "$0" .sh)
+
+# Replace dot with empty string
 # blnk=$(echo "$arg0" | sed 's/./ /g')
 
+flag=''
+script=${0##*/} # run.sh
+
 # sets colors for output logs
+# ANSI escape code
+# Black        0;30     Dark Gray     1;30
+# Red          0;31     Light Red     1;31
+# Green        0;32     Light Green   1;32
+# Brown/Orange 0;33     Yellow        1;33
+# Blue         0;34     Light Blue    1;34
+# Purple       0;35     Light Purple  1;35
+# Cyan         0;36     Light Cyan    1;36
+# Light Gray   0;37     White         1;37
 BLUE='\033[34m'
 RED='\033[31m'
+YELLOW='\033[33m'
+GREEN='\033[32m'
 CLEAR='\033[0m'
 
 # pre-configured log levels
 INFO="(${BLUE}INFO${CLEAR})"
 ERROR="(${RED}ERROR${CLEAR})"
+
+PRINT='print_message "${GREEN:-}${FUNCNAME[0]} ${BLUE:-}$*"'
+
+exec 3>&1
 
 usage_info()
 {
@@ -25,62 +51,66 @@ usage_info()
     echo ""
 }
 
-find_home() {
-  local script=$0
-  [ -h "$script" ] && script="$(readlink "$script")"
-  echo "$(cd -P "$(dirname "$script")" && pwd)"
+print_info() {
+  # -e here enables the interpretation of backslash escapes
+  # echo -e "print \ntest \nmessage"
+  echo -e "$script:$INFO $1"
 }
 
-log_info() {
-  local message=$1
-  echo -e "$script:$INFO $message"
+print_warning() {
+    printf "%b\n" "${YELLOW:-}Warning: $1${CLEAR:-}" >&3
 }
 
-log_error() {
-  local message=$1
-  echo -e "$script:$ERROR $message" >&2
+print_error() {
+    printf "%b\n" "${RED:-}Error: $1${CLEAR:-}" >&2
+}
 
-  # >&2
-  # > redirect standard output
-  # & what comes next is a file descriptor, not a file (only for right hand side of >)
-  # 2 stderr file descriptor number
-  # Redirect stdout from echo command to stderr. (If you were to useecho "hey" >2 you would output hey to a file called 2)
-  # File descriptor 1 is stdout and File descriptor 2 is stderr
-
-  # echo -e "$script:$ERROR $1" >&2 > err.log
+print_message() {
+    printf "%b\n" "${CLEAR:-}${script}: $1${CLEAR:-}" >&3
 }
 
 docker_start() {
+  eval $PRINT
+
   docker-compose up -d --build
 }
 
 docker_stop() {
+  eval $PRINT
+
   docker-compose stop
 }
 
 docker_delete() {
+  eval $PRINT
+
   docker-compose down
 }
 
 minikube_start() {
-  minikube start --cpus 2 --memory 4g
+  eval $PRINT 
+
+  local cpu=$1
+  local memory="$2"
+
+  minikube start --cpus $cpu --memory $memory
   # minikube start --cpus 2 --memory 4g --driver=hyperkit
   minikube status
   minikube ip
 }
 
 minikube_stop() {
+  eval $PRINT
+  
   minikube stop
 }
 
 minikube_delete() {
+  eval $PRINT
+  
   minikube delete
   # minikube delete --all --purge
 }
-
-flag=''
-script=${0##*/}
-home=$(find_home)
 
 case "$1" in
   -?|--?|-h|--help|-[Hh]elp)
@@ -100,7 +130,7 @@ case "$1" in
       usage_info
       exit 1
    ;;
-  *) log_error "Invalid option" ; usage_info ; exit 1 ;;
+  *) print_error "Invalid option" ; usage_info ; exit 1 ;;
 esac
 
 if [ "$flag" = "start" ]; then 
@@ -111,7 +141,7 @@ if [ "$flag" = "start" ]; then
       ;;
     -a | all)
       docker_start
-      minikube_start
+      minikube_start 2 '4g'
       exit 1
       ;; 
     -d | docker) 
@@ -119,11 +149,11 @@ if [ "$flag" = "start" ]; then
       exit 1
       ;;
     -m | minikube)
-      minikube_start
+      minikube_start 2 '4g'
       exit 1
       ;;
     *)
-      log_error "Invalid option: $1"
+      print_error "Invalid option: $1"
       # shift
       exit 1
       ;;
@@ -150,7 +180,7 @@ if [ "$flag" = "stop" ]; then
       exit 1
       ;;
     *)
-      log_error "Invalid option: $1"
+      print_error "Invalid option: $1"
       # shift
       exit 1
       ;;
@@ -177,8 +207,7 @@ if [ "$flag" = "delete" ]; then
       exit 1
       ;;
     *)
-      log_error "Invalid option: $1"
-      # shift
+      print_error "Invalid option: $1"
       exit 1
       ;;
   esac
