@@ -123,13 +123,37 @@ find_home() {
 }
 
 remove_trailing_slash() {
-    local input="${1:-}"
+    local input="$1"
     echo "${input%/}"
     return 0
 }
 
+request_url() {
+    local $url=$1
+
+    max_retries=3
+    retry_count=0
+
+    while [ $retry_count -lt $max_retries ]; do
+    curl -m 10 $url
+
+    if [ $? -eq 0 ]; then
+        echo "Request was successful"
+        break
+    else
+        echo "Request failed with exit code $?. Retrying..."
+        retry_count=$((retry_count + 1))
+        sleep 3
+    fi
+    done
+
+    if [ $retry_count -eq $max_retries ]; then
+        echo "Request failed after $max_retries retries. Exiting."
+    fi
+}
+
 remove_beginning_slash() {
-    local input="${1:-}"
+    local input="$1"
     echo "${input#/}"
     return 0
 }

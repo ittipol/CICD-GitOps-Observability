@@ -3,16 +3,16 @@
 # -e  Exit immediately if a command exits with a non-zero status
 # set -ex
 
-# $? The exit status of the last command executed.
-# $0 The filename of the current script.
-# $# The number of arguments supplied to a script.
+# $? The exit status of the last command executed
+# $0 The filename of the current script
+# $# The number of arguments supplied to a script
 # $$ The process number of the current shell. For shell scripts, this is the process ID under which they are executing.
 
 # If Statement
 if [ "$status" = "success" ]; then
     echo "value equal"
     exit 1
-elif [ -n "$str" ]; then
+elif [ -n "$error" ]; then
     echo "the length of STRING is nonzero"
     exit 0
 else
@@ -23,6 +23,17 @@ fi
 # Check variable is true
 if [ "$start" = true ]; then
     print "true"
+fi
+
+if [ ! -z "$option" ]; then
+    echo "Invalid option" >&2
+    exit 1
+fi
+
+string="matched-string"
+# Check if the string matches the pattern "matched-*"
+if [[ $string =~ "matched-*" ]] then
+   exit 0
 fi
 
 # if option
@@ -92,5 +103,12 @@ done
 # > redirect standard output
 # & what comes next is a file descriptor, not a file (only for right hand side of >)
 # 2 stderr file descriptor number
-# Redirect stdout from echo command to stderr. (If you were to useecho "hey" >2 you would output hey to a file called 2)
+# Redirect stdout from echo command to stderr. (If you were to use echo "hey" >2 you would output hey to a file called 2)
 # File descriptor 1 is stdout and File descriptor 2 is stderr
+
+# -eq: Check if the two numbers are equal
+# -ne: Check if the two numbers are not equal
+# -lt: Check if the first number is less than the second number
+# -le: Check if the first number is less than or equal to the second number
+# -gt: Check if the first number is greater than the second number
+# -ge: Check if the first number is greater than or equal to the second number
