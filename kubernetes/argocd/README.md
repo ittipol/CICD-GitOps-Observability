@@ -25,8 +25,11 @@ chmod +x ./scripts/argocd.sh
 - Password: (In argocd-initial-admin-secret secret)
 
 ## Resolve to IP address
+**To force cURL to use "$(minikube ip)" as the IP address when requesting "argocd.example" over port 80 (HTTP)** \
 ``` bash
-curl --resolve "argocd-server:80:$(minikube ip)" -i http://argocd.example
+# --resolve <host:port:address[,address]...> Resolve the host+port to this address
+# -i Include protocol response headers in the output
+curl --resolve "argocd.example:80:$(minikube ip)" -i http://argocd.example
 ```
 
 ## Credentials
