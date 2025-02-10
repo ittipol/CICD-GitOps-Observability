@@ -15,17 +15,17 @@ docker_registry_username="docker"
 docker_registry_password="1234"
 
 run_command() {    
-    local command=$1
+    local command="$1"
     $base $command
 }
 
 log_info() {
-  local message=$1
+  local message="$1"
   echo -e "$script:$INFO $message"
 }
 
 log_error() {
-  local message=$1
+  local message="$1"
   echo -e "$script:$ERROR $message" >&2
   # echo -e "$script:$ERROR $1" >&2 > err.log
   exit 1
@@ -40,20 +40,20 @@ get_repo() {
 }
 
 get_tags() {
-    local repo=$1
+    local repo="$1"
    run_command "curl -u $docker_registry_username:$docker_registry_password --cacert /docker_registry/cert/server.crt -X GET https://registry:5000/v2/$repo/tags/list" 
 }
 
 get_digest() {
-    local repo=$1
-    local tag=$2
+    local repo="$1"
+    local tag="$2"
     run_command "curl -u $docker_registry_username:$docker_registry_password --cacert /docker_registry/cert/server.crt -X GET https://registry:5000/v2/$repo/manifests/$tag"
 }
 
 create_htpasswd() {
-    local username=$1
-    local password=$2
-    local output_path=$3
+    local username="$1"
+    local password="$2"
+    local output_path="$3"
     docker run --rm --entrypoint htpasswd httpd:2 -Bbn $username $password > $output_path
 }
 

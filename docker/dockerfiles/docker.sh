@@ -11,21 +11,20 @@ INFO="(${BLUE}INFO${CLEAR})"
 ERROR="(${RED}ERROR${CLEAR})"
 
 log_info() {
-  local message=$1
+  local message="$1"
   echo -e "$script:$INFO $message"
 }
 
 log_error() {
-  local message=$1
+  local message="$1"
   echo -e "$script:$ERROR $message" >&2
-  # echo -e "$script:$ERROR $1" >&2 > err.log
   exit 1
 }
 
 push() {
-    local repo=$1
-    local tag=$2
-    local path=$3
+    local repo="$1"
+    local tag="$2"
+    local path="$3"
 
     docker build -t $repo:$tag -f $path .
     docker tag $repo:$tag registry:5000/$repo:$tag

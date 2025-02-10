@@ -13,12 +13,12 @@ INFO="(${BLUE}INFO${CLEAR})"
 ERROR="(${RED}ERROR${CLEAR})"
 
 log_info() {
-  local message=$1
+  local message="$1"
   echo -e "$script:$INFO $message"
 }
 
 log_error() {
-  local message=$1
+  local message="$1"
   echo -e "$script:$ERROR $message" >&2
   # echo -e "$script:$ERROR $1" >&2 > err.log
   exit 1

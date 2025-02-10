@@ -129,7 +129,7 @@ remove_trailing_slash() {
 }
 
 request_url() {
-    local $url=$1
+    local $url="$1"
 
     max_retries=3
     retry_count=0

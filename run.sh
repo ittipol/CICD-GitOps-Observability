@@ -1,6 +1,8 @@
 #!/bin/bash
 
 set -e
+# Stop when unbound variables found, use ${var:-}
+# Unbound variable: shell variables that have not been assigned a value
 set -u
 set -o pipefail
 
@@ -53,6 +55,7 @@ usage_info()
 
 print_info() {
   # -e here enables the interpretation of backslash escapes
+  # -e use with color code ex. \033[32m
   # echo -e "print \ntest \nmessage"
   echo -e "$script:$INFO $1"
 }
