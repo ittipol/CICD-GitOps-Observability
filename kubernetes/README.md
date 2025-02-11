@@ -7,3 +7,8 @@
 ``` bash
 kubectl logs -f {pod_name}
 ```
+
+## Ingress
+``` bash
+curl --resolve "goapp.example:80:$(minikube ip)" -i http://goapp.example
+```
