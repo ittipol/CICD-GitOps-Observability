@@ -13,6 +13,7 @@ locals {
     "controller.metrics.enabled" = "true"
     "controller.metrics.serviceMonitor.enabled" = "true"
     "controller.metrics.serviceMonitor.additionalLabels.release" = "prometheus"
+    "controller.service.type" = "NodePort"
   }
 }
 
@@ -34,4 +35,6 @@ resource "helm_release" "ingress-nginx" {
   }
 
   # values = [file("values/ingress-nginx.yaml")]
+
+  timeout = 600
 }

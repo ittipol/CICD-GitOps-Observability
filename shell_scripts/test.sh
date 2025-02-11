@@ -30,10 +30,29 @@ if [ ! -z "$option" ]; then
     exit 1
 fi
 
+# =======================================
 string="matched-string"
 # Check if the string matches the pattern "matched-*"
 if [[ $string =~ "matched-*" ]] then
    exit 0
+fi
+
+# check sting value
+str="String value"
+str2=" "
+str3=""
+
+# -a = and
+if [ ! -z "$str" -a "$str" != " " ]; then
+        echo "Str is not null or space"
+fi
+
+if [ ! -z "$str2" -a "$str2" != " " ]; then
+        echo "Str2 is not null or space"
+fi
+
+if [ ! -z "$str3" -a "$str3" != " " ]; then
+        echo "Str3 is not null or space"
 fi
 
 # if option
