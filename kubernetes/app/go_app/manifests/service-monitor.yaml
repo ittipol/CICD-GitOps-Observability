@@ -2,15 +2,15 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: cadvisor
-  namespace: cadvisor
+  name: go-app
+  namespace: go-app
   labels:
     release: prometheus # Matches kube-prometheus-stack release label
 spec:
   selector:
     matchLabels:
-      name: cadvisor
+      app.kubernetes.io/name: go-app-server
   endpoints:
-  - port: http
+  - port: metrics
     interval: 15s
     scrapeTimeout: 15s

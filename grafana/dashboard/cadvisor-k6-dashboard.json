@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 37,
+  "id": 30,
   "links": [],
   "panels": [
     {
@@ -87,7 +87,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.4.1",
       "targets": [
         {
           "editorMode": "code",
@@ -154,7 +154,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.4.1",
       "targets": [
         {
           "editorMode": "code",
@@ -249,12 +249,12 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.4.1",
       "targets": [
         {
           "editorMode": "code",
           "expr": "sum(rate(container_cpu_usage_seconds_total{id=\"/\"}[1m])) / sum(machine_cpu_cores{namespace=\"cadvisor\", namespace=\"cadvisor\"}) * 100",
-          "interval": "30",
+          "interval": "30s",
           "legendFormat": "CPU usage",
           "range": true,
           "refId": "A"
@@ -346,12 +346,12 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.4.1",
       "targets": [
         {
           "editorMode": "code",
           "expr": "sum(container_memory_working_set_bytes{id=\"/\"}) / sum(machine_memory_bytes{namespace=\"cadvisor\", namespace=\"cadvisor\"}) * 100",
-          "interval": "15",
+          "interval": "30s",
           "legendFormat": "Memory usage",
           "range": true,
           "refId": "A"
@@ -413,7 +413,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.4.1",
       "targets": [
         {
           "editorMode": "code",
@@ -479,7 +479,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.4.1",
       "targets": [
         {
           "editorMode": "code",
@@ -545,7 +545,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.4.1",
       "targets": [
         {
           "editorMode": "code",
@@ -611,7 +611,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.4.1",
       "targets": [
         {
           "editorMode": "code",
@@ -711,7 +711,7 @@
         "xTickLabelRotation": 0,
         "xTickLabelSpacing": 100
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.4.1",
       "targets": [
         {
           "alias": "Requests per Second",
@@ -838,7 +838,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.4.1",
       "targets": [
         {
           "alias": "http req failed",
@@ -958,7 +958,7 @@
           "unit": "ms"
         }
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.4.1",
       "targets": [
         {
           "datasource": {
@@ -1088,7 +1088,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.4.1",
       "targets": [
         {
           "alias": "VUs",
@@ -1276,7 +1276,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.4.1",
       "targets": [
         {
           "editorMode": "code",
@@ -1432,7 +1432,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.4.1",
       "targets": [
         {
           "datasource": {
@@ -1617,7 +1617,7 @@
           "sort": "desc"
         }
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.4.1",
       "targets": [
         {
           "editorMode": "code",
@@ -1739,7 +1739,7 @@
           "sort": "desc"
         }
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.4.1",
       "targets": [
         {
           "editorMode": "code",
@@ -1847,7 +1847,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.4.1",
       "targets": [
         {
           "editorMode": "code",
@@ -2008,6 +2008,6 @@
   "timezone": "Asia/Bangkok",
   "title": "cAdvisor Monitoring & k6 Load Testing Dashboard",
   "uid": "bebiikv2b0idcf",
-  "version": 7,
+  "version": 1,
   "weekStart": ""
 }
