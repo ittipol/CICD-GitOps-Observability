@@ -12,6 +12,8 @@ minikube profile list
 
 docker-compose up -d docker-registry && docker-compose up -d nginx
 
+docker system prune -a
+
 ## Copy key from /docker/nginx/certs/ca.crt
 cd /etc/docker/
 sudo mkdir -p certs.d/host.minikube.internal:5000
