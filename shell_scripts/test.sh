@@ -60,6 +60,10 @@ fi
 #    true if file exists. 
 # -d file
 #    operator to test if the given directory exists or not
+# -r, -w, -x file
+#    true if file can read, write, execute
+# -s file
+#    true if file size not 0
 # -n STRING
 #    the length of STRING is nonzero
 # -z STRING

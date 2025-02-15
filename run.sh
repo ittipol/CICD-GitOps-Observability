@@ -1,9 +1,13 @@
 #!/bin/bash
 
 set -e
-# Stop when unbound variables found, use ${var:-}
+
+# Bash will exit immediately when unbound variables found, use ${var:-}
 # Unbound variable: shell variables that have not been assigned a value
 set -u
+
+# Bash will exit immediately when any command in a pipeline fails
+# This can help you catch unbound variables that are used in pipeline commands.
 set -o pipefail
 
 which docker-compose > /dev/null 2>&1 || { echo "docker-compose is not installed"; exit 1; }
