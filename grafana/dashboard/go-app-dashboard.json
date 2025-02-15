@@ -74,7 +74,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum(go_app_http_requests_total)",
+          "expr": "sum(go_app_http_server_request_duration_seconds_count{status_code=~\"$http_status$\"})",
           "interval": "5s",
           "legendFormat": "Total",
           "range": true,
@@ -155,7 +155,7 @@
       "options": {
         "legend": {
           "calcs": [
-            "last"
+            "lastNotNull"
           ],
           "displayMode": "table",
           "placement": "right",
@@ -170,9 +170,9 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum(go_app_http_requests_total) by (path)",
+          "expr": "go_app_http_server_request_duration_seconds_count{status_code=~\"$http_status$\"}",
           "interval": "5s",
-          "legendFormat": "{{path}}",
+          "legendFormat": "{{route}}",
           "range": true,
           "refId": "A"
         }
@@ -615,7 +615,7 @@
       "options": {
         "legend": {
           "calcs": [
-            "last"
+            "lastNotNull"
           ],
           "displayMode": "table",
           "placement": "right",
@@ -630,7 +630,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum(rate(go_app_http_requests_total[1m]))",
+          "expr": "sum(rate(go_app_http_server_request_duration_seconds_count{status_code=~\"$http_status$\"}[1m]))",
           "interval": "1s",
           "legendFormat": "Total",
           "range": true,
@@ -712,7 +712,7 @@
       "options": {
         "legend": {
           "calcs": [
-            "last"
+            "lastNotNull"
           ],
           "displayMode": "table",
           "placement": "right",
@@ -729,9 +729,9 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "rate(go_app_http_requests_total[1m])",
+          "expr": "rate(go_app_http_server_request_duration_seconds_count{status_code=~\"$http_status$\"}[1m])",
           "interval": "1s",
-          "legendFormat": "{{path}}",
+          "legendFormat": "{{route}}",
           "range": true,
           "refId": "A"
         }
@@ -791,7 +791,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           },
@@ -871,9 +872,9 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.99, sum by(le) (rate(go_app_http_server_request_duration_seconds_bucket[1m])))",
+          "expr": "histogram_quantile(0.99, sum by(le) (rate(go_app_http_server_request_duration_seconds_bucket{status_code=~\"$http_status$\"}[1m])))",
           "format": "time_series",
-          "interval": "15s",
+          "interval": "5s",
           "legendFormat": "0.99",
           "range": true,
           "refId": "A"
@@ -887,7 +888,7 @@
           "expr": "histogram_quantile(0.95, sum by(le) (rate(go_app_http_server_request_duration_seconds_bucket[1m])))",
           "hide": false,
           "instant": false,
-          "interval": "15s",
+          "interval": "5s",
           "legendFormat": "0.95",
           "range": true,
           "refId": "B"
@@ -901,7 +902,7 @@
           "expr": "histogram_quantile(0.9, sum by(le) (rate(go_app_http_server_request_duration_seconds_bucket[1m])))",
           "hide": false,
           "instant": false,
-          "interval": "15s",
+          "interval": "5s",
           "legendFormat": "0.90",
           "range": true,
           "refId": "C"
@@ -912,6 +913,7 @@
     }
   ],
   "preload": false,
+  "refresh": "5s",
   "schemaVersion": 40,
   "tags": [],
   "templating": {
@@ -933,17 +935,35 @@
         "refresh": 1,
         "regex": "",
         "type": "query"
+      },
+      {
+        "current": {
+          "text": "200",
+          "value": "200"
+        },
+        "definition": "label_values(go_app_http_server_request_duration_seconds_count,status_code)",
+        "includeAll": true,
+        "name": "http_status",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(go_app_http_server_request_duration_seconds_count,status_code)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
       }
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "Asia/Bangkok",
   "title": "Go app dashboard",
   "uid": "aecux0fk90wzka",
-  "version": 83,
+  "version": 113,
   "weekStart": ""
 }
