@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+metrics() {
+    cd ../k6
+    docker-compose run --rm k6 run /scripts/generate_metrics/script.js
+}
+
 logs() {
     cd ../k6
     docker-compose run --rm k6 run /scripts/generate_logs/script.js
@@ -12,6 +17,9 @@ traces() {
 }
 
 case "$1" in
+    metrics)
+		metrics
+	;;
     logs)
 		logs
 	;;

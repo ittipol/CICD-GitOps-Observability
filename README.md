@@ -93,14 +93,23 @@ ping $(minikube ip)
 ### The Three Pillars of Observability: Logs, Metrics, and Traces
 
 ### Metrics
-**Go application container metrics**
+**Go application container resource metrics**
 1. Install cAdvisor (Container Advisor) by running "./cadvisor.sh install"
 2. Apply pod monitor for pulling metrics by running "./cadvisor.sh monitor"
 3. Apply Grafana dashboard by running "./grafana.sh dashboard"
 4. Access Grafana by running "./grafana.sh -s"
 5. Go to http://localhost:3000
 6. Navigate to Dashboards > cAdvisor Monitoring & k6 Load Testing Dashboard
-7. This dashboard will display container metrics
+7. This dashboard will display container resource metrics
+
+**Go application metrics**
+1. Apply service monitor for pulling metrics by running "./go_app.sh monitor"
+2. Apply Grafana dashboard by running "./grafana.sh dashboard"
+3. Generate logs by running "./k6.sh metrics"
+4. Access Grafana by running "./grafana.sh -s"
+5. Go to http://localhost:3000
+6. Navigate to Dashboards > Go app dashboard
+7. This dashboard will display Go application metrics
 
 ### Logs
 **Go application logs**

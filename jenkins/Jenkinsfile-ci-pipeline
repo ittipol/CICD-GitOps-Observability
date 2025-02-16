@@ -37,7 +37,7 @@ pipeline {
   stages {
     stage('Init') {
       steps {
-        echo '************************************************************'
+        echo '::: Init ************************************************************'
         // Clean before build
         cleanWs()
         echo "Building ${env.JOB_NAME}..."
@@ -51,7 +51,7 @@ pipeline {
     }
     stage('SCM Checkout') {
       steps {
-        echo '************************************************************'
+        echo '::: SCM Checkout ************************************************************'
         // We need to explicitly checkout from SCM here
         // ‘checkout scm’ is only available when using “Multibranch Pipeline” or “Pipeline script from SCM”
         // checkout scm
@@ -59,14 +59,14 @@ pipeline {
         // sh 'env'
       }
     }
-    stage('Test') {      
+    stage('Test') {
       when {
           expression {
               params.executeTest == true
           }
       }
       steps {
-        echo '************************************************************'
+        echo '::: Test ************************************************************'
         // sh '''
         // cd src
         // go test ./...
@@ -85,7 +85,7 @@ pipeline {
     //       }
     //     }
     //     steps {
-    //       echo '************************************************************'
+    //       echo '::: OWASP Dependency-Check Vulnerabilities ************************************************************'
     //       dependencyCheck additionalArguments: ''' 
     //                   -o './'
     //                   -s './src'
@@ -95,9 +95,9 @@ pipeline {
     //       dependencyCheckPublisher pattern: 'dependency-check-report.xml'
     //     }
     // }
-    stage('Sonarqube analysis') {            
+    stage('Sonarqube analysis') {
       steps {
-        echo '************************************************************'
+        echo '::: Sonarqube analysis ************************************************************'
         withSonarQubeEnv(env.SONARQUBE_SERVER_NAME) {
             sh '''
             $SCANNER_HOME/bin/sonar-scanner \
@@ -111,7 +111,7 @@ pipeline {
     }
     stage("Quality Gate") {
       steps {
-        echo '************************************************************'
+        echo '::: Quality Gate ************************************************************'
         timeout(time: 1, unit: 'HOURS') {
             // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
             // true = set pipeline to UNSTABLE, false = don't
@@ -119,9 +119,9 @@ pipeline {
         }
       }
     }
-    stage('Build image') {      
+    stage('Build image') {
       steps {
-        echo '************************************************************'
+        echo '::: Build image ************************************************************'
         // sh '''
         // cd src
         // docker build -t go-app:v1 .
@@ -149,9 +149,9 @@ pipeline {
           sh 'curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl > html.tpl'
           sh 'mkdir -p reports'
 
-          sh '''
-          trivy image --format template --template "@html.tpl" -o reports/app-scan.html $REGISTRY_REPO:$tagVersion
-          '''
+          sh """
+          trivy image --format template --template "@html.tpl" -o reports/app-scan.html --vuln-type ${params.VULNERABILITY_TYPES} $REGISTRY_REPO:$tagVersion
+          """
 					publishHTML target : [
 							allowMissing: true,
 							alwaysLinkToLastBuild: true,
@@ -179,13 +179,13 @@ pipeline {
           //   error "Vulnerabilities found in the Docker image."
 					// }
 
-          sh "trivy image --exit-code 1 --severity ${params.IMAGE_SEVERITY_LEVELS} --vuln-type ${params.VULNERABILITY_TYPES} ${REGISTRY_REPO}:${params.tagVersion}"					
+          sh "trivy image --exit-code 1 --severity ${params.IMAGE_SEVERITY_LEVELS} --vuln-type ${params.VULNERABILITY_TYPES} ${REGISTRY_REPO}:${params.tagVersion}"
         }
       }
     }
     stage('Push image') {      
       steps {
-        echo '************************************************************'
+        echo '::: Push image ************************************************************'
         // sh '''
         // docker login -u docker -p 1234 https://registry:5000
         // docker tag go-app:v1 registry:5000/go-app:v1
@@ -213,9 +213,9 @@ pipeline {
     //     // '''
     //   }
     // }
-    stage('Trigger CD Pipeline') {   
+    stage('Trigger CD Pipeline') {
       steps {
-        echo '************************************************************'
+        echo '::: Trigger CD Pipeline ************************************************************'
 
         script {
           // Trigger builds remotely
