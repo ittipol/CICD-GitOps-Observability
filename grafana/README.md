@@ -8,7 +8,7 @@
 ``` bash
 kubectl create configmap cadvisor-k6-dashboard --from-file=./cadvisor-k6-dashboard.json -n monitoring
 
-kubectl create configmap cadvisor-k6-dashboard --from-file=./go-app-dashboard.json -n monitoring
+kubectl create configmap go-app-dashboard --from-file=./go-app-dashboard.json -n monitoring
 ```
 
 ## Apply Grafana dashboard config map

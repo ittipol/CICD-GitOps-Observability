@@ -19,3 +19,33 @@ kubectl logs -f {pod_name}
 ``` bash
 curl --resolve "goapp.example:80:$(minikube ip)" -i http://goapp.example
 ```
+
+## Communication between containers within same pod
+**Use localhost to communicate with other containers within the same pod**
+- 127.0.0.1:3000
+- 127.0.0.1:9000
+- 127.0.0.1:3306
+``` yaml
+spec:
+	containers:
+	- name: go-app
+		image: go-app:2.0
+		imagePullPolicy: Never
+		ports:
+		- containerPort: 3000
+			name: http
+		- containerPort: 9000
+			name: metrics
+		resources:
+			limits:
+				cpu: 500m
+				memory: 256Mi
+			requests:
+				cpu: 500m
+				memory: 128Mi
+	- name: mysql
+		image: mysql:8.0		
+		ports:
+		- containerPort: 3306
+			name: http
+```

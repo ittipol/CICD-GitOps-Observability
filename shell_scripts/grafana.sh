@@ -8,7 +8,7 @@ start_port_forward() {
 apply_dashboard() {
 	cd ../grafana/dashboard
 
-	kubectl apply -f cadvisor-k6-dashboard.yaml
+	kubectl apply -f ./k8s
 }
 
 case "$1" in

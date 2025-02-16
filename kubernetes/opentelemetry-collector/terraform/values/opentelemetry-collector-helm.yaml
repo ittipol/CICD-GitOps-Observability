@@ -21,6 +21,9 @@ config:
     #   endpoint: https://tempo.tempo.svc:4318
 
     # Data sources: metrics
+    prometheus:
+      endpoint: 0.0.0.0:8889
+      namespace: testapp
     # prometheus:
     #   endpoint: 0.0.0.0:8889
     #   namespace: default

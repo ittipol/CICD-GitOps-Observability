@@ -10,6 +10,8 @@ minikube start --driver=parallels
 minikube config
 minikube profile list
 
+minikube image load {image_name}
+
 docker-compose up -d docker-registry && docker-compose up -d nginx
 
 docker system prune -a
