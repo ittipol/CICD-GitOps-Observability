@@ -21,8 +21,8 @@ apply_cadvisor_pod_monitor() {
 }
 
 start_port_forward() {
-		local pod=$(kubectl -n "${NAMESPACE}" get pod -l app=cadvisor -o jsonpath="{.items[0].metadata.name}")
-		local port="$1"
+    local pod=$(kubectl -n "${NAMESPACE}" get pod -l app=cadvisor -o jsonpath="{.items[0].metadata.name}")
+    local port="$1"
 
     if [ "$1" = "" ]; then
         port="8083"

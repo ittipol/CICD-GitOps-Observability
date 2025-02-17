@@ -1,0 +1,39 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: go-app-proxy
+  namespace: go-app-proxy
+  labels:
+    release: prometheus # Matches kube-prometheus-stack release label
+spec:
+  namespaceSelector:
+    matchNames:
+    - go-app-proxy
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: go-app-server
+  endpoints:
+  - port: proxy-metric
+    path: /stats/prometheus
+    interval: 15s
+    scrapeTimeout: 15s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: go-app
+  namespace: go-app-proxy
+  labels:
+    release: prometheus # Matches kube-prometheus-stack release label
+spec:
+  namespaceSelector:
+    matchNames:
+    - go-app-proxy
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: go-app-server
+  endpoints:
+  - port: metrics
+    interval: 15s
+    scrapeTimeout: 15s

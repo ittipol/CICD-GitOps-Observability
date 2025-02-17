@@ -71,7 +71,7 @@ case "$1" in
             get_tags $2
         else 
             log_error "Invalid option: $1"
-        fi        
+        fi 
         exit 1
         ;;
     digest)        

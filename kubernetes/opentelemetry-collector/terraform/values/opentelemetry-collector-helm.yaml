@@ -8,28 +8,38 @@ config:
       verbosity: detailed
 
     # Data sources: traces, metrics, logs
-    otlp:
-      endpoint: https://tempo.tempo.svc:4318
-      tls:
-        insecure: true
+    # otlp:
+    #   endpoint: http://tempo.tempo.svc:4318
+    #   tls:
+    #     insecure: true
     #   tls:
     #     cert_file: cert.pem
     #     key_file: cert-key.pem
 
     # Data sources: traces, metrics
-    # otlphttp:
-    #   endpoint: https://tempo.tempo.svc:4318
+    otlphttp:
+      # endpoint:  # The target base URL to send data to
+      traces_endpoint: http://tempo.tempo.svc:4318 # The target URL to send trace data to
+      # metrics_endpoint:
+      # logs_endpoint
 
     # Data sources: metrics
-    prometheus:
-      endpoint: 0.0.0.0:8889
-      namespace: testapp
     # prometheus:
-    #   endpoint: 0.0.0.0:8889
-    #   namespace: default
+    #   endpoint: "0.0.0.0:8889"
+    #   tls:
+    #     ca_file: "/path/to/ca.pem"
+    #     cert_file: "/path/to/cert.pem"
+    #     key_file: "/path/to/key.pem"
+    #   namespace: test-space
+    #   const_labels:
+    #     label1: value1
+    #     "another label": spaced value
     #   send_timestamps: true
     #   metric_expiration: 180m
     #   enable_open_metrics: true
+    #   add_metric_suffixes: false
+    #   resource_to_telemetry_conversion:
+    #     enabled: true
 
   extensions:
     # The health_check extension is mandatory for this chart.
@@ -131,7 +141,7 @@ config:
           # - prometheus
       traces:
         exporters:
-          - otlp
+          - otlphttp
         processors:
           - memory_limiter
           - batch

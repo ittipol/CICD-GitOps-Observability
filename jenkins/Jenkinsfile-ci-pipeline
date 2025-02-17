@@ -145,7 +145,7 @@ pipeline {
         echo '::: Scan Docker Image ************************************************************'
         
         script {
-          // sh "curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.47.0"
+          // sh "curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.59.1"
           sh 'curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl > html.tpl'
           sh 'mkdir -p reports'
 
@@ -180,6 +180,9 @@ pipeline {
 					// }
 
           sh "trivy image --exit-code 1 --severity ${params.IMAGE_SEVERITY_LEVELS} --vuln-type ${params.VULNERABILITY_TYPES} ${REGISTRY_REPO}:${params.tagVersion}"
+
+          // Disable secret scanning
+          // sh "trivy image --scanners vuln --exit-code 1 --severity ${params.IMAGE_SEVERITY_LEVELS} --vuln-type ${params.VULNERABILITY_TYPES} ${REGISTRY_REPO}:${params.tagVersion}"                
         }
       }
     }

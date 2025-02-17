@@ -1,7 +1,7 @@
 # Install manually
 # helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
 # helm repo update
-# helm install opentelemetry-collector --namespace opentelemetry-collector --create-namespace --version 0.115.0 --values kubernetes/terraform/values/opentelemetry-collector-helm.yaml open-telemetry/opentelemetry-collector --set mode=<value> --set image.repository="otel/opentelemetry-collector-k8s" --set command.name="otelcol-k8s"
+# helm install opentelemetry-collector --namespace otelcol --create-namespace --version 0.115.0 --values kubernetes/terraform/values/opentelemetry-collector-helm.yaml open-telemetry/opentelemetry-collector --set mode=<value> --set image.repository="otel/opentelemetry-collector-k8s" --set command.name="otelcol-k8s"
 
 locals {
   helm_extra_args = {
@@ -16,7 +16,7 @@ resource "helm_release" "open-telemetry" {
 
   repository       = "https://open-telemetry.github.io/opentelemetry-helm-charts"
   chart            = "opentelemetry-collector"
-  namespace        = "opentelemetry-collector"
+  namespace        = "otelcol"
   version          = "0.115.0"
   create_namespace = true
 
