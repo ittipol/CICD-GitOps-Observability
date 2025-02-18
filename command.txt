@@ -10,7 +10,12 @@ minikube start --driver=parallels
 minikube config
 minikube profile list
 
-minikube image load {image_name}
+## Push images
+## Loading directly to in-cluster container runtime
+minikube image load {image_name:tag}
+
+## Building images to in-cluster container runtime
+minikube image build -t {image_name:tag} .
 
 docker-compose up -d docker-registry && docker-compose up -d nginx
 

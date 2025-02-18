@@ -1,3 +1,10 @@
+# mode: daemonset
+
+# presets:
+#   logsCollection:
+#     enabled: true
+#     includeCollectorLogs: true
+
 config:
   exporters:
     # Data sources: traces, metrics, logs
@@ -8,8 +15,15 @@ config:
       verbosity: detailed
 
     # Data sources: traces, metrics, logs
+    otlp/tempo:
+      endpoint: tempo.tempo.svc:4317
+      tls:
+        insecure: true
+    #   tls:
+    #     cert_file: cert.pem
+    #     key_file: cert-key.pem
     # otlp:
-    #   endpoint: http://tempo.tempo.svc:4318
+    #   endpoint: url:4318
     #   tls:
     #     insecure: true
     #   tls:
@@ -17,11 +31,26 @@ config:
     #     key_file: cert-key.pem
 
     # Data sources: traces, metrics
-    otlphttp:
+    # otlphttp:
       # endpoint:  # The target base URL to send data to
-      traces_endpoint: http://tempo.tempo.svc:4318 # The target URL to send trace data to
+      # traces_endpoint: http://tempo.tempo.svc:4318 # The target URL to send trace data to
       # metrics_endpoint:
       # logs_endpoint
+
+    # otlphttp/loki:
+    #   # auth:
+    #   #   authenticator: basicauth/loki
+    #   endpoint: loki.loki.svc:3100/loki/api/v1/push
+
+    # loki:
+    #   # auth:
+    #   #   authenticator: basicauth/loki
+    #   endpoint: https://loki.example.com:3100/loki/api/v1/push
+    #   # tls:
+    #   #   insecure: true
+    #   # default_labels_enabled:
+    #   #   exporter: true
+    #   #   job: true
 
     # Data sources: metrics
     # prometheus:
@@ -67,17 +96,17 @@ config:
     #   endpoint: ${env:MY_POD_IP}:8006
 
     # Data sources: metrics
-    hostmetrics:
-      scrapers:
-        cpu:
-        disk:
-        filesystem:
-        load:
-        memory:
-        network:
-        process:
-        processes:
-        paging:
+    # hostmetrics:
+    #   scrapers:
+    #     cpu:
+    #     disk:
+    #     filesystem:
+    #     load:
+    #     memory:
+    #     network:
+    #     process:
+    #     processes:
+    #     paging:
 
     # Data sources: traces
     jaeger:
@@ -100,16 +129,20 @@ config:
           endpoint: ${env:MY_POD_IP}:4317
         http:
           endpoint: ${env:MY_POD_IP}:4318
+          cors:
+            allowed_origins:
+              - "http://*"
+              - "https://*"
 
     # Data sources: metrics
-    # prometheus:
-    #   config:
-    #     scrape_configs:
-    #       - job_name: opentelemetry-collector
-    #         scrape_interval: 15s
-    #         static_configs:
-    #           - targets:
-    #               - ${env:MY_POD_IP}:8888
+    prometheus:
+      config:
+        scrape_configs:
+          - job_name: opentelemetry-collector
+            scrape_interval: 10s
+            static_configs:
+              - targets:
+                  - ${env:MY_POD_IP}:8888
 
     # Data sources: traces          
     # zipkin:
@@ -119,12 +152,15 @@ config:
     telemetry:
       metrics:
         address: ${env:MY_POD_IP}:8888
+      # logs:
+      #   level: debug
     extensions:
       - health_check
     pipelines:
       logs:
         exporters:
           - debug
+          # - otlphttp
         processors:
           - memory_limiter
           - batch
@@ -141,13 +177,13 @@ config:
           # - prometheus
       traces:
         exporters:
-          - otlphttp
+          - otlp/tempo
         processors:
           - memory_limiter
           - batch
         receivers:
           - otlp
-          - jaeger
+          # - jaeger
           # - zipkin
 
 # Configuration for ports
