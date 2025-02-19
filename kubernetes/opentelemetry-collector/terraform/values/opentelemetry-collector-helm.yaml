@@ -14,6 +14,9 @@ config:
     debug:
       verbosity: detailed
 
+    # logging:
+    #   logLevel: debug
+
     # Data sources: traces, metrics, logs
     otlp/tempo:
       endpoint: tempo.tempo.svc:4317
@@ -37,10 +40,13 @@ config:
       # metrics_endpoint:
       # logs_endpoint
 
-    # otlphttp/loki:
-    #   # auth:
-    #   #   authenticator: basicauth/loki
-    #   endpoint: loki.loki.svc:3100/loki/api/v1/push
+    otlphttp/loki:
+      # auth:
+      #   authenticator: basicauth/loki
+      endpoint: http://loki.loki.svc:3100/otlp
+
+    # otlphttp/prometheus:
+    #   endpoint: http://prometheus-operated.monitoring.svc:9090/otlp
 
     # loki:
     #   # auth:
@@ -54,11 +60,11 @@ config:
 
     # Data sources: metrics
     # prometheus:
-    #   endpoint: "0.0.0.0:8889"
-    #   tls:
-    #     ca_file: "/path/to/ca.pem"
-    #     cert_file: "/path/to/cert.pem"
-    #     key_file: "/path/to/key.pem"
+    #   endpoint: "${env:MY_POD_IP}:8889"
+    #   # tls:
+    #   #   ca_file: "/path/to/ca.pem"
+    #   #   cert_file: "/path/to/cert.pem"
+    #   #   key_file: "/path/to/key.pem"
     #   namespace: test-space
     #   const_labels:
     #     label1: value1
@@ -159,8 +165,8 @@ config:
     pipelines:
       logs:
         exporters:
-          - debug
-          # - otlphttp
+          # - debug
+          - otlphttp/loki
         processors:
           - memory_limiter
           - batch
@@ -168,7 +174,9 @@ config:
           - otlp
       metrics:
         exporters:
-          - debug
+          # - debug
+          - prometheus
+          # - otlphttp/prometheus
         processors:
           - memory_limiter
           - batch

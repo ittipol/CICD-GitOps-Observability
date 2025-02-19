@@ -139,7 +139,13 @@ ping $(minikube ip)
 10. Explore tempo will display traces that created from Go application
 
 ## Collector
-**OpenTelemetry Collector**
+### OpenTelemetry Collector
+OpenTelemetry Collector pipeline has 3 steps
+```
+Receivers —> Processors —> Exporters
+```
+
+**Install OpenTelemetry Collector**
 1. Install OpenTelemetry Collector by running "./opentelemetry.sh install"
 
 ## OpenTelemetry Language APIs & SDKs
