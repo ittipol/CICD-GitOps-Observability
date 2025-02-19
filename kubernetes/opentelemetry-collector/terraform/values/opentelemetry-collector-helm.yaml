@@ -174,8 +174,7 @@ config:
           - otlp
       metrics:
         exporters:
-          # - debug
-          - prometheus
+          - debug
           # - otlphttp/prometheus
         processors:
           - memory_limiter

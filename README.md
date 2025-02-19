@@ -147,6 +147,7 @@ Receivers —> Processors —> Exporters
 
 **Install OpenTelemetry Collector**
 1. Install OpenTelemetry Collector by running "./opentelemetry.sh install"
+2. OpenTelemetry Collector will deploy on Kubernetes
 
 ## OpenTelemetry Language APIs & SDKs
 https://opentelemetry.io/docs/languages/
