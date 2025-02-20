@@ -151,3 +151,14 @@ Receivers —> Processors —> Exporters
 
 ## OpenTelemetry Language APIs & SDKs
 https://opentelemetry.io/docs/languages/
+
+## Trivy
+``` bash
+trivy [command] .
+
+# Scan manifest files
+trivy config ./k8s
+
+# Scan a container image
+trivy image {image:tag}
+```
