@@ -1,3 +1,7 @@
+prometheusOperator:
+  extraArgs:
+    - --web.enable-otlp-receiver
+
 grafana:
   additionalDataSources: 
   - name: influxdb

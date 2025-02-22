@@ -45,8 +45,12 @@ config:
       #   authenticator: basicauth/loki
       endpoint: http://loki.loki.svc:3100/otlp
 
-    # otlphttp/prometheus:
-    #   endpoint: http://prometheus-operated.monitoring.svc:9090/otlp
+    otlphttp/prometheus:
+      # otlp write receiver needs to be enabled with --web.enable-otlp-receiver
+      endpoint: http://prometheus-operated.monitoring.svc:9090/api/v1/otlp
+      # metrics_endpoint: http://prometheus-operated.monitoring.svc:9090/api/v1/otlp/v1/metrics
+      # tls:
+      #   insecure: true
 
     # loki:
     #   # auth:
@@ -174,8 +178,8 @@ config:
           - otlp
       metrics:
         exporters:
-          - debug
-          # - otlphttp/prometheus
+          # - debug
+          - otlphttp/prometheus
         processors:
           - memory_limiter
           - batch
