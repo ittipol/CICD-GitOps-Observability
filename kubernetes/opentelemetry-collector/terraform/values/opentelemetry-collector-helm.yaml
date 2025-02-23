@@ -35,10 +35,11 @@ config:
 
     # Data sources: traces, metrics
     # otlphttp:
-      # endpoint:  # The target base URL to send data to
-      # traces_endpoint: http://tempo.tempo.svc:4318 # The target URL to send trace data to
-      # metrics_endpoint:
-      # logs_endpoint
+      # endpoint: https://url:4318 # The target base URL to send data to      
+      # To send each signal a corresponding path will be added to this base URL, i.e. for traces "/v1/traces" will appended, for metrics "/v1/metrics" will be appended, for logs "/v1/logs" will be appended.
+      # traces_endpoint: # The target URL to send trace data to -> https://url:4318/v1/traces. If this setting is present the endpoint setting is ignored for traces
+      # metrics_endpoint: # The target URL to send metric data to -> https://url:4318/v1/metrics. If this setting is present the endpoint setting is ignored for metrics
+      # logs_endpointL # The target URL to send log data to -> https://url:4318/v1/logs. If this setting is present the endpoint setting is ignored logs
 
     otlphttp/loki:
       # auth:

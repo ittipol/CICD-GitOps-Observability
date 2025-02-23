@@ -1,6 +1,6 @@
-prometheusOperator:
-  extraArgs:
-    - --web.enable-otlp-receiver
+# prometheusOperator:
+#   extraArgs:
+#     - --web.enable-otlp-receiver
 
 grafana:
   additionalDataSources: 
