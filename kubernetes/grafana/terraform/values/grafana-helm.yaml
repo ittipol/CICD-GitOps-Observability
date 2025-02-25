@@ -8,6 +8,28 @@ datasources:
   datasources.yaml:
     apiVersion: 1
     datasources:
+    - name: Prometheus
+      uid: prometheus    
+      type: prometheus
+      access: proxy
+      orgId: 1
+      url: http://prometheus.prometheus.svc:9090/
+      basicAuth: false
+      isDefault: true
+      jsonData:
+        httpMethod: POST
+        timeInterval: 30s
+    - name: Alertmanager
+      uid: alertmanager    
+      type: alertmanager
+      access: proxy
+      orgId: 1
+      url: http://prometheus-alertmanager.prometheus.svc:9093/
+      basicAuth: false
+      isDefault: false
+      jsonData:
+        handleGrafanaManagedAlerts: false
+        implementation: prometheus
     - name: influxdb
       uid: influxdb    
       type: influxdb
@@ -25,3 +47,22 @@ datasources:
         tlsAuth: false
         tlsAuthWithCACert: false
         tlsSkipVerify: false
+    - name: loki
+      uid: loki    
+      type: loki
+      access: proxy
+      orgId: 1
+      url: http://loki.loki.svc:3100
+      basicAuth: false
+      isDefault: false
+      jsonData:
+        timeout: 300
+    - name: tempo
+      uid: tempo    
+      type: tempo
+      access: proxy
+      orgId: 1
+      url: http://tempo.tempo.svc:3100
+      basicAuth: false
+      isDefault: false
+      jsonData: {}

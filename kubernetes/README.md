@@ -13,6 +13,12 @@ kubectl get [resource] [resources_name] -n [namespace] --watch
 ## Log streaming
 ``` bash
 kubectl logs -f {pod_name}
+
+# Check the logs for container inside pod in there are multiple containers
+kubectl logs -f {pod_name} -c {container_name}
+kubectl logs -f {pod_name} -c {container_name} -n {namespace}
+
+# kubectl logs -f go-app-66cf55f986-gqf99 -c go-app -n go-app
 ```
 
 ## Ingress

@@ -41,10 +41,17 @@ config:
       # metrics_endpoint: # The target URL to send metric data to -> https://url:4318/v1/metrics. If this setting is present the endpoint setting is ignored for metrics
       # logs_endpointL # The target URL to send log data to -> https://url:4318/v1/logs. If this setting is present the endpoint setting is ignored logs
 
+    # otlphttp/tempo:
+    #   endpoint: http://tempo.tempo.svc:4318
+    #   tls:
+    #     insecure: true
+
     otlphttp/loki:
       # auth:
       #   authenticator: basicauth/loki
       endpoint: http://loki.loki.svc:3100/otlp
+      tls:
+        insecure: true
 
     otlphttp/prometheus:
       # otlp write receiver needs to be enabled with --web.enable-otlp-receiver

@@ -138,9 +138,8 @@ ping $(minikube ip)
 9. Type {} to input field 
 10. Explore tempo will display traces that created from Go application
 
-## Collector
-### OpenTelemetry Collector
-OpenTelemetry Collector pipeline has 3 steps
+## OpenTelemetry Collector
+**OpenTelemetry Collector pipeline has 3 steps**
 ```
 Receivers —> Processors —> Exporters
 ```
@@ -149,8 +148,66 @@ Receivers —> Processors —> Exporters
 1. Install OpenTelemetry Collector by running "./opentelemetry.sh install"
 2. OpenTelemetry Collector will deploy on Kubernetes
 
-## OpenTelemetry Language APIs & SDKs
+**OpenTelemetry Language APIs & SDKs** \
 https://opentelemetry.io/docs/languages/
+
+**OpenTelemetry Collector config**
+``` yaml
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+  prometheus/collector:
+    config:
+      scrape_configs:
+        - job_name: "opentelemetry-collector"
+          static_configs:
+            - targets: ["localhost:8888"]
+
+processors:
+  batch:
+
+exporters:
+  otlphttp/metrics:
+    endpoint: http://localhost:9090/api/v1/otlp # Prometheus
+    tls:
+      insecure: true
+  otlphttp/traces:
+    endpoint: http://localhost:4318 # Tempo
+    tls:
+      insecure: true
+  otlphttp/logs:
+    endpoint: http://localhost:3100/otlp # Loki
+    tls:
+      insecure: true
+  debug/metrics:
+    verbosity: detailed
+  debug/traces:
+    verbosity: detailed
+  debug/logs:
+    verbosity: detailed
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlphttp/traces]
+      #exporters: [otlphttp/traces,debug/traces]
+    metrics:
+      receivers: [otlp, prometheus/collector]
+      processors: [batch]
+      exporters: [otlphttp/metrics]
+      #exporters: [otlphttp/metrics,debug/metrics]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlphttp/logs]
+      #exporters: [otlphttp/logs,debug/logs]
+```
 
 ## Trivy
 ``` bash
