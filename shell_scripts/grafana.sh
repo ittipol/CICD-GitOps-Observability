@@ -1,6 +1,19 @@
 #!/bin/bash
 set -e
 
+install() {
+    cd ../kubernetes/grafana/terraform
+
+    terraform init
+    terraform apply
+}
+
+destroy() {
+    cd ../kubernetes/grafana/terraform
+
+    terraform destroy
+}
+
 start_port_forward() {
   kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
 }
@@ -12,6 +25,12 @@ apply_dashboard() {
 }
 
 case "$1" in
+	install)
+		install
+	;;
+	destroy)
+		destroy
+	;;
 	-s) 
 		start_port_forward
     ;;

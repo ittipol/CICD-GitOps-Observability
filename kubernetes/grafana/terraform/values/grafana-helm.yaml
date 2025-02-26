@@ -1,5 +1,17 @@
 adminUser: admin
-adminPassword: 1234
+adminPassword: admin
+
+persistence:
+  type: pvc
+  enabled: true
+
+sidecar:
+  dashboards:
+    enabled: true
+    label: grafana_dashboard
+    labelValue: "1"
+    # Allow discovery in all namespaces for dashboards
+    searchNamespace: ALL
 
 ## Configure grafana datasources
 ## ref: http://docs.grafana.org/administration/provisioning/#datasources
