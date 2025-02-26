@@ -2,14 +2,16 @@
 set -e
 
 install() {
-    cd ../kubernetes/kube-prometheus-stack/terraform
+    # cd ../kubernetes/kube-prometheus-stack/terraform
+	cd ../kubernetes/prometheus/terraform
 
     terraform init
     terraform apply
 }
 
 destroy() {
-    cd ../kubernetes/kube-prometheus-stack/terraform
+    # cd ../kubernetes/kube-prometheus-stack/terraform
+	cd ../kubernetes/prometheus/terraform
 
     terraform destroy
 }

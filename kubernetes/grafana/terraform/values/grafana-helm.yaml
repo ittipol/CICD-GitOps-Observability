@@ -25,7 +25,7 @@ datasources:
       type: prometheus
       access: proxy
       orgId: 1
-      url: http://prometheus.prometheus.svc:9090/
+      url: http://prometheus-server.prometheus.svc
       basicAuth: false
       isDefault: true
       jsonData:
@@ -36,7 +36,7 @@ datasources:
       type: alertmanager
       access: proxy
       orgId: 1
-      url: http://prometheus-alertmanager.prometheus.svc:9093/
+      url: http://prometheus-alertmanager.prometheus.svc:9093
       basicAuth: false
       isDefault: false
       jsonData:

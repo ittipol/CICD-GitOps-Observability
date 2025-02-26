@@ -10,6 +10,12 @@ kubectl get [resource] [resources_name] -n [namespace] --watch
 # kubectl get deployment ingress-nginx-controller -n ingress-nginx --watch
 ```
 
+## Shell into pod
+``` bash
+kubectl exec -it {pod_name} -n {namespace} -- sh
+kubectl exec -it {pod_name} -n {namespace} -c {container_name}  -- sh
+```
+
 ## Log streaming
 ``` bash
 kubectl logs -f {pod_name}

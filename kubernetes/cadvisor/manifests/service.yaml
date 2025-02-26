@@ -5,12 +5,13 @@ metadata:
   name: cadvisor
   namespace: cadvisor
   labels:
-    name: cadvisor
+    app.kubernetes.io/name: cadvisor-service
 spec:
   clusterIP: None
   ports:
   - name: http
     port: 8080
-    targetPort: http
+    # targetPort: http
+    targetPort: 8080
   selector:
     name: cadvisor

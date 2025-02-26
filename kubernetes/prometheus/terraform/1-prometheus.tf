@@ -11,5 +11,5 @@ resource "helm_release" "prometheus" {
   version          = "27.4.0"
   create_namespace = true
 
-  # values = [file("values/prometheus-helm.yaml")]
+  values = [file("values/prometheus-value.yaml")]
 }
