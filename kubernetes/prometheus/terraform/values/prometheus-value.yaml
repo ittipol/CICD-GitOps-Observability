@@ -7,6 +7,17 @@ server:
 serverFiles:
   prometheus.yml:
     scrape_configs:
+      - job_name: 'cadvisor-metric'
+      
+        scrape_interval: 2m
+        scrape_timeout: 30s
+
+        static_configs:
+          - targets:
+            - cadvisor.cadvisor.svc:8080
+            labels:
+              app.kubernetes.io/name: cadvisor-service
+
       - job_name: prometheus
         static_configs:
           - targets:
@@ -416,13 +427,4 @@ serverFiles:
             action: drop
           - source_labels: [__meta_kubernetes_pod_node_name]
             action: replace
-            target_label: node
-
-      - job_name: 'cadvisor'
-        scrape_interval: 15s
-        scrape_timeout: 30s
-        static_configs:
-          - targets:
-            - cadvisor.cadvisor.svc:8080
-            labels:
-              app.kubernetes.io/name: cadvisor-service
+            target_label: node            
