@@ -7,10 +7,20 @@ server:
 serverFiles:
   prometheus.yml:
     scrape_configs:
+      - job_name: 'istio-envoy-proxy'
+      
+        scrape_interval: 15s
+        scrape_timeout: 15s
+        metrics_path: /stats/prometheus
+
+        static_configs:
+          - targets:
+            - go-app-server.go-app.svc:9901
+
       - job_name: 'cadvisor-metric'
       
-        scrape_interval: 2m
-        scrape_timeout: 30s
+        scrape_interval: 15s
+        scrape_timeout: 15s
 
         static_configs:
           - targets:

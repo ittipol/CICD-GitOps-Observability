@@ -17,7 +17,8 @@ destroy() {
 }
 
 start_port_forward() {
-  kubectl port-forward svc/prometheus-operated -n monitoring 9090:9090
+#   kubectl port-forward svc/prometheus-operated -n monitoring 9090:9090
+	kubectl port-forward svc/prometheus-server -n prometheus 9090:80
 }
 
 case "$1" in
