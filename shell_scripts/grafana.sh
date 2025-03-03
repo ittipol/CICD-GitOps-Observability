@@ -15,7 +15,7 @@ destroy() {
 }
 
 start_port_forward() {
-  kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
+  kubectl port-forward svc/grafana -n grafana 3000:80
 }
 
 apply_dashboard() {

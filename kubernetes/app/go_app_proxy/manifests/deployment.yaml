@@ -22,21 +22,39 @@ spec:
         app.kubernetes.io/name: go-app-proxy    
     spec:
       containers:
-      # - name: envoy-sidecar
-      #   image: envoyproxy/envoy:v1.33.0
-      #   ports:
-      #   - containerPort: 5055
-      #     name: proxy
-      #   - containerPort: 9901
-      #     name: proxy-metric
-      #   args:
-      #   - "--config-path"
-      #   - "/etc/envoy/envoy.yaml"
-      #   volumeMounts:
-      #   - name: envoy-config-volume
-      #     mountPath: /etc/envoy
-      - name: go-app
-        image: go-app:2.0
+      - name: envoy-sidecar
+        image: envoyproxy/envoy:v1.33.0
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          runAsNonRoot: true
+          readOnlyRootFilesystem: true
+          runAsUser: 10001
+          runAsGroup: 10001
+          seccompProfile:
+            type: RuntimeDefault
+        ports:
+        - containerPort: 5055
+          name: proxy
+        - containerPort: 9901
+          name: proxy-metric
+        args:
+        - "--config-path"
+        - "/etc/envoy/envoy.yaml"
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi
+        volumeMounts:
+        - name: envoy-config-volume
+          mountPath: /etc/envoy
+      - name: go-app-otel-test
+        image: host.minikube.internal:5000/go-app-otel-test:1.0.0
         imagePullPolicy: Never
         securityContext:
           allowPrivilegeEscalation: false
@@ -48,12 +66,12 @@ spec:
           runAsUser: 10001
           runAsGroup: 10001
           seccompProfile:
-            type: RuntimeDefault         
+            type: RuntimeDefault
         ports:
         - containerPort: 3000
           name: http
-        - containerPort: 9000
-          name: metrics
+        # - containerPort: 9000
+        #   name: metrics
         resources:
           limits:
             cpu: 500m

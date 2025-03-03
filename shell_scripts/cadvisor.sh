@@ -7,6 +7,7 @@ install() {
     # if no parameter is provided, use the default version
     local version="$1"
     if [ "$1" = "" ]; then
+        # https://github.com/google/cadvisor/releases
         version="v0.49.2"
     fi
 

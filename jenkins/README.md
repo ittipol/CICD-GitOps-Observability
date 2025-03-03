@@ -78,7 +78,7 @@ Jenkins (Docker client) --[tcp://docker:2376]--> dind (Docker daemon) --[registr
 ### Solution 1: Mount host machine /var/run/docker.sock in your container
 ``` yaml
 volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+    - /var/run/docker.sock:/var/run/docker.sock
 ```
 
 ### Solution 2: Use docker-in-docker (DinD) image
