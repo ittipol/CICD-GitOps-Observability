@@ -73,7 +73,7 @@ ping $(minikube ip)
 ## Deploy Go application on Kubernetes
 ### Pull-based GitOps
 **Install Argo CD**
-1. Install Argo CD by running "./argocd.sh -i"
+1. Install Argo CD by running "./argocd.sh install"
 2. Argo CD will install on Kubernetes
 
 **Deploy Go application**

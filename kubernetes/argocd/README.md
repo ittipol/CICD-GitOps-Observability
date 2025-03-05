@@ -1,23 +1,22 @@
 # Argo CD
 
-
 ## Install Argo CD
 ``` bash
 chmod +x ./scripts/argocd.sh
 
-./scripts/argocd.sh -i
+./scripts/argocd.sh install
 ```
 
 ## Password
 ``` bash
 # kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
-./scripts/argocd.sh -p
+./scripts/argocd.sh password
 ```
 
 ## Port-forward
 ``` bash
-# kubectl port-forward service/argocd-server -n argocd 5050:443
-./scripts/argocd.sh -s 5050
+# kubectl port-forward service/argocd-server -n argocd 8084:443
+./scripts/argocd.sh -s 8084
 ```
 
 ## Login
