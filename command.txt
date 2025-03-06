@@ -4,6 +4,7 @@ kubectl get node -o wide
 kubectl describe nodes
 kubectl config current-context
 echo $(kubectl get node minikube -o jsonpath='{.status.capacity}')
+kubectl api-versions
 
 minikube start --driver=parallels
 
