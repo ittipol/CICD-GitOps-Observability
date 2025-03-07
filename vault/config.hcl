@@ -7,8 +7,9 @@ cluster_addr  = "http://127.0.0.1:8201"
 api_addr      = "http://127.0.0.1:8200"
 disable_mlock = true
 
-storage "file" {
+storage "raft" {
   path = "/opt/vault/data"
+  node_id = "node1"
 }
  
 listener "tcp" {

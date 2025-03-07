@@ -1,3 +1,27 @@
 server:
-  dev:
+  # dev:
+  #   enabled: true
+  
+  ha:
     enabled: true
+    replicas: 1
+
+    # config is a raw string of default configuration when using a Stateful
+    # deployment. Default is to use a Consul for its HA storage backend.
+    # This should be HCL.
+    config: |
+      ui = true
+
+      listener "tcp" {
+        tls_disable = 1
+        address = "[::]:8200"
+        cluster_address = "[::]:8201"
+      }
+      storage "consul" {
+        path = "vault"
+        address = "consul-consul-server:8500"
+      }
+
+ui:
+  enabled: true
+  externalPort: 8200

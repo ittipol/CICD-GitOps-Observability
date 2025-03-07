@@ -10,6 +10,7 @@ services:
       DOCKER_HOST: "tcp://docker:2376"
       DOCKER_CERT_PATH: "/certs/client"
       DOCKER_TLS_VERIFY: 1
+      # VAULT_ADDR: "http://vault:8200"
     volumes:
       # - /var/run/docker.sock:/var/run/docker.sock
       - jenkins-data:/var/jenkins_home
@@ -108,6 +109,17 @@ services:
       retries: 5
     networks:
       - jenkins
+
+  # vault:
+  #   build: ./dockerfiles/vault
+  #   container_name: vault
+  #   restart: unless-stopped
+  #   environment:
+  #     VAULT_ADDR: "http://127.0.0.1:8200"
+  #   volumes:
+  #     - ./vault:/etc/vault:ro
+  #   networks:
+  #     - jenkins
     
 networks:
   jenkins:
