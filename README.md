@@ -217,6 +217,21 @@ service:
       #exporters: [otlphttp/logs,debug/logs]
 ```
 
+## Vault
+**Install Consul**
+1. Install Consul by running "./consul.sh install"
+2. Consul will deploy on Kubernetes
+
+**Install Vault**
+1. Install Vault by running "./vault.sh install"
+2. Vault will deploy on Kubernetes
+
+### Database dynamic secret creation
+**Enable the database engine**
+``` bash
+vault secrets enable database
+```
+
 ## Trivy
 ``` bash
 trivy [command] .

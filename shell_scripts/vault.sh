@@ -15,11 +15,7 @@ destroy() {
 }
 
 start_port_forward() {
-	kubectl port-forward svc/vault -n vault 8200:8200
-}
-
-start_ui() {
-	kubectl port-forward svc/vault-ui -n vault 8400:8200
+	kubectl port-forward vault-0 -n vault 8200:8200
 }
 
 case "$1" in
@@ -31,9 +27,6 @@ case "$1" in
 	;;
 	-s) 
 		start_port_forward
-    ;;
-	ui) 
-		start_ui
     ;;
     *)
 		echo "Invalid option" >&2

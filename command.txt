@@ -3,8 +3,10 @@ alias k=kubectl
 kubectl get node -o wide
 kubectl describe nodes
 kubectl config current-context
+kubectl cluster-info
 echo $(kubectl get node minikube -o jsonpath='{.status.capacity}')
 kubectl api-versions
+kubectl get pod -l app=webapp -o jsonpath="{.items[0].metadata.name}
 
 minikube start --driver=parallels
 
