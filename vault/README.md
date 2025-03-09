@@ -59,14 +59,14 @@ vault policy write only-read /path/to/policy.hcl
 vault operator init
 ```
 
-**Login**
-``` bash
-vault login
-```
-
 **Unseal a Vault**
 ``` bash
 vault operator unseal
+```
+
+**Login**
+``` bash
+vault login
 ```
 
 **Create a policy**
@@ -85,5 +85,5 @@ path "go-app/*" {
 **Create a token**
 ``` bash
 vault token create -period=30m -use-limit=100 -renewable=true -explicit-max-ttl=1h -policy=only-read
-vault token create  -period=5m -policy=db-user-creation
+vault token create -period=5m -policy=db-user-creation
 ```

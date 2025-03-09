@@ -27,6 +27,11 @@ kubectl logs -f {pod_name} -c {container_name} -n {namespace}
 # kubectl logs -f go-app-66cf55f986-gqf99 -c go-app -n go-app
 ```
 
+## Delete all resources
+``` bash
+kubectl delete all --all -n {namespace}
+```
+
 ## Ingress
 ``` bash
 curl --resolve "goapp.example:80:$(minikube ip)" -i http://goapp.example

@@ -92,9 +92,19 @@ ping $(minikube ip)
 2. Grafana will install on Kubernetes
 
 **Install Grafana and Prometheus via kube-prometheus-stack** \
-kube-prometheus-stack will apply ServiceMonitor and PodMonitor CRD (CustomResourceDefinition)
+kube-prometheus-stack will automatically install ServiceMonitor and PodMonitor CRD (CustomResourceDefinition)
 1. Install Grafana and Prometheus by running "./kube-prometheus-stack.sh install"
 2. Grafana and Prometheus will install on Kubernetes
+
+**Manually Install ServiceMonitor and PodMonitor CRD** \
+https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack/charts/crds/crds
+``` bash
+# Install ServiceMonitor CRD
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.80.1/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
+
+# Install PodMonitor CRD
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.80.1/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
+```
 
 ### The Three Pillars of Observability: Logs, Metrics, and Traces
 
@@ -230,6 +240,124 @@ service:
 **Enable the database engine**
 ``` bash
 vault secrets enable database
+```
+
+**Install postgresql**
+``` bash
+./postgresql.sh install
+```
+
+**Create a database configuration**
+``` bash
+vault write database/config/postgresdb \
+    plugin_name=postgresql-database-plugin \
+    allowed_roles="sql-create-user-role" \
+    allowed_roles="sql-all-access-role" \
+    connection_url="postgresql://{{username}}:{{password}}@postgresql.postgresql.svc:5432/postgresdb?sslmode=disable" \
+    username="admin" \
+    password="password1234"
+```
+
+**Create a database role**
+``` bash
+ vault write database/roles/sql-create-user-role \
+    db_name=postgresdb \
+    creation_statements="CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; \
+        GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"{{name}}\";" \
+    default_ttl="1h" \
+    max_ttl="24h"
+
+  vault write database/roles/sql-all-access-role \
+    db_name=postgresdb \
+    creation_statements="CREATE ROLE \"{{name}}\" WITH LOGIN ENCRYPTED PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; \
+        GRANT ALL PRIVILEGES ON SCHEMA public TO \"{{name}}\";" \
+    default_ttl="1h" \
+    max_ttl="24h"
+```
+
+**Test database role**
+``` bash
+vault read database/creds/sql-create-user-role
+
+vault read database/creds/sql-all-access-role
+
+# Shell into postgresql pod
+kubectl exec -it postgresql-0 -n postgresql -- sh
+
+# Login to postgresql
+psql -U admin -d postgresdb
+
+# Display postgresql user
+\du
+```
+
+**Create a policy**
+``` bash
+vault policy write database-only-read-policy - <<EOF
+path "database/creds/sql-create-user-role" {
+  capabilities = ["read"]
+}
+EOF
+
+vault policy write sql-all-access-role-policy - <<EOF
+path "database/creds/sql-all-access-role" {
+  capabilities = ["read"]
+}
+EOF
+```
+
+**Enable the Kubernetes authentication**
+``` bash
+vault auth enable kubernetes
+```
+
+**Create a Kubernetes configuration**
+``` bash
+vault write auth/kubernetes/config \
+    token_reviewer_jwt="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \
+    kubernetes_host=https://${KUBERNETES_PORT_443_TCP_ADDR}:443 \
+    kubernetes_ca_cert=@/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+```
+
+**Bind a role to a Kubernetes service account**
+``` bash
+vault write auth/kubernetes/role/sql-create-user-role \
+   bound_service_account_names=go-app-sa \
+   bound_service_account_namespaces=go-app \
+   policies=database-only-read-policy \
+   ttl=1h
+```
+
+**Inject a secret to a pod**
+``` yaml
+# Deployment
+annotations:
+  vault.hashicorp.com/agent-inject: "true"
+  vault.hashicorp.com/tls-skip-verify: "true"
+  vault.hashicorp.com/agent-inject-secret-sql-create-user-role: "database/creds/sql-create-user-role"
+  vault.hashicorp.com/agent-inject-template-sql-create-user-role: |
+    {
+    {{- with secret "database/creds/sql-create-user-role" -}}
+      "db_connection": "host=postgres.postgres.svc port=5432 user={{ .Data.username }} password={{ .Data.password }} dbname=postgresqldb sslmode=disable TimeZone=Asia/Bangkok"
+    {{- end }}
+    }
+  vault.hashicorp.com/role: "sql-create-user-role"
+```
+
+**View a secret in a pod**
+``` bash
+kubectl exec -it {pod_name} -n go-app -c go-app -- sh
+
+cat /vault/secrets/sql-create-user-role
+```
+
+**Create a token for creating database username and password for developing or testing**
+``` bash
+vault token create -period=1h -ttl=24h -policy=database-only-read-policy
+
+vault token create -period=1h -ttl=24h -policy=sql-all-access-role-policy
+
+vault token create -period=1h -ttl=24h -policy=database-only-read-policy -policy=sql-all-access-role-policy
 ```
 
 ## Trivy
