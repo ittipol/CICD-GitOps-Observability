@@ -164,7 +164,7 @@ Receivers —> Processors —> Exporters
 
 **Install OpenTelemetry Collector**
 1. Install OpenTelemetry Collector by running "./opentelemetry.sh install"
-2. OpenTelemetry Collector will deploy on Kubernetes
+2. OpenTelemetry Collector will install on Kubernetes
 
 **OpenTelemetry Language APIs & SDKs** \
 https://opentelemetry.io/docs/languages/
@@ -230,11 +230,11 @@ service:
 ## Vault
 **Install Consul**
 1. Install Consul by running "./consul.sh install"
-2. Consul will deploy on Kubernetes
+2. Consul will install on Kubernetes
 
 **Install Vault**
 1. Install Vault by running "./vault.sh install"
-2. Vault will deploy on Kubernetes
+2. Vault will install on Kubernetes
 
 ### Database dynamic secret creation
 **Enable the database engine**
@@ -242,7 +242,7 @@ service:
 vault secrets enable database
 ```
 
-**Install postgresql**
+**Install Postgresql**
 ``` bash
 ./postgresql.sh install
 ```
@@ -260,34 +260,39 @@ vault write database/config/postgresdb \
 
 **Create a database role**
 ``` bash
- vault write database/roles/sql-create-user-role \
+vault write database/roles/sql-create-user-role \
     db_name=postgresdb \
-    creation_statements="CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; \
-        GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"{{name}}\";" \
+    creation_statements="CREATE ROLE \"{{name}}\" WITH LOGIN ENCRYPTED PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; \
+        GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO \"{{name}}\"; \
+        GRANT SELECT, UPDATE, INSERT, DELETE ON ALL TABLES IN SCHEMA public TO \"{{name}}\";" \
     default_ttl="1h" \
     max_ttl="24h"
 
-  vault write database/roles/sql-all-access-role \
+vault write database/roles/sql-all-access-role \
     db_name=postgresdb \
     creation_statements="CREATE ROLE \"{{name}}\" WITH LOGIN ENCRYPTED PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; \
-        GRANT ALL PRIVILEGES ON SCHEMA public TO \"{{name}}\";" \
+        GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO \"{{name}}\"; \
+        GRANT ALL PRIVILEGES ON SCHEMA public TO \"{{name}}\"; \
+        GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO \"{{name}}\";" \
     default_ttl="1h" \
     max_ttl="24h"
 ```
 
 **Test database role**
 ``` bash
+# Generate a username and password
 vault read database/creds/sql-create-user-role
 
+# Generate a username and password
 vault read database/creds/sql-all-access-role
 
-# Shell into postgresql pod
+# Shell into Postgresql pod
 kubectl exec -it postgresql-0 -n postgresql -- sh
 
-# Login to postgresql
+# Login to Postgresql
 psql -U admin -d postgresdb
 
-# Display postgresql user
+# Display Postgresql user
 \du
 ```
 
@@ -361,6 +366,7 @@ vault token create -period=1h -ttl=24h -policy=database-only-read-policy -policy
 ```
 
 ## Trivy
+Use Trivy to find vulnerabilities (CVE) & misconfigurations
 ``` bash
 trivy [command] .
 
