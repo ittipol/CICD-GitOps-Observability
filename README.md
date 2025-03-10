@@ -228,6 +228,9 @@ service:
 ```
 
 ## Vault
+https://developer.hashicorp.com/vault/tutorials/kubernetes/kubernetes-minikube-raft
+https://developer.hashicorp.com/vault/tutorials/kubernetes/kubernetes-minikube-consul
+
 **Install Consul**
 1. Install Consul by running "./consul.sh install"
 2. Consul will install on Kubernetes
@@ -235,6 +238,26 @@ service:
 **Install Vault**
 1. Install Vault by running "./vault.sh install"
 2. Vault will install on Kubernetes
+
+### Add encryption key
+**Enable the kv engine**
+``` bash
+vault secrets enable -path=key kv
+```
+
+**Add JWT secret key**
+``` bash
+vault kv put -mount=key jwt-secret-key jwt-access-token-secret=9ba485b73bacbedc78a6479d970c1db0123b7dfcbcdab0de31fe457737a7db53 jwt-refresh-token-secret=a23077273df250d47a09f6bae3f480ee6ba07574bdda0f684d71d8dd211e0506
+```
+
+**Create a policy**
+``` bash
+vault policy write jwt-secret-key-policy - <<EOF
+path "key/jwt-secret-key" {
+  capabilities = ["read"]
+}
+EOF
+```
 
 ### Database dynamic secret creation
 **Enable the database engine**
@@ -311,6 +334,7 @@ path "database/creds/sql-all-access-role" {
 EOF
 ```
 
+### Bind a role to a Kubernetes
 **Enable the Kubernetes authentication**
 ``` bash
 vault auth enable kubernetes
@@ -331,6 +355,13 @@ vault write auth/kubernetes/role/sql-create-user-role \
    bound_service_account_namespaces=go-app \
    policies=database-only-read-policy \
    ttl=1h
+
+vault write auth/kubernetes/role/multiple-role \
+   bound_service_account_names=go-app-sa \
+   bound_service_account_namespaces=go-app \
+   policies=database-only-read-policy \
+   policies=jwt-secret-key-policy \
+   ttl=1h
 ```
 
 **Inject a secret to a pod**
@@ -343,10 +374,11 @@ annotations:
   vault.hashicorp.com/agent-inject-template-sql-create-user-role: |
     {
     {{- with secret "database/creds/sql-create-user-role" -}}
-      "db_connection": "host=postgres.postgres.svc port=5432 user={{ .Data.username }} password={{ .Data.password }} dbname=postgresqldb sslmode=disable TimeZone=Asia/Bangkok"
+      "db_connection": "host=postgresql.postgresql.svc port=5432 user={{ .Data.username }} password={{ .Data.password }} dbname=postgresdb sslmode=disable TimeZone=Asia/Bangkok"
     {{- end }}
     }
-  vault.hashicorp.com/role: "sql-create-user-role"
+  vault.hashicorp.com/agent-inject-secret-jwt-secret-key : "key/jwt-secret-key"
+  vault.hashicorp.com/role: "multiple-role"
 ```
 
 **View a secret in a pod**

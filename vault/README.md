@@ -12,6 +12,9 @@ vault login
 # Prints the current state of Vault
 vault status
 
+vault secrets list
+vault auth list
+
 # https://developer.hashicorp.com/vault/docs/commands/token/create
 vault token create -period=30m -use-limit=100 -renewable=true -explicit-max-ttl=1h -policy=only-read
 
