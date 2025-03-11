@@ -227,7 +227,7 @@ service:
       #exporters: [otlphttp/logs,debug/logs]
 ```
 
-## Vault
+## Vault (Secrets management)
 https://developer.hashicorp.com/vault/tutorials/kubernetes/kubernetes-minikube-raft
 https://developer.hashicorp.com/vault/tutorials/kubernetes/kubernetes-minikube-consul
 
@@ -239,7 +239,7 @@ https://developer.hashicorp.com/vault/tutorials/kubernetes/kubernetes-minikube-c
 1. Install Vault by running "./vault.sh install"
 2. Vault will install on Kubernetes
 
-### Add encryption key
+### Manage a key
 **Enable the kv engine**
 ``` bash
 vault secrets enable -path=key kv
@@ -303,6 +303,9 @@ vault write database/roles/sql-all-access-role \
 
 **Test database role**
 ``` bash
+# Shell into Vault pod
+kubectl exec -it vault-0 -n vault -- sh
+
 # Generate a username and password
 vault read database/creds/sql-create-user-role
 
@@ -378,6 +381,16 @@ annotations:
     {{- end }}
     }
   vault.hashicorp.com/agent-inject-secret-jwt-secret-key : "key/jwt-secret-key"
+  # vault.hashicorp.com/agent-inject-template-jwt-secret-key: |
+  #   {{- with secret "key/jwt-secret-key" -}}
+  #     {{ range $k, $v := .Data }}
+  #       {{ $k }}: {{ $v }}
+  #     {{ end }}
+  #   {{- end }}
+  vault.hashicorp.com/agent-inject-template-jwt-secret-key: |
+    {{- with secret "key/jwt-secret-key" -}}
+      {{ .Data | toJSON }}
+    {{- end }}
   vault.hashicorp.com/role: "multiple-role"
 ```
 
@@ -386,6 +399,8 @@ annotations:
 kubectl exec -it {pod_name} -n go-app -c go-app -- sh
 
 cat /vault/secrets/sql-create-user-role
+
+cat /vault/secrets/jwt-secret-key
 ```
 
 **Create a token for creating database username and password for developing or testing**
