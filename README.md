@@ -247,7 +247,7 @@ vault secrets enable -path=key kv
 
 **Add JWT secret key**
 ``` bash
-vault kv put -mount=key jwt-secret-key jwt-access-token-secret=9ba485b73bacbedc78a6479d970c1db0123b7dfcbcdab0de31fe457737a7db53 jwt-refresh-token-secret=a23077273df250d47a09f6bae3f480ee6ba07574bdda0f684d71d8dd211e0506
+vault kv put -mount=key jwt-secret-key jwt-access-token-secret=uDnF3+6uGj+tyvqRrzfCqc1czsKOnW8m+xv7lnOBDzuIGIkjphTa6aGjuQbbMQ79EAI22YU7bTfhTQzyqKMgBQ== jwt-refresh-token-secret=0Cf7yuCqusHqFW2N5eWZ88dy4bukCK19/jFdNIP1XvHR7zEiCDa04yf4JUqCX5TMRFaELd4ERLMcIFUB8aMXjg==
 ```
 
 **Create a policy**
