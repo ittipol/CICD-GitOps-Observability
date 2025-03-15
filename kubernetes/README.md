@@ -66,3 +66,7 @@ spec:
 		- containerPort: 3306
 			name: http
 ```
+
+## Connect a service in a different namespace
+{protocol}://{service_name}.{service_namespace}.{Kubernetes_suffix}:{service_port} \
+redis://redis-service.redis-database.svc.cluster.local:6379
