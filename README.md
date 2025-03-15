@@ -6,14 +6,17 @@ https://roadmap.sh/ \
 https://prometheus.io/docs/concepts/metric_types/ \
 https://developer.hashicorp.com/vault/docs HashiCorp Vault
 
+## SLOs, SLIs, SLAs - Measure reliability
+https://aws.amazon.com/th/what-is/sre/
+
+## The Twelve-Factor
+https://12factor.net/
+
 ## Cloud Security
 • Cloud Workload Protection Platform (CWPP) \
 • Cloud Security Posture Management (CSPM) \
 • Cloud Infrastructure Entitlement Management (CIEM) \
 • Cloud Native Application Protection Platform (CNAPP)
-
-## SLOs, SLIs, SLAs
-https://aws.amazon.com/th/what-is/sre/
 
 ## Start a Docker
 **Start a following services** \
