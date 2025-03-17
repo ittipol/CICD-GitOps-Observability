@@ -3,43 +3,51 @@ kind: StatefulSet
 metadata:
   name: redis
   namespace: redis
-  labels:
-    app: redis
 spec:
-  serviceName: "redis"
-  replicas: 1
   selector:
-  matchLabels:
-    app: redis
+    matchLabels:
+      app.kubernetes.io/name: redis
+  replicas: 1
   template:
     metadata:
       labels:
-        app: redis
+        app.kubernetes.io/name: redis
     spec:
       containers:
-      - name: redis
-        image: redis:6.2
-        ports:
-        - containerPort: 6379
-          name: redis-port
-        env:
-        - name: REDIS_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: redis-secret
-              key: REDIS_PASSWORD
-        args: ["--requirepass", "$(REDIS_PASSWORD)"]
-        volumeMounts:
-        - name: redis-storage
-          mountPath: /data
-      # - name: redis-exporter
-      #   image: oliver006/redis_exporter
-      #   ports:
-      #   - containerPort: 9121
-      #     name: exporter-port
-      #   volumeMounts:
-      #   - name: data
-      #     mountPath: /data
+        - name: redis
+          image: redis:6.2
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            seccompProfile:
+              type: RuntimeDefault
+          ports:
+          - containerPort: 6379
+            name: redis-port
+          resources:
+            limits:
+              cpu: 100m
+              memory: 1Gi
+            requests:
+              cpu: 50m
+              memory: 512Mi
+          env:
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: redis-secret
+                key: REDIS_PASSWORD
+          args: ["--requirepass", "$(REDIS_PASSWORD)"]
+          volumeMounts:
+          - name: redis-storage
+            mountPath: /data
   volumeClaimTemplates:
   - metadata:
       name: redis-storage

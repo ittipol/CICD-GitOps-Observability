@@ -1,7 +1,13 @@
 alias k=kubectl
 
+id -u
+id -g
+
 ps
 ps aux | grep kubectl
+pe -ef
+
+htop
 
 kubectl get node -o wide
 kubectl describe nodes
@@ -51,6 +57,7 @@ scp -i $(minikube ssh-key) ./cert/ca.crt docker@$(minikube ip):/home/docker/ca.c
 ## Copy an entire directory
 scp -r ./data/install user@hostname:~/data/install/
 
-## Update package version after installed
+## Package manager
+## Update package version after installed (apt command for debian) (yum command for redhat)
 sudo apt update
 sudo apt upgrade
