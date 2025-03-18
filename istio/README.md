@@ -47,6 +47,7 @@ echo $PATH
 which istioctl
 
 istioctl
+```
 
 ## Install with Helm
 https://istio.io/latest/docs/setup/install/helm/
