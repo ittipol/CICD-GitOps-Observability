@@ -1,5 +1,7 @@
 alias k=kubectl
 
+## Linux
+## Linux distros (Linux distribution) group of open source Linux operating system ex. Ubuntu, Debian, Arch Linux, Red Hat, Fedora
 id -u
 id -g
 
@@ -8,6 +10,7 @@ ps aux | grep kubectl
 pe -ef
 
 htop
+## =======
 
 kubectl get node -o wide
 kubectl describe nodes
@@ -18,10 +21,11 @@ kubectl api-versions
 kubectl get crd
 kubectl get pod -l app=webapp -o jsonpath="{.items[0].metadata.name}
 
+## minikube
 minikube start --driver=parallels
-
 minikube config
 minikube profile list
+minikube ssh
 
 ## Push images
 ## Loading directly to in-cluster container runtime
@@ -30,8 +34,10 @@ minikube image load {image_name:tag}
 ## Building images to in-cluster container runtime
 minikube image build -t {image_name:tag} .
 
+## Run a specific service in docker-compose
 docker-compose up -d docker-registry && docker-compose up -d nginx
 
+## Delete unused docker images
 docker system prune -a
 
 ## Copy key from /docker/nginx/certs/ca.crt
