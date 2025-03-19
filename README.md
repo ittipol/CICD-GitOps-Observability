@@ -95,7 +95,7 @@ ping $(minikube ip)
 2. Grafana will install on Kubernetes
 
 **Install Grafana and Prometheus via kube-prometheus-stack** \
-kube-prometheus-stack will automatically install ServiceMonitor and PodMonitor CRD (CustomResourceDefinition)
+kube-prometheus-stack will automatically install ServiceMonitor and PodMonitor CRD (Custom Resource Definition)
 1. Install Grafana and Prometheus by running "./kube-prometheus-stack.sh install"
 2. Grafana and Prometheus will install on Kubernetes
 
