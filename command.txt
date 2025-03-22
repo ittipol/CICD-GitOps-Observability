@@ -20,6 +20,11 @@ echo $(kubectl get node minikube -o jsonpath='{.status.capacity}')
 kubectl api-versions
 kubectl get crd
 kubectl get pod -l app=webapp -o jsonpath="{.items[0].metadata.name}
+kubectl get events -n {namespace}
+## Print logs in a pod on pod init state
+kubectl logs first-app-v1-86f6db4f85-zkjsn -n staging -c vault-agent-init
+## Shell into a pod on pod init state
+kubectl exec -it first-app-v1-86f6db4f85-cnpw5 -n staging -c vault-agent-init -- sh
 
 ## minikube
 minikube start --driver=parallels

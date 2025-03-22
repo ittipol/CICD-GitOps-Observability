@@ -22,5 +22,5 @@ resource "helm_release" "istiod" {
 
   depends_on = [helm_release.istio_base]
 
-  timeout = 600
+  # timeout = 600
 }

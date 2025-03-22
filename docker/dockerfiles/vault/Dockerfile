@@ -1,4 +1,4 @@
-FROM debian
+FROM debian:12.10
 USER root
 RUN apt-get update && apt-get install -y wget gnupg lsb-release
 RUN wget -O - https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg

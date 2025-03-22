@@ -357,17 +357,17 @@ vault write auth/kubernetes/config \
 **Bind a role to a Kubernetes service account**
 ``` bash
 vault write auth/kubernetes/role/sql-create-user-role \
-   bound_service_account_names=go-app-sa \
-   bound_service_account_namespaces=go-app \
-   policies=database-only-read-policy \
-   ttl=1h
+  bound_service_account_names=auth-service-sa \
+  bound_service_account_namespaces=auth-service \
+  policies=database-only-read-policy \
+  ttl=1h
 
 vault write auth/kubernetes/role/multiple-role \
-   bound_service_account_names=go-app-sa \
-   bound_service_account_namespaces=go-app \
-   policies=database-only-read-policy \
-   policies=jwt-secret-key-policy \
-   ttl=1h
+  bound_service_account_names=auth-service-sa \
+  bound_service_account_namespaces=auth-service \
+  policies=database-only-read-policy \
+  policies=jwt-secret-key-policy \
+  ttl=1h
 ```
 
 **Inject a secret to a pod**

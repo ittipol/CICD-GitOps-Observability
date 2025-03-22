@@ -15,5 +15,5 @@ resource "helm_release" "istio_base" {
     value = "istio-system"
   }
 
-  timeout = 600
+  # timeout = 600
 }

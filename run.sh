@@ -102,6 +102,7 @@ minikube_start() {
 
   minikube start --cpus $cpu --memory $memory
   # minikube start --cpus 2 --memory 4g --driver=hyperkit
+  # minikube start --cpus $cpu --memory $memory --driver=parallels
   minikube status
   minikube ip
 }

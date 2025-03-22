@@ -20,5 +20,5 @@ resource "helm_release" "gateway" {
     helm_release.istiod
   ]
 
-  timeout = 600
+  # timeout = 600
 }
