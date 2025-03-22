@@ -8,7 +8,7 @@ resource "helm_release" "prometheus" {
   repository       = "https://prometheus-community.github.io/helm-charts"
   chart            = "kube-prometheus-stack"
   namespace        = "monitoring"
-  version          = "69.8.1"
+  version          = "70.2.1"
   create_namespace = true
 
   values = [file("values/kube-prometheus-stack.yaml")]

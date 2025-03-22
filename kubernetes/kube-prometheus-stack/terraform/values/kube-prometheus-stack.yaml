@@ -2,7 +2,28 @@
 #   extraArgs:
 #     - --web.enable-otlp-receiver
 
+prometheus:
+  prometheusSpec:
+    podMonitorSelector:
+      matchLabels:
+        prometheus: main
+
+    podMonitorNamespaceSelector:
+      matchLabels:
+        monitoring: prometheus
+
+    serviceMonitorSelector:
+      matchLabels:
+        prometheus: main
+        
+    serviceMonitorNamespaceSelector:
+      matchLabels:
+        monitoring: prometheus
+
+
 grafana:
+  enabled: false
+
   additionalDataSources: 
   - name: influxdb
     uid: influxdb    

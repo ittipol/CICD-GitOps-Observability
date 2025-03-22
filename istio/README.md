@@ -1,4 +1,5 @@
 # Istio
+Traffic Management https://istio.io/latest/docs/tasks/traffic-management/
 
 ## Download and install
 https://istio.io/latest/docs/setup/install/istioctl/ \
@@ -56,3 +57,8 @@ https://istio.io/latest/docs/setup/install/helm/
 • istio/base \
 • istio/istiod \
 • istio/gateway
+
+### Check Istio CRD (Custom Resource Definition)
+``` bash
+kubectl get crds | grep 'istio.io'
+```
