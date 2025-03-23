@@ -13,10 +13,13 @@ https://aws.amazon.com/th/what-is/sre/
 https://12factor.net/
 
 ## Cloud Security
-• Cloud Workload Protection Platform (CWPP) \
-• Cloud Security Posture Management (CSPM) \
-• Cloud Infrastructure Entitlement Management (CIEM) \
-• Cloud Native Application Protection Platform (CNAPP)
+- Cloud Workload Protection Platform (CWPP)
+- Cloud Security Posture Management (CSPM)
+- Cloud Infrastructure Entitlement Management (CIEM)
+- Cloud Native Application Protection Platform (CNAPP)
+  - Artifact scanning
+  - Cloud configuration
+  - Runtime protection
 
 ## Start a Docker
 **Start a following services** \

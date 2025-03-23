@@ -21,6 +21,8 @@ kubectl api-versions
 kubectl get crd
 kubectl get pod -l app=webapp -o jsonpath="{.items[0].metadata.name}
 kubectl get events -n {namespace}
+kubectl describe quota -n {namespace}
+kubectl get priorityclass
 ## Print logs in a pod on pod init state
 kubectl logs first-app-v1-86f6db4f85-zkjsn -n staging -c vault-agent-init
 ## Shell into a pod on pod init state

@@ -20,28 +20,59 @@ datasources:
   datasources.yaml:
     apiVersion: 1
     datasources:
+
+    # For prometheus helm
+    # - name: Prometheus
+    #   uid: prometheus    
+    #   type: prometheus
+    #   access: proxy
+    #   orgId: 1
+    #   url: http://prometheus-server.prometheus.svc
+    #   basicAuth: false
+    #   isDefault: true
+    #   jsonData:
+    #     httpMethod: POST
+    #     timeInterval: 30s
+
+    # For kube-prometheus-stack helm
     - name: Prometheus
       uid: prometheus    
       type: prometheus
       access: proxy
       orgId: 1
-      url: http://prometheus-server.prometheus.svc
+      url: http://prometheus-kube-prometheus-prometheus.monitoring:9090/
       basicAuth: false
       isDefault: true
       jsonData:
         httpMethod: POST
         timeInterval: 30s
+
+    # For prometheus helm
+    # - name: Alertmanager
+    #   uid: alertmanager    
+    #   type: alertmanager
+    #   access: proxy
+    #   orgId: 1
+    #   url: http://prometheus-alertmanager.prometheus.svc:9093
+    #   basicAuth: false
+    #   isDefault: false
+    #   jsonData:
+    #     handleGrafanaManagedAlerts: false
+    #     implementation: prometheus
+
+    # For kube-prometheus-stack helm
     - name: Alertmanager
       uid: alertmanager    
       type: alertmanager
       access: proxy
       orgId: 1
-      url: http://prometheus-alertmanager.prometheus.svc:9093
+      url: http://prometheus-kube-prometheus-alertmanager.monitoring:9093/
       basicAuth: false
       isDefault: false
       jsonData:
         handleGrafanaManagedAlerts: false
         implementation: prometheus
+
     - name: influxdb
       uid: influxdb    
       type: influxdb
