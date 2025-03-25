@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: node-exporter-podmonitor
+  namespace: proxy-monitoring
+  labels:
+    prometheus: main
+spec:
+  namespaceSelector:
+    matchNames:
+      - monitoring
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: prometheus-node-exporter
+  podMetricsEndpoints:
+  - port: http-metrics
+    interval: 15s
+    scrapeTimeout: 15s

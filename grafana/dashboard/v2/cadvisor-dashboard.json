@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 30,
+  "id": 3,
   "links": [],
   "panels": [
     {
@@ -87,7 +87,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.4.1",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "editorMode": "code",
@@ -154,7 +154,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.4.1",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "editorMode": "code",
@@ -245,11 +245,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.4.1",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "editorMode": "code",
@@ -342,11 +343,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.4.1",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "editorMode": "code",
@@ -413,7 +415,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.4.1",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "editorMode": "code",
@@ -479,7 +481,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.4.1",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "editorMode": "code",
@@ -545,7 +547,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.4.1",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "editorMode": "code",
@@ -611,7 +613,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.4.1",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "editorMode": "code",
@@ -631,561 +633,6 @@
         "w": 24,
         "x": 0,
         "y": 22
-      },
-      "id": 11,
-      "panels": [],
-      "title": "Load testing",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "influxdb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "dark-green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 23
-      },
-      "id": 4,
-      "interval": "1s",
-      "options": {
-        "barRadius": 0,
-        "barWidth": 0.8,
-        "fullHighlight": false,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "orientation": "vertical",
-        "showValue": "auto",
-        "stacking": "none",
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        },
-        "xTickLabelRotation": 0,
-        "xTickLabelSpacing": 100
-      },
-      "pluginVersion": "11.4.1",
-      "targets": [
-        {
-          "alias": "Requests per Second",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "influxdb"
-          },
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "none"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "http_reqs",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "SELECT sum(\"value\") FROM \"vus\" WHERE $timeFilter GROUP BY time($__interval) fill(null)",
-          "rawQuery": false,
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "sum"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "title": "Requests per Second",
-      "type": "barchart"
-    },
-    {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "influxdb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds",
-            "seriesBy": "last"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "dark-red",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 23
-      },
-      "id": 5,
-      "interval": "1s",
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.4.1",
-      "targets": [
-        {
-          "alias": "http req failed",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "influxdb"
-          },
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "http_req_failed",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "SELECT sum(\"value\") FROM \"http_reqs\" WHERE $timeFilter GROUP BY time($__interval) fill(null)",
-          "rawQuery": false,
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "sum"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "title": "HTTP req failed",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "influxdb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "scaleDistribution": {
-              "type": "linear"
-            }
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 31
-      },
-      "id": 20,
-      "interval": ">1s",
-      "options": {
-        "calculate": true,
-        "calculation": {
-          "yBuckets": {
-            "scale": {
-              "log": 2,
-              "type": "log"
-            }
-          }
-        },
-        "cellGap": 2,
-        "color": {
-          "exponent": 0.5,
-          "fill": "dark-orange",
-          "mode": "scheme",
-          "reverse": false,
-          "scale": "exponential",
-          "scheme": "RdYlGn",
-          "steps": 128
-        },
-        "exemplars": {
-          "color": "rgba(255,0,255,0.7)"
-        },
-        "filterValues": {
-          "le": 1e-9
-        },
-        "legend": {
-          "show": true
-        },
-        "rowsFrame": {
-          "layout": "auto"
-        },
-        "tooltip": {
-          "mode": "single",
-          "showColorScale": false,
-          "yHistogram": true
-        },
-        "yAxis": {
-          "axisPlacement": "left",
-          "reverse": false,
-          "unit": "ms"
-        }
-      },
-      "pluginVersion": "11.4.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "influxdb"
-          },
-          "query": "SELECT \"value\" FROM http_req_duration WHERE $timeFilter and value > 0",
-          "rawQuery": true,
-          "refId": "A",
-          "resultFormat": "time_series"
-        }
-      ],
-      "title": "HTTP req duration (over time)",
-      "type": "heatmap"
-    },
-    {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "influxdb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 15,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "VUs Max"
-            },
-            "properties": [
-              {
-                "id": "custom.gradientMode",
-                "value": "opacity"
-              },
-              {
-                "id": "custom.lineStyle",
-                "value": {
-                  "dash": [
-                    10,
-                    10
-                  ],
-                  "fill": "dash"
-                }
-              },
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "dark-red",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 0
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 31
-      },
-      "id": 17,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.4.1",
-      "targets": [
-        {
-          "alias": "VUs",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "influxdb"
-          },
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "vus",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "SELECT sum(\"value\") FROM \"vus\" WHERE $timeFilter GROUP BY time($__interval) fill(null)",
-          "rawQuery": false,
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        },
-        {
-          "alias": "VUs Max",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "influxdb"
-          },
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "hide": false,
-          "measurement": "vus_max",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "B",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "title": "Virtual users",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 39
       },
       "id": 10,
       "panels": [],
@@ -1258,7 +705,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 23
       },
       "id": 19,
       "options": {
@@ -1272,16 +719,17 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.4.1",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "editorMode": "code",
-          "expr": "rate(\n    container_cpu_cfs_throttled_seconds_total{\nimage!=\"\",name=~\"^k8s_.*\",container_label_io_kubernetes_pod_namespace=~\"$pod_namespace$\",container_label_io_kubernetes_pod_name=~\"$pod_name$\",\ncontainer_label_io_kubernetes_docker_type=\"container\"\n    }[1m]\n)",
-          "legendFormat": "{{container_label_io_kubernetes_pod_name}}",
+          "expr": "rate(\n    container_cpu_cfs_throttled_seconds_total{\nimage!=\"\",name=~\"^k8s_.*\",container_label_io_kubernetes_pod_namespace=~\"$pod_namespace\",container_label_io_kubernetes_pod_name=~\"$pod_name\",\ncontainer_label_io_kubernetes_docker_type=\"container\"\n    }[1m]\n)",
+          "legendFormat": "{{container_label_io_kubernetes_pod_name}} | {{container_label_io_kubernetes_container_name}}",
           "range": true,
           "refId": "A"
         }
@@ -1340,10 +788,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -1414,7 +858,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 48
+        "y": 31
       },
       "id": 1,
       "options": {
@@ -1428,11 +872,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.4.1",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
@@ -1440,7 +885,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",name=~\"^k8s_.*\",container_label_io_kubernetes_pod_namespace=~\"$pod_namespace$\",container_label_io_kubernetes_pod_name=~\"$pod_name$\",\ncontainer_label_io_kubernetes_docker_type=\"container\"\n}[1m])) by (\n    container_label_io_kubernetes_pod_name\n)",
+          "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",name=~\"^k8s_.*\",container_label_io_kubernetes_pod_namespace=~\"$pod_namespace\",container_label_io_kubernetes_pod_name=~\"$pod_name\",\ncontainer_label_io_kubernetes_docker_type=\"container\"\n}[1m])) by (\n    container_label_io_kubernetes_pod_name\n)",
           "legendFormat": "{{container_label_io_kubernetes_pod_name}}",
           "range": true,
           "refId": "A"
@@ -1451,7 +896,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "avg(\n    kube_pod_container_resource_limits{\n        namespace=~\"$pod_namespace$\",\n        pod=~\"$pod_name$\",\n        resource=\"cpu\",\n        unit=\"core\"\n    }\n)",
+          "expr": "kube_pod_container_resource_limits{\n    exported_container=~\"$pod_namespace\",\n    exported_pod=~\"$pod_name\",\n    resource=\"cpu\",\n    unit=\"core\"\n}",
           "hide": false,
           "instant": false,
           "legendFormat": "Limit",
@@ -1464,7 +909,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "avg(\n    kube_pod_container_resource_requests{\n        namespace=~\"$pod_namespace$\",\n        pod=~\"$pod_name$\",\n        resource=\"cpu\",\n        unit=\"core\"\n    }\n)",
+          "expr": "kube_pod_container_resource_requests{\n    exported_container=~\"$pod_namespace\",\n    exported_pod=~\"$pod_name\",\n    resource=\"cpu\",\n    unit=\"core\"\n}",
           "hide": false,
           "instant": false,
           "legendFormat": "Request",
@@ -1525,10 +970,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -1599,7 +1040,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 60
+        "y": 43
       },
       "id": 2,
       "options": {
@@ -1613,15 +1054,16 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
       },
-      "pluginVersion": "11.4.1",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum (container_memory_working_set_bytes{image!=\"\",name=~\"^k8s_.*\",container_label_io_kubernetes_pod_namespace=~\"$pod_namespace$\",\ncontainer_label_io_kubernetes_pod_name=~\"$pod_name$\",\ncontainer_label_io_kubernetes_docker_type=\"container\"\n}) by (\n    container_label_io_kubernetes_pod_name\n)",
+          "expr": "sum (container_memory_working_set_bytes{image!=\"\",name=~\"^k8s_.*\",container_label_io_kubernetes_pod_namespace=~\"$pod_namespace\",\ncontainer_label_io_kubernetes_pod_name=~\"$pod_name\",\ncontainer_label_io_kubernetes_docker_type=\"container\"\n}) by (\n    container_label_io_kubernetes_pod_name\n)",
           "legendFormat": "{{container_label_io_kubernetes_pod_name}}",
           "range": true,
           "refId": "A"
@@ -1632,7 +1074,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "avg(\n    kube_pod_container_resource_limits{\n        namespace=~\"$pod_namespace$\",\n        pod=~\"$pod_name$\",\n        resource=\"memory\",\n        unit=\"byte\"\n    }\n)",
+          "expr": "kube_pod_container_resource_limits{\n    exported_container=~\"$pod_namespace\",\n    exported_pod=~\"$pod_name\",\n    resource=\"memory\",\n    unit=\"byte\"\n}",
           "hide": false,
           "instant": false,
           "legendFormat": "Limit",
@@ -1645,7 +1087,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "avg(\n    kube_pod_container_resource_requests{\n        namespace=~\"$pod_namespace$\",\n        pod=~\"$pod_name$\",\n        resource=\"memory\",\n        unit=\"byte\"\n    }\n)",
+          "expr": "kube_pod_container_resource_requests{\n    exported_container=~\"$pod_namespace\",\n    exported_pod=~\"$pod_name\",\n    resource=\"memory\",\n    unit=\"byte\"\n}",
           "hide": false,
           "instant": false,
           "legendFormat": "Request",
@@ -1654,102 +1096,6 @@
         }
       ],
       "title": "Pods memory usage with requests and limits",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 15,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "Bps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 72
-      },
-      "id": 3,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull"
-          ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "pluginVersion": "11.4.1",
-      "targets": [
-        {
-          "editorMode": "code",
-          "expr": "sum (irate (container_network_receive_bytes_total{image!=\"\",name=~\"^k8s_.*\",container_label_io_kubernetes_pod_namespace=~\"$pod_namespace$\",container_label_io_kubernetes_pod_name=~\"$pod_name$\"\n}[1m])) by (\n    container_label_io_kubernetes_pod_name\n)",
-          "legendFormat": "{{container_label_io_kubernetes_pod_name}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Pods network I/O (1m avg)",
       "type": "timeseries"
     },
     {
@@ -1802,10 +1148,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -1830,7 +1172,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 82
+        "y": 55
       },
       "id": 18,
       "options": {
@@ -1843,16 +1185,17 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.4.1",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "editorMode": "code",
-          "expr": "irate(\n  container_network_receive_bytes_total{\n    image!=\"\",\n    name=~\"^k8s_.*\",container_label_io_kubernetes_pod_namespace=~\"$pod_namespace$\",container_label_io_kubernetes_pod_name=~\"$pod_name$\"\n  }[1m]\n) * 8",
-          "legendFormat": "Receive - {{container_label_io_kubernetes_pod_name}}",
+          "expr": "irate(\n  container_network_receive_bytes_total{\n    image!=\"\",\n    name=~\"^k8s_.*\",container_label_io_kubernetes_pod_namespace=~\"$pod_namespace\",container_label_io_kubernetes_pod_name=~\"$pod_name\"\n  }[1m]\n) * 8",
+          "legendFormat": "Receive | {{container_label_io_kubernetes_pod_name}}",
           "range": true,
           "refId": "A"
         },
@@ -1862,10 +1205,10 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "irate(\n  container_network_transmit_bytes_total{\n    image!=\"\",\n    name=~\"^k8s_.*\",\ncontainer_label_io_kubernetes_pod_namespace=~\"$pod_namespace$\",container_label_io_kubernetes_pod_name=~\"$pod_name$\"\n  }[1m]\n) * 8",
+          "expr": "irate(\n  container_network_transmit_bytes_total{\n    image!=\"\",\n    name=~\"^k8s_.*\",\ncontainer_label_io_kubernetes_pod_namespace=~\"$pod_namespace\",container_label_io_kubernetes_pod_name=~\"$pod_name\"\n  }[1m]\n) * 8",
           "hide": false,
           "instant": false,
-          "legendFormat": "Transmit - {{container_label_io_kubernetes_pod_name}}",
+          "legendFormat": "Transmit | {{container_label_io_kubernetes_pod_name}}",
           "range": true,
           "refId": "B"
         }
@@ -1875,14 +1218,15 @@
     }
   ],
   "preload": false,
+  "refresh": "15s",
   "schemaVersion": 40,
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "text": "go-app",
-          "value": "go-app"
+          "text": "auth-service",
+          "value": "auth-service"
         },
         "definition": "label_values(container_label_io_kubernetes_pod_namespace)",
         "includeAll": true,
@@ -1899,78 +1243,8 @@
       },
       {
         "current": {
-          "text": "minikube",
-          "value": "minikube"
-        },
-        "definition": "label_values(node)",
-        "includeAll": false,
-        "name": "node",
-        "options": [],
-        "query": {
-          "qryType": 1,
-          "query": "label_values(node)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "type": "query"
-      },
-      {
-        "current": {
-          "text": [
-            "http_req_duration"
-          ],
-          "value": [
-            "http_req_duration"
-          ]
-        },
-        "includeAll": true,
-        "multi": true,
-        "name": "Measurement",
-        "options": [
-          {
-            "selected": true,
-            "text": "http_req_duration",
-            "value": "http_req_duration"
-          },
-          {
-            "selected": false,
-            "text": "http_req_blocked",
-            "value": "http_req_blocked"
-          },
-          {
-            "selected": false,
-            "text": "http_req_connecting",
-            "value": "http_req_connecting"
-          },
-          {
-            "selected": false,
-            "text": "http_req_looking_up",
-            "value": "http_req_looking_up"
-          },
-          {
-            "selected": false,
-            "text": "http_req_receiving",
-            "value": "http_req_receiving"
-          },
-          {
-            "selected": false,
-            "text": "http_req_sending",
-            "value": "http_req_sending"
-          },
-          {
-            "selected": false,
-            "text": "http_req_waiting",
-            "value": "http_req_waiting"
-          }
-        ],
-        "query": "http_req_duration,http_req_blocked,http_req_connecting,http_req_looking_up,http_req_receiving,http_req_sending,http_req_waiting",
-        "type": "custom"
-      },
-      {
-        "current": {
-          "text": "All",
-          "value": "$__all"
+          "text": "auth-service-v1-84c4dc4587-mkbfg",
+          "value": "auth-service-v1-84c4dc4587-mkbfg"
         },
         "definition": "label_values({container_label_io_kubernetes_pod_namespace=\"$pod_namespace\"},container_label_io_kubernetes_pod_name)",
         "includeAll": true,
@@ -1988,7 +1262,7 @@
     ]
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {
@@ -2006,8 +1280,8 @@
     ]
   },
   "timezone": "Asia/Bangkok",
-  "title": "cAdvisor Monitoring & k6 Load Testing Dashboard",
+  "title": "cAdvisor monitoring dashboard",
   "uid": "bebiikv2b0idcf",
-  "version": 1,
+  "version": 10,
   "weekStart": ""
 }

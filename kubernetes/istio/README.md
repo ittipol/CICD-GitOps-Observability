@@ -1,21 +1,4 @@
-# Service Mesh • Ingress Gateway • Virtual Service • Gateway • Ingress • mTLS
-
-## Istiod
-Istiod provides service discovery, configuration and certificate management
-
-## Envoy
-Envoy is a high-performance proxy, Designed for cloud-native applications
-
-**Envoy’s built-in features** \
-• Dynamic service discovery \
-• Load balancing \
-• TLS termination \
-• HTTP/2 and gRPC proxies \
-• Circuit breakers \
-• Health checks \
-• Staged rollouts with %-based traffic split \
-• Fault injection \
-• Rich metrics
+# Service Mesh • Ingress Gateway • Virtual Service • mTLS
 
 ## Installing the Sidecar (Proxy) and enable injection to pod
 
@@ -119,6 +102,41 @@ export SECURE_INGRESS_PORT=$(kubectl get svc "$INGRESS_NAME" -n "$INGRESS_NS" -o
 **Set the GATEWAY_URL environment variable**
 ``` bash
 export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT
+```
+
+## mTLS (Mutual TLS)
+https://istio.io/latest/docs/reference/config/security/peer_authentication/
+
+### Authentication
+- Peer authentication is achieved using mTLS, while request authentication often uses tokens such as JWT (JSON Web Tokens)
+
+There are two types of authentication provided by Istio
+- **Peer Authentication** For service-to-service authentication
+- **Request Authentication** For end-user authentication. Using JSON Web Tokens (JWT)
+
+### Examples
+**To apply policy enforces mTLS for all services (pod) in the `auth-service` namespace**
+``` yaml
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: auth-service-peer-authentication
+  namespace: auth-service
+spec:
+  mtls:
+    mode: STRICT
+```
+
+**Lock down workloads in all namespaces to only accept mutual TLS traffic by putting the policy in the system namespace of your Istio installation**
+``` yaml
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: peer-authentication
+  namespace: istio-system # Istio installation namespace
+spec:
+  mtls:
+    mode: STRICT
 ```
 
 ## Test access to service

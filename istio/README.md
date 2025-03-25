@@ -62,3 +62,20 @@ https://istio.io/latest/docs/setup/install/helm/
 ``` bash
 kubectl get crds | grep 'istio.io'
 ```
+
+## Istiod
+Istiod provides service discovery, configuration and certificate management
+
+## Envoy
+Envoy is a high-performance proxy, Designed for cloud-native applications
+
+**Envoy’s built-in features** \
+• Dynamic service discovery \
+• Load balancing \
+• TLS termination \
+• HTTP/2 and gRPC proxies \
+• Circuit breakers \
+• Health checks \
+• Staged rollouts with %-based traffic split \
+• Fault injection \
+• Rich metrics
