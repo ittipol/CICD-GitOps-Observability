@@ -24,6 +24,7 @@ kubectl get events -n {namespace}
 kubectl describe quota -n {namespace}
 kubectl get hpa -n {namespace}
 kubectl top pods -n {namespace}
+kubectl top nodes
 kubectl get priorityclass
 kubectl get peerauthentication --all-namespaces
 
