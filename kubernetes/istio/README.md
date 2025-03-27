@@ -139,17 +139,40 @@ spec:
     mode: STRICT
 ```
 
-## Test access to service
-### Internal access test
-``` bash
-while true; do curl http://auth-service-server.auth-service.svc.cluster.local:3000/version && echo "" && sleep 1; done
+## Circuit breakers
+**Circuit breakers are configured using Destination Rules**
+``` yaml
+# DestinationRule
+trafficPolicy:  
+  connectionPool:  
+    tcp:  
+      maxConnections: 2  
+    http:  
+      http1MaxPendingRequests: 1  
+      maxRequestsPerConnection: 1  
+  outlierDetection:  
+    consecutive5xxErrors: 2  
+    interval: 10s # If the auth service encounters 2 consecutive 5xx errors within 10 seconds, it will be ejected for 30 seconds
+    baseEjectionTime: 30s # After 30 seconds, the circuit enters a half-open state to test recovery
 ```
 
-### External access test
-``` bash
-while true; do curl http://app.service.api/version && echo "" && sleep 0.5; done
-
-while true; do curl http://app.service.api/version && echo "" && sleep 1; done
-
-while true; do curl http://app.service.api/user/profile && echo "" && sleep 1; done
+## Request Timeouts
+**Circuit Breaker with Timeout**
+``` yaml
+# VirtualService
+http:
+- name: "auth-service-route"
+  match:
+  - uri:
+      prefix: /
+  timeout: 5s # 5 second timeout for requests to the auth service. If the service does not respond within this time, the request will fail gracefully
+  route:
+  - destination:
+      host: auth-service-server.auth-service.svc.cluster.local
+      subset: v1
+    weight: 90
+  - destination:
+      host: auth-service-server.auth-service.svc.cluster.local
+      subset: v2
+    weight: 10
 ```

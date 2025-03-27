@@ -23,8 +23,11 @@ kubectl get pod -l app=webapp -o jsonpath="{.items[0].metadata.name}
 kubectl get events -n {namespace}
 kubectl describe quota -n {namespace}
 kubectl get hpa -n {namespace}
+kubectl describe hpa {hpa_name} -n {namespace}
+kubectl top pods -A
 kubectl top pods -n {namespace}
 kubectl top nodes
+kubectl get --raw /api/v1/nodes/{node_name}/proxy/stats/summary
 kubectl get priorityclass
 kubectl get peerauthentication --all-namespaces
 

@@ -917,7 +917,7 @@
           "refId": "C"
         }
       ],
-      "title": "Pods CPU usage (1m avg) with requests and limits",
+      "title": "Pods CPU usage (1m avg) with requests and limits (CPU)",
       "type": "timeseries"
     },
     {
@@ -1095,7 +1095,7 @@
           "refId": "C"
         }
       ],
-      "title": "Pods memory usage with requests and limits",
+      "title": "Pods memory usage with requests and limits (Memory)",
       "type": "timeseries"
     },
     {
@@ -1229,7 +1229,7 @@
           "value": "auth-service"
         },
         "definition": "label_values(container_label_io_kubernetes_pod_namespace)",
-        "includeAll": true,
+        "includeAll": false,
         "name": "pod_namespace",
         "options": [],
         "query": {
@@ -1243,8 +1243,8 @@
       },
       {
         "current": {
-          "text": "auth-service-v1-84c4dc4587-mkbfg",
-          "value": "auth-service-v1-84c4dc4587-mkbfg"
+          "text": "All",
+          "value": "$__all"
         },
         "definition": "label_values({container_label_io_kubernetes_pod_namespace=\"$pod_namespace\"},container_label_io_kubernetes_pod_name)",
         "includeAll": true,
@@ -1282,6 +1282,6 @@
   "timezone": "Asia/Bangkok",
   "title": "cAdvisor monitoring dashboard",
   "uid": "bebiikv2b0idcf",
-  "version": 10,
+  "version": 12,
   "weekStart": ""
 }

@@ -79,3 +79,18 @@ Envoy is a high-performance proxy, Designed for cloud-native applications
 • Staged rollouts with %-based traffic split \
 • Fault injection \
 • Rich metrics
+
+## Test access to service
+### Internal access test
+``` bash
+while true; do curl http://auth-service-server.auth-service.svc.cluster.local:3000/version && echo "" && sleep 1; done
+```
+
+### External access test
+``` bash
+while true; do curl http://app.service.api/version && echo "" && sleep 0.5; done
+
+while true; do curl http://app.service.api/version && echo "" && sleep 1; done
+
+while true; do curl http://app.service.api/user/profile && echo "" && sleep 1; done
+```

@@ -378,8 +378,8 @@
       },
       {
         "current": {
-          "text": "auth-service-v1-84c4dc4587-mkbfg",
-          "value": "auth-service-v1-84c4dc4587-mkbfg"
+          "text": "All",
+          "value": "$__all"
         },
         "definition": "label_values(istio_requests_total{namespace=\"$namespace\"},pod)",
         "includeAll": true,
@@ -432,9 +432,9 @@
       "1d"
     ]
   },
-  "timezone": "browser",
+  "timezone": "Asia/Bangkok",
   "title": "Istio dashboard",
   "uid": "cegok5cahfny8e",
-  "version": 29,
+  "version": 30,
   "weekStart": ""
 }
