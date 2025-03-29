@@ -1,0 +1,49 @@
+cr:
+  create: true
+  namespace: "istio-system"
+
+  spec:
+    auth:
+      # Determines what authentication strategy to use when users log into Kiali. Options are anonymous, token, openshift, openid, or header
+      strategy: "anonymous"
+
+    # https://kiali.io/docs/configuration/kialis.kiali.io/
+    external_services:
+      # custom_dashboards:
+      #   enabled: true
+      #   prometheus:
+      #     auth:
+      #       insecure_skip_verify: true
+      #     url: "http://prometheus-kube-prometheus-prometheus.monitoring:9090"
+      #     health_check_url: "http://prometheus-kube-prometheus-prometheus.monitoring:9090"
+
+      prometheus:
+        url: "http://prometheus-kube-prometheus-prometheus.monitoring:9090"
+        
+      grafana:
+        enabled: true
+        auth:
+          insecure_skip_verify: true
+          type: "basic"
+          username: "admin"
+          password: "1111"
+        # external_url: ""
+        internal_url: "http://grafana.grafana.svc"
+
+      tracing:
+        enabled: true
+        auth:
+          insecure_skip_verify: true
+        internal_url: "http://tempo.tempo.svc:3100"
+        provider: "tempo"
+        # query_timeout: 5
+        tempo_config:
+          org_id: "1"
+          datasource_uid: "tempo"
+          url_format: "grafana"
+          cache_enabled: true
+          cache_capacity: 200
+        use_grpc: false
+        # grpc_port: 9095
+        # namespace_selector: true
+        # whitelist_istio_system: ["auth-service", "istio-ingress"]

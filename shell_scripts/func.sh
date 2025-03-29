@@ -128,6 +128,14 @@ remove_trailing_slash() {
     return 0
 }
 
+test_url() {
+    local $url="$1"
+
+    curl "$url" -s -o /dev/null -w "%{http_code}\n"
+
+    # curl --header "Authorization: Bearer $token" "$url" -s -o /dev/null -w "%{http_code}\n"
+}
+
 request_url() {
     local $url="$1"
 

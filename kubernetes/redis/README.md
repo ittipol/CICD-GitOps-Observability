@@ -1,4 +1,5 @@
 # Redis
+Redis is no longer open source
 
 ## Using CLI
 ``` bash

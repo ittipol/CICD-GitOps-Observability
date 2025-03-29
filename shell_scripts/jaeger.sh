@@ -2,26 +2,20 @@
 set -e
 
 install() {
-    cd ../kubernetes/grafana/terraform
+	cd ../kubernetes/jaeger/terraform
 
     terraform init
     terraform apply
 }
 
 destroy() {
-    cd ../kubernetes/grafana/terraform
+	cd ../kubernetes/jaeger/terraform
 
     terraform destroy
 }
 
 start_port_forward() {
-	kubectl port-forward svc/grafana -n grafana 3000:80
-}
-
-apply_dashboard() {
-	cd ../grafana/dashboard
-
-	kubectl apply -f ./k8s
+    kubectl port-forward service/jaeger -n jaeger 16686:16686
 }
 
 case "$1" in
@@ -31,11 +25,8 @@ case "$1" in
 	destroy)
 		destroy
 	;;
-	-s) 
+    -s) 
 		start_port_forward
-    ;;
-	dashboard) 
-		apply_dashboard
     ;;
     *)
 		echo "Invalid option" >&2

@@ -277,7 +277,7 @@ serviceMonitor:
 
   # additional labels for the ServiceMonitor
   extraLabels:
-    release: prometheus
+    prometheus: main
   # Used to set relabeling and metricRelabeling configs on the ServiceMonitor
   # https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config
   relabelings: []

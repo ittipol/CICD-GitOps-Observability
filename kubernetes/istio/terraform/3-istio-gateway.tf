@@ -10,11 +10,6 @@ resource "helm_release" "gateway" {
   create_namespace = true
   version          = "1.25.0"
 
-  # set {
-  #   name  = "service.type"
-  #   value = "ClusterIP"
-  # }
-
   depends_on = [
     helm_release.istio_base,
     helm_release.istiod
