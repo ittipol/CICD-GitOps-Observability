@@ -44,16 +44,22 @@ gateway:
   enabled: false
 
 memcached:
-  resources:
-    requests:
-      cpu: 1000m
-      memory: 4Gi
-    limits:
-      cpu: 2000m
-      memory: 6Gi
+  chunk_cache:
+    enabled: false
+  results_cache:
+      enabled: false
+
+# memcached:
+#   resources:
+#     requests:
+#       cpu: 1000m
+#       memory: 4Gi
+#     limits:
+#       cpu: 2000m
+#       memory: 6Gi
 
 memcachedExporter:
-  enabled: true
+  enabled: false
   resources:
     limits:
       cpu: 200m
@@ -61,3 +67,9 @@ memcachedExporter:
     requests:
       cpu: 100m
       memory: 128Mi
+
+chunksCache:
+  allocatedMemory: 512
+
+resultsCache:
+  allocatedMemory: 256
