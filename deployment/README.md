@@ -1,5 +1,6 @@
 # Deployment
 
+## Deployment Strategies
 - Big Bang Deployment
 - Rolling Deployment
 - Blue-Green Deployment
