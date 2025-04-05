@@ -149,7 +149,7 @@ if [ "$flag" = "start" ]; then
       ;;
     -a | all)
       docker_start
-      minikube_start 2 '4g'
+      minikube_start 4 '10g'
       exit 1
       ;; 
     -d | docker) 
@@ -157,7 +157,7 @@ if [ "$flag" = "start" ]; then
       exit 1
       ;;
     -m | minikube)
-      minikube_start 2 '4g'
+      minikube_start 4 '10g'
       exit 1
       ;;
     *)

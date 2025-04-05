@@ -3,6 +3,10 @@ set -e
 
 which colima > /dev/null 2>&1 || { echo "colima is not installed"; exit 1; }
 
+start() {
+  colima start --cpu 6 --memory 20 --disk 200
+}
+
 if [ "$1" = "start" ]; then
 
     # -arch        architecture (aarch64, x86_64) (default "aarch64")
@@ -11,8 +15,7 @@ if [ "$1" = "start" ]; then
     # --cpu        number of CPUs (default 2)
     # --memory     memory in GiB (default 2)
 
-    colima start --cpu 6 --memory 16 --disk 200
-    # colima start --cpu 2 --memory 4 --disk 200
+    start
 
     # To start Qemu mode
     # colima start --cpu 4 --memory 12 --arch aarch64 --vm-type qemu
@@ -21,6 +24,9 @@ if [ "$1" = "start" ]; then
     # colima start --cpu 4 --memory 12 --arch aarch64 --vm-type=vz --vz-rosetta
 elif [ "$1" = "stop" ]; then
     colima stop
+elif [ "$1" = "restart" ]; then
+    colima stop
+    start
 elif [ "$1" = "delete" ]; then
     colima delete
 elif [ "$1" = "help" ]; then
