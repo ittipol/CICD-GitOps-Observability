@@ -84,3 +84,7 @@ sudo apt upgrade
 ls -lh
 ls -la
 ls -ltr
+
+# Use the kafka-console-producer command to send a message to a Kafka topic
+kafka-console-producer.sh --broker-list <kafka-service>:9092 --topic test
+kafka-console-consumer.sh --bootstrap-server <kafka-service>:9092 --topic test --from-beginning
