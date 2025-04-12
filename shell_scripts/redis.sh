@@ -13,9 +13,9 @@ destroy() {
     kubectl delete -f ./manifests
 }
 
-# start_port_forward() {
-  
-# }
+start_port_forward() {
+	kubectl port-forward svc/redis-service -n redis 6379:6379
+}
 
 case "$1" in
 	install)
@@ -24,9 +24,9 @@ case "$1" in
 	destroy)
 		destroy
 	;;
-	# -s)
-	# 	start_port_forward
-	# ;;
+	-s)
+		start_port_forward
+	;;
     *)
 		echo "Invalid option" >&2
 		exit 1

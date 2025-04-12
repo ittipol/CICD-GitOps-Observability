@@ -1,0 +1,118 @@
+# https://strimzi.io/docs/operators/latest/deploying
+# Specifies the API version of the Kafka custom resource
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: test-cluster
+  namespace: kafka
+  # annotations:
+  #   strimzi.io/node-pools: enabled
+spec:
+  # Configures the Kafka brokers within the cluster
+  kafka:
+    # Specifies the version of Kafka
+    version: 3.7.0
+    # Specifies the number of Kafka broker replicas
+    replicas: 1
+    # Configures the listeners for Kafka clients to connect to the brokers
+    listeners:
+      - name: plain
+        port: 9092
+        # Type of listener
+        type: internal
+        # Indicates whether TLS encryption is enabled for the listener
+        tls: false
+      - name: tls
+        port: 9093
+        type: internal
+        tls: true
+        authentication:
+          type: tls
+      - name: external
+        port: 9094
+        tls: false
+        type: nodeport # cluster-ip
+        # Additional configuration for the listener, such as advertised host and port
+        configuration:
+          brokers:
+            - broker: 0
+              advertisedHost: localhost
+              advertisedPort: 31769
+    # Specifies Kafka broker configuration settings
+    config:
+      offsets.topic.replication.factor: 1
+      transaction.state.log.replication.factor: 1
+      transaction.state.log.min.isr: 1
+      default.replication.factor: 1
+      min.insync.replicas: 1
+      inter.broker.protocol.version: "3.7"
+    # Configures storage options for Kafka brokers
+    storage:
+      # Type of storage
+      type: jbod
+      # Specifies volume configurations for Kafka brokers
+      volumes:
+      - id: 0
+        type: persistent-claim
+        size: 2Gi
+        class: manual
+        deleteClaim: false
+      # - id: 1
+      #   type: persistent-claim
+      #   size: 100Gi
+      #   deleteClaim: false
+  # Configures the Zookeeper ensemble used by Kafka
+  zookeeper:
+    # Specifies the number of Zookeeper replicas
+    replicas: 1
+    # Configures storage options for Zookeeper
+    storage:
+      # The storage type must always be persistent-claim for ZooKeeper, as it does not support JBOD storage
+      type: persistent-claim
+      size: 2Gi
+      class: manual
+      deleteClaim: false
+    # Resources requests and limits (recommended)
+    resources:
+      requests:
+        memory: 8Gi
+        cpu: "2"
+      limits:
+        memory: 8Gi
+        cpu: "2"
+  # Configures the entity operators for managing Kafka topics and users
+  entityOperator:
+    # topicOperator: {}
+    topicOperator:
+      # Resources requests and limits (recommended)
+      resources:
+        requests:
+          memory: 512Mi
+          cpu: "1"
+        limits:
+          memory: 512Mi
+          cpu: "1"
+      # Logging configuration (optional)
+      logging:
+        type: inline
+        loggers:
+          rootLogger.level: INFO
+      watchedNamespace: kafka
+      reconciliationIntervalSeconds: 60
+    # userOperator: {}
+    userOperator:
+      watchedNamespace: kafka
+      reconciliationIntervalMs: 60000
+      # Resources requests and limits (recommended)
+      resources:
+        requests:
+          memory: 512Mi
+          cpu: "1"
+        limits:
+          memory: 512Mi
+          cpu: "1"
+      # Logging configuration (optional)
+      logging:
+        type: inline
+        loggers:
+          rootLogger.level: INFO

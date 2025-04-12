@@ -3,9 +3,6 @@ kind: Service
 metadata:
   name: redis-service
   namespace: redis
-  labels:
-    job: node-api
-    app: redis-service
 spec:
   type: ClusterIP
   ports:
@@ -16,4 +13,4 @@ spec:
     #   targetPort: exporter-port
     #   name: redis-metrics
   selector:
-    app: redis
+    app.kubernetes.io/name: redis

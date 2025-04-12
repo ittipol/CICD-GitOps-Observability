@@ -34,7 +34,7 @@ kubectl delete all --all -n {namespace}
 
 ## Ingress
 ``` bash
-curl --resolve "goapp.example:80:$(minikube ip)" -i http://goapp.example
+curl --resolve "app.api.service:80:$(minikube ip)" -i http://app.api.service
 ```
 
 ## Communication between containers within same pod
@@ -70,3 +70,13 @@ spec:
 ## Connect a service in a different namespace
 {protocol}://{service_name}.{service_namespace}.{Kubernetes_suffix}:{service_port} \
 redis://redis-service.redis-database.svc.cluster.local:6379
+
+## Pull Policy
+**Always** \
+Alway attempts to pull the reference
+
+**Never** \
+Never pull the reference and only uses a local image or artifact
+
+**IfNotPresent** \
+Pull if the reference isn't already present on disk
