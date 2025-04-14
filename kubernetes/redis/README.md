@@ -116,3 +116,18 @@ appendonly yes
 # PASSWORD
 requirepass password
 ```
+
+## Naming Conventions
+- Keep it concise
+- Use lowercase letters
+- Use Delimiters for Hierarchy
+- Avoid special characters
+
+### Examples
+Convention: entity:id:attribute
+- user:100:settings
+- session:5rk3JqIQkV50VjX7Ek45Y:expires
+- cache:system:content
+
+**Use Snake_case when a key names are composed of multiple words**
+- user:100:refresh_token

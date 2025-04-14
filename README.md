@@ -251,6 +251,7 @@ https://developer.hashicorp.com/vault/tutorials/kubernetes/kubernetes-minikube-c
 vault secrets enable -path=key kv
 ```
 
+### JWT secret key
 **Add JWT secret key**
 ``` bash
 vault kv put -mount=key jwt-secret-key jwt-access-token-secret=uDnF3+6uGj+tyvqRrzfCqc1czsKOnW8m+xv7lnOBDzuIGIkjphTa6aGjuQbbMQ79EAI22YU7bTfhTQzyqKMgBQ== jwt-refresh-token-secret=0Cf7yuCqusHqFW2N5eWZ88dy4bukCK19/jFdNIP1XvHR7zEiCDa04yf4JUqCX5TMRFaELd4ERLMcIFUB8aMXjg==
@@ -260,6 +261,21 @@ vault kv put -mount=key jwt-secret-key jwt-access-token-secret=uDnF3+6uGj+tyvqRr
 ``` bash
 vault policy write jwt-secret-key-policy - <<EOF
 path "key/jwt-secret-key" {
+  capabilities = ["read"]
+}
+EOF
+```
+
+### Redis secret
+**Add Redis password**
+``` bash
+vault kv put -mount=key redis-secret password=cGFzc3dvcmQ=
+```
+
+**Create a policy**
+``` bash
+vault policy write redis-secret-policy - <<EOF
+path "key/redis-secret" {
   capabilities = ["read"]
 }
 EOF
@@ -370,6 +386,7 @@ vault write auth/kubernetes/role/multiple-role \
   bound_service_account_namespaces=auth-service \
   policies=database-only-read-policy \
   policies=jwt-secret-key-policy \
+  policies=redis-secret-policy \
   ttl=1h
 ```
 
@@ -386,7 +403,7 @@ annotations:
       "db_connection": "host=postgresql.postgresql.svc port=5432 user={{ .Data.username }} password={{ .Data.password }} dbname=postgresdb sslmode=disable TimeZone=Asia/Bangkok"
     {{- end }}
     }
-  vault.hashicorp.com/agent-inject-secret-jwt-secret-key : "key/jwt-secret-key"
+  vault.hashicorp.com/agent-inject-secret-jwt-secret-key: "key/jwt-secret-key"
   # vault.hashicorp.com/agent-inject-template-jwt-secret-key: |
   #   {{- with secret "key/jwt-secret-key" -}}
   #     {{ range $k, $v := .Data }}
@@ -395,6 +412,11 @@ annotations:
   #   {{- end }}
   vault.hashicorp.com/agent-inject-template-jwt-secret-key: |
     {{- with secret "key/jwt-secret-key" -}}
+      {{ .Data | toJSON }}
+    {{- end }}
+  vault.hashicorp.com/agent-inject-secret-redis-secret: "key/redis-secret"
+  vault.hashicorp.com/agent-inject-template-redis-secret: |
+    {{- with secret "key/redis-secret" -}}
       {{ .Data | toJSON }}
     {{- end }}
   vault.hashicorp.com/role: "multiple-role"
@@ -407,6 +429,8 @@ kubectl exec -it {pod_name} -n go-app -c go-app -- sh
 cat /vault/secrets/sql-create-user-role
 
 cat /vault/secrets/jwt-secret-key
+
+cat /vault/secrets/redis-secret
 ```
 
 **Create a token for creating database username and password for developing or testing**
