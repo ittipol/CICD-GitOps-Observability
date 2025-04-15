@@ -269,7 +269,7 @@ EOF
 ### Redis secret
 **Add Redis password**
 ``` bash
-vault kv put -mount=key redis-secret password=cGFzc3dvcmQ=
+vault kv put -mount=key redis-secret username= password=password
 ```
 
 **Create a policy**
@@ -416,9 +416,11 @@ annotations:
     {{- end }}
   vault.hashicorp.com/agent-inject-secret-redis-secret: "key/redis-secret"
   vault.hashicorp.com/agent-inject-template-redis-secret: |
+    {
     {{- with secret "key/redis-secret" -}}
-      {{ .Data | toJSON }}
+      "db_connection": "redis://:{{ .Data.password }}@redis-service.redis.svc.cluster.local:6379/0"
     {{- end }}
+    }
   vault.hashicorp.com/role: "multiple-role"
 ```
 
