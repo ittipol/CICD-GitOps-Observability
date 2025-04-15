@@ -1,7 +1,21 @@
 # Kubernetes
 
+## Lightweight Linux images (Lean)
+- Alpine image
+- Distroless image
+- Chainguard image
+- Scratch image
+
+## Container security
+- Running a container as a non-root user and unprivileged container
+- Use lightweight image for base image
+- Do not install unnecessary packages in container
+
 ## Terraform
 - Resource: helm_release https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release
+
+## Init containers
+Init containers run and complete their tasks before the main application container starts. init containers are not continuously running alongside the main containers
 
 ## Watch for status changes
 ``` bash
