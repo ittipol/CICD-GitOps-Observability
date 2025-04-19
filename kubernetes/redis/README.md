@@ -102,16 +102,37 @@ hdel key field [field ...]
 hexists key field
 ```
 
+## Redis Persistence
+### Snapshotting
+**Write dataset to disk**
+```
+// redis.conf
+save 60 100 # save after 60 seconds (1 min) if at least 100 keys have changed
+```
+
+### Append-only file (AOF)
+```
+// redis.conf
+appendonly yes # enable AOF persistence
+appendfsync always # sync AOF to disk after every write operation (safe, but slow)
+```
+
+**`appendfsync` has 3 modes**
+- **always**: sync after every write operation (safe, but slow)
+- **everysec**: sync every second (default option)
+- **no**: never sync, let the operating system handle it (fast, but risky)
+
 ## Redis Configuration
 ``` bash
-# SNAPSHOTTING
+# Snapshotting
 save <seconds> <changes>
-# save 900 1
+# save 900 10
 # save 300 10
-# save 60 10000
+# save 60 100
 
-# APPEND ONLY MODE
+# Append-only file (AOF)
 appendonly yes
+appendfsync always
 
 # PASSWORD
 requirepass password
@@ -124,10 +145,10 @@ requirepass password
 - Avoid special characters
 
 ### Examples
-Convention: entity:id:attribute
+**Convention:** entity:id:attribute
 - user:100:settings
 - session:5rk3JqIQkV50VjX7Ek45Y:expires
 - cache:system:content
 
-**Use Snake_case when a key names are composed of multiple words**
+**Use `Snake_case` when a key names are composed of multiple words**
 - user:100:refresh_token
