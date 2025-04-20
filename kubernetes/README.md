@@ -17,6 +17,9 @@
 ## Init containers
 Init containers run and complete their tasks before the main application container starts. init containers are not continuously running alongside the main containers
 
+## Headless Service
+A headless service in Kubernetes can be a useful tool for creating distributed applications. It allows you to directly access the individual pods in a service
+
 ## Watch for status changes
 ``` bash
 kubectl get [resource] [resources_name] -n [namespace] --watch
@@ -82,10 +85,43 @@ spec:
 ```
 
 ## Connect a service in a different namespace
+```
+<service_name> (Use if in same namespace)
+<service_name>.<namespace_name> (Use if across namespace)
+<service_name>.<namespace_name>.svc.cluster.local (FQDN)
+```
 **DNS pattern** \
 {protocol}://{service_name}.{service_namespace}.{Kubernetes_suffix}:{service_port}
 ```
 ex. redis://redis-service.redis-database.svc.cluster.local:6379
+```
+
+**Headless service DNS pattern** \
+{protocol}://{pod_name}.{service_name}.{service_namespace}.{Kubernetes_suffix}:{service_port}
+```
+ex. redis://redis-0.redis-service.redis-database.svc.cluster.local:6379
+```
+
+**Headless service config**
+``` yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  namespace: redis
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: redis
+  replicas: 6
+  serviceName: redis-headless-svc-stateful # Point the serviceName to the headless service that’s responsible for exposing the StatefulSet to the network
+  template:
+    ...
+```
+
+**Test headless service**
+``` bash
+nslookup redis-0.redis-headless-svc-stateful.redis.svc.cluster.local
 ```
 
 ## Pull Policy
