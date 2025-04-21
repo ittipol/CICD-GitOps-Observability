@@ -418,7 +418,7 @@ annotations:
   vault.hashicorp.com/agent-inject-template-redis-secret: |
     {
     {{- with secret "key/redis-secret" -}}
-      "db_connection": "redis://:{{ .Data.password }}@redis-service.redis.svc.cluster.local:6379/0"
+      "db_connection": "redis://:{{ .Data.password }}@redis-0.redis-headless-svc-stateful.redis.svc.cluster.local:6379/0"
     {{- end }}
     }
   vault.hashicorp.com/role: "multiple-role"

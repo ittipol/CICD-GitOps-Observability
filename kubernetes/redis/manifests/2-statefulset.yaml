@@ -24,7 +24,7 @@ spec:
             echo $TEST_VALUE
             env
 
-            echo "Config" > /etc/redis/test.conf            
+            echo -n "Config from initContainers" > /etc/redis/test.conf
         volumeMounts:
         - name: redis-config
           mountPath: /etc/redis/
@@ -68,6 +68,7 @@ spec:
         command: [ "sh", "-c" ]
         args:
           - |
+            cat /etc/redis/test.conf
             echo $REDIS_PASSWORD
             # redis-server --requirepass "$REDIS_PASSWORD"
             redis-server /tmp/redis/redis.conf
