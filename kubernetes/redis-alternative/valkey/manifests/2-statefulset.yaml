@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: valkey
+  namespace: valkey
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: valkey
+  replicas: 6 # Require at least 6 nodes for running valkey cluster
+  serviceName: valkey-headless-svc-stateful # Point the serviceName to the headless service that’s responsible for exposing the StatefulSet to the network
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: valkey
+    spec:      
+      initContainers:
+      - name: config
+        image: valkey/valkey:8.1.1-alpine
+        command: [ "sh", "-c" ]
+        args:
+          - |
+            TEST_VALUE="test...."
+            echo $TEST_VALUE
+            env
+
+            echo -n "Config from initContainers" > /etc/valkey/test.conf
+        volumeMounts:
+        - name: valkey-config
+          mountPath: /etc/valkey/
+      containers:
+      - name: valkey
+        image: valkey/valkey:8.1.1-alpine
+        imagePullPolicy: "IfNotPresent"
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          runAsNonRoot: true
+          readOnlyRootFilesystem: true
+          runAsUser: 10001
+          runAsGroup: 10001
+          seccompProfile:
+            type: RuntimeDefault
+        ports:
+        - containerPort: 6379
+          name: valkey-port
+        resources:
+          limits:
+            cpu: 100m
+            memory: 1Gi
+          requests:
+            cpu: 50m
+            memory: 512Mi
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: VALKEY_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: valkey-secret
+              key: VALKEY_PASSWORD
+        # command: ["valkey-server"]
+        # args: ["/etc/valkey/valkey.conf"]
+        command: [ "sh", "-c" ]
+        args:
+          - |
+            cat /etc/valkey/test.conf
+            echo $VALKEY_PASSWORD
+            # valkey-server --requirepass "$VALKEY_PASSWORD"
+            valkey-server /tmp/valkey/valkey.conf
+        # args: ["--requirepass", "$(VALKEY_PASSWORD)"]
+        volumeMounts:
+        - name: valkey-storage
+          mountPath: /data
+        - name: valkey-config
+          mountPath: /etc/valkey/
+        - name: config
+          mountPath: /tmp/valkey/
+          readOnly: false
+      volumes:
+      - name: valkey-config
+        emptyDir: {}
+      - name: config
+        configMap:
+          name: valkey-cluster
+  volumeClaimTemplates:
+  - metadata:
+      name: valkey-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi

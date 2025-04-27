@@ -169,7 +169,7 @@ cluster-migration-barrier 1
 ``` bash
 REDIS_NODES={REDIS_NODE_IP_1...6}:6379
 
-#view Redis pod ip
+# View Redis pod ip
 kubectl get pods  -l app.kubernetes.io/name=redis -n redis -o json | grep -i "podIP"
 
 # Require at least 6 nodes for running Redis cluster
