@@ -24,8 +24,15 @@ git push {remote} {branch}
 ```
 
 ## Pull code
+**git pull is shorthand for git fetch + git merge**
 ``` bash
 git pull {remote} {branch}
+
+git pull --ff {remote} {branch}
+
+git pull --ff-only {remote} {branch}
+
+git pull --rebase {remote} {branch}
 ```
 
 ## Fetch and checkout
@@ -61,11 +68,15 @@ git show HEAD
 ## Show the commit logs
 ``` bash
 git log
+
+git log --oneline
 ```
 
 ## Stash the changes
 ``` bash
 git stash
+
+git stash -m "message"
 
 git stash list
 
@@ -92,4 +103,14 @@ git restore {file_name}
 git clean -n
 
 git clean -f
+```
+
+## Cherry pick
+``` bash
+git checkout <branch>
+
+# Apply the changes introduced by the commit_1, commit_2 and commit_n commits and create a new commits with these changes
+git cherry-pick <commit_1> <commit_2> <commit_n>
+
+git cherry-pick (--continue | --skip | --abort | --quit)
 ```
