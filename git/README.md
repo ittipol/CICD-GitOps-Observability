@@ -8,9 +8,43 @@ git reset --soft HEAD~
 git reset --soft HEAD~2
 ```
 
-## Undoing Your Last Commit (That Has Not Been Pushed) (Discard commit)
+### Cherry pick a commit from other branch and edit in current branch before commit and push to remote branch
+``` bash
+# Assume there 2 branch
+# 1. develop
+# 2. feature
+
+# Switch to current branch
+git checkout develop
+
+# View the commit history in feature branch
+git log feature
+
+# Copy a commit hash from feature branch
+# Cherry pick a commit hash
+git cherry-pick <commit hash>
+
+# Reset last commit in current branch
+git reset --soft HEAD~
+
+# All files in last commit will be in staged changes
+git status
+
+# When edit complete then run git add
+git add .
+
+# Commit
+git commit -m "message"
+
+# Push
+git push {remote} {branch}
+```
+
+## Undoing Your Last Remote Commit (That Has Been Pushed) (Discard commit)
 ``` bash
 git reset --hard HEAD~1
+
+# git reset --hard HEAD~n
 
 git push --force {remote} {branch}
 ```
@@ -124,4 +158,14 @@ git checkout <branch>
 git cherry-pick <commit_1> <commit_2> <commit_n>
 
 git cherry-pick (--continue | --skip | --abort | --quit)
+```
+
+## Undo merge conflict
+**If a merge has conflict**
+``` bash
+# Use for cancel merge
+git merge --abort
+
+# Use for cancel rebase
+git rebase --abort
 ```
