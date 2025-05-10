@@ -1,11 +1,18 @@
 # Git
 
-## Undoing Your Last Commit (That Has Not Been Pushed)
+## Undoing Your Last Commit (That Has Not Been Pushed) (keep commit)
 ``` bash
 git reset --soft HEAD~
 
 # To undo the last 2 commits (assuming both have not been pushed)
 git reset --soft HEAD~2
+```
+
+## Undoing Your Last Commit (That Has Not Been Pushed) (Discard commit)
+``` bash
+git reset --hard HEAD~1
+
+git push --force {remote} {branch}
 ```
 
 ## Undoing a Specific Commit (That Has Been Pushed)
@@ -70,6 +77,10 @@ git show HEAD
 git log
 
 git log --oneline
+
+git log --graph
+
+git log --oneline --graph
 ```
 
 ## Stash the changes
