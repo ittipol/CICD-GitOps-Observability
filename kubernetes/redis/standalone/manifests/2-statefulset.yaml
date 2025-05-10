@@ -7,30 +7,15 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: redis
-  replicas: 6 # Require at least 6 nodes for running Redis cluster
-  serviceName: redis-headless-svc-stateful # Point the serviceName to the headless service that’s responsible for exposing the StatefulSet to the network
+  replicas: 1 # Require at least 6 nodes for running Redis cluster
   template:
     metadata:
       labels:
         app.kubernetes.io/name: redis
-    spec:      
-      initContainers:
-      - name: config
-        image: redis:6.2
-        command: [ "sh", "-c" ]
-        args:
-          - |
-            TEST_VALUE="test...."
-            echo $TEST_VALUE
-            env
-
-            echo -n "Config from initContainers" > /etc/redis/test.conf
-        volumeMounts:
-        - name: redis-config
-          mountPath: /etc/redis/
+    spec:            
       containers:
       - name: redis
-        image: redis:6.2
+        image: redis:6.2.7
         imagePullPolicy: "IfNotPresent"
         securityContext:
           allowPrivilegeEscalation: false
@@ -64,29 +49,10 @@ spec:
               name: redis-secret
               key: REDIS_PASSWORD
         # command: ["redis-server"]
-        # args: ["/etc/redis/redis.conf"]
-        command: [ "sh", "-c" ]
-        args:
-          - |
-            cat /etc/redis/test.conf
-            echo $REDIS_PASSWORD
-            # redis-server --requirepass "$REDIS_PASSWORD"
-            redis-server /tmp/redis/redis.conf
-        # args: ["--requirepass", "$(REDIS_PASSWORD)"]
+        args: ["--requirepass", "$(REDIS_PASSWORD)"]
         volumeMounts:
         - name: redis-storage
           mountPath: /data
-        - name: redis-config
-          mountPath: /etc/redis/
-        - name: config
-          mountPath: /tmp/redis/
-          readOnly: false
-      volumes:
-      - name: redis-config
-        emptyDir: {}
-      - name: config
-        configMap:
-          name: redis-cluster
   volumeClaimTemplates:
   - metadata:
       name: redis-storage

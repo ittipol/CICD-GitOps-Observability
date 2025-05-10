@@ -2,13 +2,13 @@
 set -e
 
 install() {
-	cd ../kubernetes/redis
+	cd ../kubernetes/redis/standalone
 
     kubectl apply -f ./manifests
 }
 
 destroy() {	    
-    cd ../kubernetes/redis
+    cd ../kubernetes/redis/standalone
 
     kubectl delete -f ./manifests
 }
