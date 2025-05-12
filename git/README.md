@@ -20,14 +20,14 @@ git checkout develop
 # View the commit history in feature branch
 git log feature
 
-# Copy a commit hash from feature branch
+# Copy a specific commit hash in feature branch
 # Cherry pick a commit hash
 git cherry-pick <commit hash>
 
 # Reset last commit in current branch
 git reset --soft HEAD~
 
-# All files in last commit will be in staged changes
+# All files in last commit will be in staging area
 git status
 
 # When edit complete then run git add
@@ -36,7 +36,7 @@ git add .
 # Commit
 git commit -m "message"
 
-# Push
+# Push to remote repository
 git push {remote} {branch}
 ```
 
