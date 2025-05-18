@@ -93,6 +93,12 @@ git checkout -b {new_branch_name}
 git diff
 
 git diff HEAD~1
+
+git diff --stat
+
+git diff --numstat
+
+git diff --name-status
 ```
 
 ## Show changes in commit 
