@@ -10,5 +10,10 @@ resource "helm_release" "couchdb" {
   create_namespace = true
   version          = "4.6.0"
 
+  # set {
+  #  name  = "couchdbConfig.couchdb.uuid"
+  #  value = "54560290aacd4eadaf44c11f4d0da8a6"
+  # }
+
   values = [file("values/couchdb-helm.yaml")]
 }
