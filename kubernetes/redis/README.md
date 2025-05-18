@@ -124,7 +124,9 @@ FLUSHALL [ASYNC | SYNC]
 
 ## Check memory used
 ``` bash
-MEMORY USAGE key
+MEMORY USAGE <key>
+
+DEBUG OBJECT <key>
 
 INFO MEMORY
 

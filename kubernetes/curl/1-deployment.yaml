@@ -20,6 +20,7 @@ spec:
       containers:
       - name: curl
         image: nginx:stable-alpine3.19
+        # image: curlimages/curl:8.13.0
         imagePullPolicy: Always      
         ports:
         - containerPort: 80

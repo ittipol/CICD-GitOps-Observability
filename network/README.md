@@ -17,7 +17,7 @@ ping {ip_address|domain_name}
 # To test connectivity to a specific TCP service listening on your host
 nc -vz {domain_name} {port}
 
-# Transferring data to a server
+# Transfer data with URL to a server
 curl -kv {protocol}://{domain_name}:{port}
 
 # Verify certificate
