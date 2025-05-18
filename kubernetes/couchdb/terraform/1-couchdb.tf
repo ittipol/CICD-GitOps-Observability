@@ -4,7 +4,7 @@
 resource "helm_release" "couchdb" {
   name = "couchdb"
 
-  repository       = "https://kiali.org/helm-charts"
+  repository       = "https://apache.github.io/couchdb-helm"
   chart            = "couchdb"
   namespace        = "couchdb"
   create_namespace = true
