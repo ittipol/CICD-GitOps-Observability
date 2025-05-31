@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+# Add TLS cert to k8s cluster (minikube)
 add_cert() {
     
     ssh -i ~/.minikube/machines/minikube/id_rsa docker@$(minikube ip) "sudo mkdir -p /etc/docker/certs.d/host.minikube.internal:5000 && sudo chmod 777 /etc/docker/certs.d/host.minikube.internal:5000"

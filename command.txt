@@ -12,8 +12,6 @@ pe -ef
 htop
 ## =======
 
-kubectl get node -o wide
-kubectl describe nodes
 kubectl config current-context
 kubectl cluster-info
 echo $(kubectl get node minikube -o jsonpath='{.status.capacity}')
@@ -30,6 +28,12 @@ kubectl top nodes
 kubectl get --raw /api/v1/nodes/{node_name}/proxy/stats/summary
 kubectl get priorityclass
 kubectl get peerauthentication --all-namespaces
+
+## k8s node
+kubectl get node -o wide
+kubectl get nodes
+kubectl describe nodes
+kubectl describe node <node-name>
 
 ## Print logs in a pod on pod init state
 kubectl logs first-app-v1-86f6db4f85-zkjsn -n staging -c vault-agent-init

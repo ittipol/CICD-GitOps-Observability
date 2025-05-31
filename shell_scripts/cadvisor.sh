@@ -8,17 +8,25 @@ install() {
     local version="$1"
     if [ "$1" = "" ]; then
         # https://github.com/google/cadvisor/releases
-        version="v0.49.2"
+        version="v0.52.1"
     fi
 
     # Apply parameterized manifest files with -k
     kubectl apply -k https://github.com/google/cadvisor/deploy/kubernetes/base?ref="${version}"
 }
 
-apply_cadvisor_pod_monitor() {
-    cd ../kubernetes/cadvisor
+# cadvisor-pod-monitor.yaml (Archive version)
+# apply_cadvisor_pod_monitor() {
+#     cd ../kubernetes/cadvisor
 
-    kubectl apply -f cadvisor-pod-monitor.yaml
+#     kubectl apply -f cadvisor-pod-monitor.yaml
+# }
+
+apply_cadvisor_pod_monitor() {
+    cd ../kubernetes/monitoring
+
+    kubectl apply -f 0-proxy-monitoring-namespace.yaml
+    kubectl apply -f 3-cadvisor-podmonitor.yaml
 }
 
 start_port_forward() {

@@ -125,7 +125,7 @@ kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheu
 
 **Go application container resource metrics**
 1. Install cAdvisor (Container Advisor) by running "./cadvisor.sh install"
-2. Apply pod monitor for pulling metrics by running "./cadvisor.sh monitor"
+2. Apply pod monitor for pulling metrics from cAdvisor pod by running "./cadvisor.sh monitor"
 3. Access Grafana by running "./grafana.sh -s"
 4. Go to http://localhost:3000
 5. Navigate to Dashboards > cAdvisor Monitoring & k6 Load Testing Dashboard

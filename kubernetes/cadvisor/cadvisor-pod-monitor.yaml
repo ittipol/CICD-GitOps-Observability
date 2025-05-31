@@ -4,8 +4,9 @@ metadata:
   name: cadvisor-pod-monitor
   namespace: monitoring
   labels:
-    release: prometheus # Matches kube-prometheus-stack release label (if do not set specific value)
-    app: prometheus
+    # release: prometheus # release: prometheus is default value for matching a pod to scrap a metrics, Matches kube-prometheus-stack release label (if do not set specific value)
+    prometheus: main
+    app: prometheus    
 spec:
   namespaceSelector:
     matchNames:
