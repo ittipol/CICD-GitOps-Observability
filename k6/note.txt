@@ -1,0 +1,17 @@
+- data_received จำนวนข้อมูลที่ได้รับ
+- data_sent จำนวนข้อมูลที่ส่ง
+- http_reqs จำนวน HTTP Request ที่ k6 สร้างขึ้น
+- http_req_block เวลาที่ใช้เมื่อถูกบล็อก(รอเชื่อมต่อ TCP Connection Slot ที่ว่างอยู่) ก่อนเริ่ม Request
+- http_req_connecting เวลาที่ใช้ในสร้างการเชื่อมต่อกับ Remote Host
+- http_req_failed อัตรา Request ที่ล้มเหลว
+- http_req_receiving เวลาที่ใช้ในการรับข้อมูลจาก Remote Host
+- http_req_sending เวลาที่ใช้ในการส่งข้อมูลไป Remote Host
+- http_req_tls_handshaking เวลาที่ใช้ในการ TLS Handshaking กับ Remote Host
+- http_req_waiting เวลาที่ใช้รอ Response จาก Remote Host (“time to first byte” หรือ ”TTFB”)
+- http_req_duration เวลาที่ใช้ในการ Request เท่ากับ http_req_sending + http_req_waiting + http_req_receiving
+- iteration_duration เวลาทั้งหมดที่ default function หรือ exec function ถูกเรียก
+- iterations จำนวนครั้งที่ default function ถูกเรียก
+- dropped_literation จำนวน iterations ที่ ไม่สามารถเริ่มต้นได้
+- checks อัตราที่ checks สำเร็จ
+- vus จำนวน Virtual User ที่ใช้งาน
+- vus_max จำนวน Virtual User สูงสุดที่ถูกจัดสรรสำหรับการทดสอบ

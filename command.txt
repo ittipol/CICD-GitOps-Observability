@@ -52,6 +52,7 @@ minikube image load {image_name:tag}
 
 ## Building images to in-cluster container runtime
 minikube image build -t {image_name:tag} .
+minikube image build -t {image_name:tag} -f /path/to/your/Dockerfile .
 
 ## Run a specific service in docker-compose
 docker-compose up -d docker-registry && docker-compose up -d nginx

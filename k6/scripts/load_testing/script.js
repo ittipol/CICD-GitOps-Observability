@@ -8,7 +8,6 @@ export const options = {
       executor: 'per-vu-iterations',
       exec: 'healthCheck',
       vus: 100,
-      // duration: '10s',
       // maxDuration: '1m',
       iterations: 1,
     },
