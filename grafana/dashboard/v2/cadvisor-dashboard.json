@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 3,
+  "id": 1,
   "links": [],
   "panels": [
     {
@@ -50,8 +50,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -87,7 +86,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "12.0.0+security-01",
       "targets": [
         {
           "editorMode": "code",
@@ -117,8 +116,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -154,7 +152,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "12.0.0+security-01",
       "targets": [
         {
           "editorMode": "code",
@@ -217,8 +215,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -250,7 +247,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "12.0.0+security-01",
       "targets": [
         {
           "editorMode": "code",
@@ -315,8 +312,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -348,7 +344,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "12.0.0+security-01",
       "targets": [
         {
           "editorMode": "code",
@@ -378,8 +374,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -415,7 +410,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "12.0.0+security-01",
       "targets": [
         {
           "editorMode": "code",
@@ -444,8 +439,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -481,7 +475,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "12.0.0+security-01",
       "targets": [
         {
           "editorMode": "code",
@@ -510,8 +504,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -547,7 +540,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "12.0.0+security-01",
       "targets": [
         {
           "editorMode": "code",
@@ -576,8 +569,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -613,7 +605,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "12.0.0+security-01",
       "targets": [
         {
           "editorMode": "code",
@@ -688,12 +680,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
+                "color": "green"
               }
             ]
           },
@@ -724,11 +711,11 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "12.0.0+security-01",
       "targets": [
         {
           "editorMode": "code",
-          "expr": "rate(\n    container_cpu_cfs_throttled_seconds_total{\nimage!=\"\",name=~\"^k8s_.*\",container_label_io_kubernetes_pod_namespace=~\"$pod_namespace\",container_label_io_kubernetes_pod_name=~\"$pod_name\",\ncontainer_label_io_kubernetes_docker_type=\"container\"\n    }[1m]\n)",
+          "expr": "sum(\n  rate(\n    container_cpu_cfs_throttled_seconds_total{\n      image!=\"\",name=~\"^k8s_.*\",container_label_io_kubernetes_pod_namespace=~\"$pod_namespace\",container_label_io_kubernetes_pod_name=~\"$pod_name\",\n      container_label_io_kubernetes_docker_type=\"container\"\n    }[1m]\n  )\n) by (\n    container_label_io_kubernetes_pod_name\n)",
           "legendFormat": "{{container_label_io_kubernetes_pod_name}} | {{container_label_io_kubernetes_container_name}}",
           "range": true,
           "refId": "A"
@@ -786,8 +773,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -865,7 +851,8 @@
         "legend": {
           "calcs": [
             "mean",
-            "lastNotNull"
+            "lastNotNull",
+            "max"
           ],
           "displayMode": "table",
           "placement": "right",
@@ -877,7 +864,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "12.0.0+security-01",
       "targets": [
         {
           "datasource": {
@@ -886,6 +873,7 @@
           },
           "editorMode": "code",
           "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",name=~\"^k8s_.*\",container_label_io_kubernetes_pod_namespace=~\"$pod_namespace\",container_label_io_kubernetes_pod_name=~\"$pod_name\",\ncontainer_label_io_kubernetes_docker_type=\"container\"\n}[1m])) by (\n    container_label_io_kubernetes_pod_name\n)",
+          "interval": "15s",
           "legendFormat": "{{container_label_io_kubernetes_pod_name}}",
           "range": true,
           "refId": "A"
@@ -968,8 +956,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -1047,7 +1034,8 @@
         "legend": {
           "calcs": [
             "mean",
-            "lastNotNull"
+            "lastNotNull",
+            "max"
           ],
           "displayMode": "table",
           "placement": "right",
@@ -1059,11 +1047,12 @@
           "sort": "desc"
         }
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "12.0.0+security-01",
       "targets": [
         {
           "editorMode": "code",
           "expr": "sum (container_memory_working_set_bytes{image!=\"\",name=~\"^k8s_.*\",container_label_io_kubernetes_pod_namespace=~\"$pod_namespace\",\ncontainer_label_io_kubernetes_pod_name=~\"$pod_name\",\ncontainer_label_io_kubernetes_docker_type=\"container\"\n}) by (\n    container_label_io_kubernetes_pod_name\n)",
+          "interval": "15s",
           "legendFormat": "{{container_label_io_kubernetes_pod_name}}",
           "range": true,
           "refId": "A"
@@ -1146,8 +1135,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -1190,7 +1178,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "12.0.0+security-01",
       "targets": [
         {
           "editorMode": "code",
@@ -1219,14 +1207,14 @@
   ],
   "preload": false,
   "refresh": "15s",
-  "schemaVersion": 40,
+  "schemaVersion": 41,
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "text": "auth-service",
-          "value": "auth-service"
+          "text": "ac",
+          "value": "ac"
         },
         "definition": "label_values(container_label_io_kubernetes_pod_namespace)",
         "includeAll": false,
@@ -1282,6 +1270,5 @@
   "timezone": "Asia/Bangkok",
   "title": "cAdvisor monitoring dashboard",
   "uid": "bebiikv2b0idcf",
-  "version": 12,
-  "weekStart": ""
+  "version": 9
 }
