@@ -13,7 +13,7 @@
 - Service level agreements (SLAs)
 
 ### SLIs, SLOs Metric
-- Latency
+- Latency (Request duration)
 - Error Rate
 - Throughput
 - Availability
@@ -127,6 +127,23 @@ thresholds: {
 `90%` of all HTTP requests should have a response time `lower than 200 ms` \
 `95%` of all HTTP requests should have a response time `lower than 500 ms` \
 `99.9%` of all HTTP requests should have a response time `lower than 1000 ms`
+
+## Scaling strategy
+**When one server hits its limit, it risk slow responses, errors or full downtime**
+- `Vertical scaling:` upgrade server resources
+- `Horizontal scaling:` add more servers behind a load balancer
+
+### Horizontal scaling
+**Running load testing, 1 instance vs 5 instance**
+1. 10 vus and 10m duration with 1 instance
+    -  Result: Throughput, Latency
+2. 10 vus and 10m duration with 5 instance
+    - Result: Throughput, Latency
+
+### Fixing performance issue
+1. Code optimization
+2. Scaling
+3. Distribute workloads across multiple instance
 
 ## Run a script
 ``` bash
