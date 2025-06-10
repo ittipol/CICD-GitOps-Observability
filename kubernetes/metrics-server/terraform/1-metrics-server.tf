@@ -7,9 +7,10 @@ resource "helm_release" "metrics-server" {
 
   repository       = "https://kubernetes-sigs.github.io/metrics-server"
   chart            = "metrics-server"
+  # namespace        = "kube-system"
   namespace        = "metrics-server"
   version          = "3.12.2"
   create_namespace = true
 
-  # values = [file("values/metrics-server-helm.yaml")]
+  # values = [file("values/metrics-server-value.yaml")]
 }

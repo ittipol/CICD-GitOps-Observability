@@ -10,21 +10,28 @@ ps aux | grep kubectl
 pe -ef
 
 htop
-## =======
+
+## ===================================
 
 kubectl config current-context
 kubectl cluster-info
 echo $(kubectl get node minikube -o jsonpath='{.status.capacity}')
 kubectl api-versions
+kubectl get apiservices
 kubectl get crd
 kubectl get pod -l app=webapp -o jsonpath="{.items[0].metadata.name}
 kubectl get events -n {namespace}
 kubectl describe quota -n {namespace}
+
+## Horizontal Pod Autoscaler
 kubectl get hpa -n {namespace}
 kubectl describe hpa {hpa_name} -n {namespace}
+
+## Metric server
 kubectl top pods -A
 kubectl top pods -n {namespace}
 kubectl top nodes
+
 kubectl get --raw /api/v1/nodes/{node_name}/proxy/stats/summary
 kubectl get priorityclass
 kubectl get peerauthentication --all-namespaces
@@ -39,6 +46,16 @@ kubectl describe node <node-name>
 kubectl logs first-app-v1-86f6db4f85-zkjsn -n staging -c vault-agent-init
 ## Shell into a pod on pod init state
 kubectl exec -it first-app-v1-86f6db4f85-cnpw5 -n staging -c vault-agent-init -- sh
+
+## Edit (via vim)
+kubectl edit deployment <name> -n <namespace>
+
+kubectl edit deployment metrics-server -n kube-system
+
+## Watch pod
+kubectl get po -n <namespace> --watch
+
+## ===================================
 
 ## minikube
 minikube start --driver=parallels

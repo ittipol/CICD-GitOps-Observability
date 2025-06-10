@@ -4,7 +4,7 @@ set -e
 which colima > /dev/null 2>&1 || { echo "colima is not installed"; exit 1; }
 
 start() {
-  colima start --cpu 6 --memory 20 --disk 200
+  colima start --cpu 7 --memory 20 --disk 200
 }
 
 if [ "$1" = "start" ]; then

@@ -163,3 +163,8 @@ docker-compose run --rm k6 run /scripts/type/stress_testing.js
 
 docker-compose run --rm k6 run path/to/script (in container)
 ```
+
+## Pod watch
+``` bash
+kubectl get po -n <namespace> --watch
+```
