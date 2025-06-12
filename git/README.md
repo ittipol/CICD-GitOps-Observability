@@ -1,6 +1,6 @@
 # Git
 
-## Undoing Your Last Commit (That Has Not Been Pushed) (keep commit)
+## Undoing a last commit (That Has Not Been Pushed) (keep commit)
 ``` bash
 git reset --soft HEAD~
 
@@ -12,13 +12,13 @@ git reset --soft HEAD~2
 ``` bash
 # Assume there 2 branch
 # 1. develop
-# 2. feature
+# 2. feature-branch
 
 # Switch to current branch
 git checkout develop
 
 # View the commit history in feature branch
-git log feature
+git log feature-branch
 
 # Copy a specific commit hash in feature branch
 # Cherry pick a commit hash
@@ -30,7 +30,7 @@ git reset --soft HEAD~
 # All files in last commit will be in staging area
 git status
 
-# When edit complete then run git add
+# When editing complete then run git add
 git add .
 
 # Commit
@@ -40,7 +40,7 @@ git commit -m "message"
 git push {remote} {branch}
 ```
 
-## Undoing Your Last Remote Commit (That Has Been Pushed) (Discard commit)
+## Undoing a last remote commit (That Has Been Pushed) (Discard commit)
 ``` bash
 git reset --hard HEAD~1
 
