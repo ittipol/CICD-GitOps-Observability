@@ -22,6 +22,6 @@ git commit
 # To complete the merge
 git merge --continue
 
-# To abort the merge
+# To cancel the merge
 git merge --abort
 ```
