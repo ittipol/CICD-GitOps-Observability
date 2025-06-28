@@ -106,6 +106,13 @@ sudo apt upgrade
 ls -lh
 ls -la
 ls -ltr
+ls -ltrh | tail -5
+ls -1t | head -5
+ls -1t | tail -5
+
+## cat command
+cat -n <filename>
+cat -b <filename>
 
 # Use the kafka-console-producer command to send a message to a Kafka topic
 kafka-console-producer.sh --broker-list <kafka-service>:9092 --topic test
