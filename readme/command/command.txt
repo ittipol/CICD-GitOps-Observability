@@ -20,16 +20,16 @@ kubectl api-versions
 kubectl get apiservices
 kubectl get crd
 kubectl get pod -l app=webapp -o jsonpath="{.items[0].metadata.name}
-kubectl get events -n {namespace}
-kubectl describe quota -n {namespace}
+kubectl get events -n <namespace>
+kubectl describe quota -n <namespace>
 
 ## Horizontal Pod Autoscaler
-kubectl get hpa -n {namespace}
-kubectl describe hpa {hpa_name} -n {namespace}
+kubectl get hpa -n <namespace>
+kubectl describe hpa <hpa_name> -n <namespace>
 
-## Metric server
+## Metric server (Displays CPU and memory usage)
 kubectl top pods -A
-kubectl top pods -n {namespace}
+kubectl top pods -n <namespace>
 kubectl top nodes
 
 kubectl get --raw /api/v1/nodes/{node_name}/proxy/stats/summary
@@ -65,11 +65,11 @@ minikube ssh
 
 ## Push images
 ## Loading directly to in-cluster container runtime
-minikube image load {image_name:tag}
+minikube image load <image_name:tag>
 
 ## Building images to in-cluster container runtime
-minikube image build -t {image_name:tag} .
-minikube image build -t {image_name:tag} -f /path/to/your/Dockerfile .
+minikube image build -t <image_name:tag> .
+minikube image build -t <image_name:tag> -f /path/to/your/Dockerfile .
 
 ## Run a specific service in docker-compose
 docker-compose up -d docker-registry && docker-compose up -d nginx

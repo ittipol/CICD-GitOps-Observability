@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 3,
   "links": [],
   "panels": [
     {
@@ -721,7 +721,7 @@
           "refId": "A"
         }
       ],
-      "title": "Pods CPU throttling",
+      "title": "Pods CPU throttling (Occurs when a container exceeds its CPU limit, causing Kubernetes to restrict its CPU access)",
       "type": "timeseries"
     },
     {
@@ -905,7 +905,7 @@
           "refId": "C"
         }
       ],
-      "title": "Pods CPU usage (1m avg) with requests and limits (CPU)",
+      "title": "Pods CPU usage (1m avg) with requests and limits (CPU) (Exceeding the limit can lead to throttling)",
       "type": "timeseries"
     },
     {
@@ -1213,8 +1213,8 @@
     "list": [
       {
         "current": {
-          "text": "ac",
-          "value": "ac"
+          "text": "cadvisor",
+          "value": "cadvisor"
         },
         "definition": "label_values(container_label_io_kubernetes_pod_namespace)",
         "includeAll": false,
@@ -1270,5 +1270,5 @@
   "timezone": "Asia/Bangkok",
   "title": "cAdvisor monitoring dashboard",
   "uid": "bebiikv2b0idcf",
-  "version": 9
+  "version": 3
 }

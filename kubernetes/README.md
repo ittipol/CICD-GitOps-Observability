@@ -133,3 +133,24 @@ Never pull the reference and only uses a local image or artifact
 
 **IfNotPresent** \
 Pull if the reference isn't already present on disk
+
+## Health Checks (Probes)
+
+- **Liveness probes:** Check if a container is running properly or not, and can be restarted if it is unhealthy
+``` yaml
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 3000
+  initialDelaySeconds: 10
+  periodSeconds: 15
+```
+- **Readiness probes:** Checks if a container is ready to handle traffic, preventing traffic from being sent to unhealthy containers
+``` yaml
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 3000
+  initialDelaySeconds: 10
+  periodSeconds: 15
+```
