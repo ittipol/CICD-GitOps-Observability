@@ -1,0 +1,22 @@
+services:
+  server:
+    build: ./server
+    container_name: server
+    environment:
+      DOCKER_HOST: "tcp://docker:2376"
+      DOCKER_CERT_PATH: "/certs/client"
+      DOCKER_TLS_VERIFY: 1
+      VAULT_ADDR: "http://127.0.0.1:8200"
+    volumes:
+      - docker-certs:/certs/client
+
+  docker:
+    image: docker:dind
+    container_name: dind-server
+    privileged: true
+    volumes:
+      - docker-certs:/certs/client
+
+volumes:
+  docker-certs:
+    external: false

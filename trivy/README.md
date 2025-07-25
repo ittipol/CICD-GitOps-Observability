@@ -4,8 +4,13 @@
 # Scan a container image
 trivy image node:18.20-alpine3.21
 
+# Scan types
+trivy image --pkg-types os <repo>:<tag>
+trivy image --pkg-types library <repo>:<tag>
+trivy image --pkg-types os,library <repo>:<tag>
+
 # Output format spdx-json
-trivy image --scanners vuln --format spdx-json --output result_spdx.json repo:tag
+trivy image --scanners vuln --format spdx-json --output result_spdx.json <repo>:<tag>
 
 # Generate List from spdx-json format
 trivy sbom result_spdx.json
