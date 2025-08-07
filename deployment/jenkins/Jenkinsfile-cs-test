@@ -1,0 +1,153 @@
+def newPath(path, newPath) {
+    return "$path:$newPath"
+}
+
+def test(String specificFile, String logger)
+{
+	try {	
+    dotnet test ${specificFile} --no-build --no-restore --logger:"${logger}"
+	}
+  catch (Exception ex) {
+    throw ex
+  }
+}
+
+pipeline {
+  agent any
+  environment {
+    // DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = "1"
+    // DOTNET_ROOT = "$HOME/.dotnet"
+    // PATH = newPath("$PATH", "$DOTNET_ROOT")
+    SOURCE_PATH = "/app"
+  }
+  options {
+    // This is required if you want to clean before build
+    skipDefaultCheckout(true)
+  }
+  stages {
+    stage('Init') {
+      steps {
+        echo '::: Init ************************************************************'
+        // Clean before build
+        cleanWs()
+
+        // sh 'env'
+
+        // sh "echo $WORKSPACE"
+        sh "echo $DOTNET_ROOT"
+        // sh '''
+        // cd /usr/local/bin
+        // ls -l
+        // cd ~
+        // ls -la
+        // cd .dotnet
+        // ls -la
+        // ./dotnet --version
+        // '''        
+        
+        // sh 'which dotnet'
+        // sh "dotnet --version"
+        // sh 'dotnet --list-sdks'
+        // sh 'dotnet --list-runtimes'
+      }
+    }
+    // stage('Build') {
+    //   steps {
+    //     echo '::: SCM Checkout ************************************************************'
+        
+    //     //  go to unit-test root dir
+    //     sh '''
+    //     cd /source/TestProject
+    //     dotnet restore
+    //     dotnet build        
+    //     '''
+
+    //     // dotnet publish ./ '-p:TargetFrameworks=net8.0' '-p:PackTargetFramework=net8.0' -c Release -o "./out" -p:UseAppHost=false
+    //   }
+    // }
+    // stage('SCM Checkout') {
+    //     steps {
+    //         echo '::: SCM Checkout ************************************************************'
+            
+    //         sh '''
+
+    //         cp -r /source/TestProject/. $WORKSPACE
+
+    //         cd $WORKSPACE
+    //         pwd
+    //         ls -la
+    //         echo "AAA ======================================"
+    //         dotnet test --no-build --no-restore --logger:"junit;LogFilePath=test-result.xml" || true
+    //         echo "BBB ======================================"
+    //         ls -la
+    //         '''        
+    //     }
+    // }
+    stage('Test') {
+      steps {
+        echo '::: Test ************************************************************'
+
+        // Test result format
+        // dotnet test --no-build --no-restore --logger "trx;LogFileName=TestResults.trx"
+        // dotnet test --logger "html;LogFileName=TestResults.html"
+        // dotnet test --logger "trx;LogFileName=TestResults.trx"
+        // dotnet test --logger:"junit;LogFilePath=test-result.xml"
+        // dotnet test --logger "xunit;LogFileName=xunit-results.xml"
+        
+        sh '''
+
+        cp -r /source/. $WORKSPACE
+
+        cd $WORKSPACE
+        pwd
+        ls -l
+
+        echo "JUnit ======================================"
+        dotnet test ./<path_to_dll_or_csproj> --no-build --no-restore --logger:"junit;LogFilePath=test-result.xml" || true
+        echo "XUnit ======================================"
+        dotnet test ./<path_to_dll_or_csproj> --no-build --no-restore --logger:"xunit;LogFileName=xunit-results.xml" || true
+        echo "End ======================================"
+        '''      
+      }
+    }
+  }
+  post {
+    always {
+      echo '::: POST ************************************************************'
+      // junit '**/*.xml'
+      junit(testResults: '**/test-result.xml', allowEmptyResults: true)
+
+      echo '::: POST ========================= ************************************************************'
+
+      // archive file
+      // archiveArtifacts artifacts: '**/test-result.xml', allowEmptyArchive: true
+
+      // parser: COBERTURA, CLOVER, GO_COV, JACOCO, JUNIT, METRICS, NUNIT, OPENCOVER, PIT, VECTORCAST, XUNIT
+      recordCoverage(
+        // tools: [[parser: 'JUNIT', pattern: '**/test-result.xml']],
+        tools: [[parser: 'XUNIT', pattern: '**/xunit-results.xml']],
+        qualityGates: [
+            [metric: 'LINE', baseline: 'PROJECT', threshold: 60, criticality: 'UNSTABLE'],
+            [metric: 'BRANCH', baseline: 'PROJECT', threshold: 50, criticality: 'FAILURE']
+        ]
+      )
+
+      // Clean after build
+      cleanWs(cleanWhenNotBuilt: false,
+              deleteDirs: true,
+              disableDeferredWipeout: true,
+              notFailBuild: true,
+              patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
+                          [pattern: '.propsfile', type: 'EXCLUDE']])
+    }
+    success {
+      echo "Build ID: ${BUILD_ID}, ${JOB_NAME} succeeded"
+    }
+    failure {
+      echo "Build ID: ${BUILD_ID}, ${JOB_NAME} failed"
+    }
+    aborted {
+      echo "Build ID: ${BUILD_ID}, ${JOB_NAME} aborted"
+    }
+  }
+}

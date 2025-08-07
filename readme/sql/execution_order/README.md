@@ -1,6 +1,6 @@
 # Execution Order
 
-| Order | SQL |
+| Execution Order | SQL |
 |:----------:|:----------:|
 | 1  | FROM  |
 | 2  | JOIN  |

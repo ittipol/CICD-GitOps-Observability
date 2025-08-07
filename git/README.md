@@ -1,5 +1,17 @@
 # Git
 
+## Counting commits
+``` bash
+git rev-list --count --all
+
+git rev-list --count HEAD
+
+# specific date
+git rev-list --count --since="1 week ago" HEAD
+
+git rev-list --count --since="1 month ago" --all
+```
+
 ## Undoing a last commit (That Has Not Been Pushed) (keep commit)
 ``` bash
 git reset --soft HEAD~
@@ -67,25 +79,25 @@ git push {remote} {branch}
 ## Pull code
 **git pull is shorthand for git fetch + git merge**
 ``` bash
-git pull {remote} {branch}
+git pull <remote> <branch>
 
-git pull --ff {remote} {branch}
+git pull --ff <remote> <branch>
 
-git pull --ff-only {remote} {branch}
+git pull --ff-only <remote> <branch>
 
-git pull --rebase {remote} {branch}
+git pull --rebase <remote> <branch>
 ```
 
 ## Fetch and checkout
 ``` bash
 git fetch
 
-git checkout {branch_name}
+git checkout <branch_name>
 ```
 
 ## Create new branch
 ``` bash
-git checkout -b {new_branch_name}
+git checkout -b <new_branch_name>
 ```
 
 ## Show changes between the working tree and the index or a tree
@@ -103,11 +115,11 @@ git diff --name-status
 
 ## Show changes in commit 
 ``` bash
-git show {commit_hash}
+git show <commit_hash>
 
-git show {commit_hash} --compact-summary
+git show <commit_hash> --compact-summary
 
-git show --color --pretty=format:%b {commit_hash}
+git show --color --pretty=format:%b <commit_hash>
 
 git show HEAD
 ```
@@ -121,13 +133,15 @@ git log --oneline
 git log --graph
 
 git log --oneline --graph
+
+git log --raw
 ```
 
 ## Stash the changes
 ``` bash
 git stash
 
-git stash -m "message"
+git stash -m "<message>"
 
 git stash list
 
@@ -138,14 +152,14 @@ git stash pop
 ``` bash
 git add .
 
-git add {file_name}
+git add <file_name>
 ```
 
 ## Restore working tree files
 ``` bash
 git restore .
 
-git restore {file_name}
+git restore <file_name>
 ```
 
 ## Remove untracked files from the working tree

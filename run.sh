@@ -92,6 +92,9 @@ docker_delete() {
   eval $PRINT
 
   docker-compose down
+
+  # Remove dangling volumes
+  docker volume rm $(docker volume ls -qf dangling=true)
 }
 
 minikube_start() {
