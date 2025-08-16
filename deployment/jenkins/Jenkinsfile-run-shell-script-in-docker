@@ -1,0 +1,92 @@
+def unitTest(gitlabSourceCodeCredId=null,sonarCredId=null,nexusCredId=null,artifactVersion=null,pipelineConfig=null,checkoutVer=null,currentBuildContext=null) {
+
+  sh """
+  docker run -i --rm -v "\$(pwd):/src" \
+  --entrypoint /build/entrypoint.sh \
+  -e PRODUCT_NAME="2345" \
+  -e BUILDER_CSPROJ="abcdef"	\
+  dotnetsdk8-builder:8.0 test
+  """
+
+  script {
+    junit(testResults: "**/test-result.xml", allowEmptyResults: true, skipMarkingBuildUnstable: true)
+  }
+
+}
+
+pipeline {
+  agent any
+  options {
+    // This is required if you want to clean before build
+    skipDefaultCheckout(true)
+  }
+  stages {    
+    stage('Test') {
+      steps {
+        echo '::: Test ************************************************************'
+
+        sh 'cp -r /unit_test/cs/TestProject1/. $WORKSPACE'
+        // sh 'env'
+        sh 'pwd'
+        sh 'ls -l'
+        sh 'docker images'
+
+        // To remove all images
+        // docker rmi $(docker images -q)
+
+        echo '::: Remove image ************************************************************'
+        // remove image
+        sh """        
+        # > /dev/null 2>&1 = Discards both the standard output and standard error of a command
+        # docker rmi dotnetsdk8-builder:8.0 > /dev/null 2>&1 && echo "image removed" || true
+
+        # 2>/dev/null = Discard standard error of a command
+        docker rmi dotnetsdk8-builder:8.0 2>/dev/null && echo "image removed" || { echo "image not found"; true; }
+        """
+
+        echo '::: Build image ************************************************************'
+        // run shell script for build image
+        sh '''
+        cp -r /dockerfiles/. $WORKSPACE/dockerfiles
+        cd dockerfiles
+        ./build.sh
+
+        cd ..
+        '''
+
+        echo '::: Call unitTest() ************************************************************'
+        unitTest()
+      }
+    }    
+  }
+  post {
+    always {
+      echo '::: POST ************************************************************'
+
+      // sh '''
+      // pwd
+      // ls -l
+      // '''
+      // script {
+      //   junit(testResults: "**/test-result.xml", allowEmptyResults: true, skipMarkingBuildUnstable: true)
+      // }
+
+      // Clean after build
+      cleanWs(cleanWhenNotBuilt: false,
+              deleteDirs: true,
+              disableDeferredWipeout: true,
+              notFailBuild: true,
+              patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
+                          [pattern: '.propsfile', type: 'EXCLUDE']])
+    }
+    success {
+      echo "Build ID: ${BUILD_ID}, ${JOB_NAME} succeeded"
+    }
+    failure {
+      echo "Build ID: ${BUILD_ID}, ${JOB_NAME} failed"
+    }
+    aborted {
+      echo "Build ID: ${BUILD_ID}, ${JOB_NAME} aborted"
+    }
+  }
+}

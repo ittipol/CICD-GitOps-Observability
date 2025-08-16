@@ -1,0 +1,14 @@
+# build
+docker build -f /path/to/your/Dockerfile /path/to/build/context
+**`/path/to/build/context:`** \
+This is the "build context," which is the directory containing all the files and directories that the Docker build process needs access to. This is typically the root of your project or a subdirectory containing the application code. Docker sends the entire contents of this directory to the Docker daemon for the build.
+
+# e.g.,
+docker image build -t dotnetsdk8-builder:8.0 -f ./dockerfiles/Dockerfile.builder ./context
+
+# run and automatically remove the container
+docker run -i --rm -v "$(pwd)/unit_test:/src" \
+--entrypoint /build/entrypoint.sh \
+-e PRODUCT_NAME="test" \
+-e BUILDER_CSPROJ="abcdef"	\
+dotnetsdk8-builder:8.0 args

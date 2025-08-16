@@ -1,0 +1,26 @@
+## minikube
+minikube start --driver=parallels
+minikube config
+minikube profile list
+minikube ssh
+
+## Push images
+## Loading directly to in-cluster container runtime
+minikube image load <image_name:tag>
+
+## Building images to in-cluster container runtime
+minikube image build -t <image_name:tag> .
+minikube image build -t <image_name:tag> -f /path/to/your/Dockerfile .
+
+## Copy key from /docker/nginx/certs/ca.crt
+minikube ssh
+cd /etc/docker/
+sudo mkdir -p certs.d/host.minikube.internal:5000
+cd /etc/docker/certs.d/host.minikube.internal:5000
+sudo touch ca.crt
+sudo vi ca.crt
+
+## minikube ssh
+minikube ssh-key
+cat ~/.minikube/machines/minikube/config.json
+ssh -i ~/.minikube/machines/minikube/id_rsa docker@$(minikube ip)

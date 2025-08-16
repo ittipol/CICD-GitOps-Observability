@@ -1,0 +1,49 @@
+kubectl config current-context
+kubectl cluster-info
+echo $(kubectl get node minikube -o jsonpath='{.status.capacity}')
+kubectl api-versions
+kubectl get apiservices
+kubectl get crd
+kubectl get pod -l app=webapp -o jsonpath="{.items[0].metadata.name}
+kubectl get events -n <namespace>
+kubectl describe quota -n <namespace>
+
+## Horizontal Pod Autoscaler
+kubectl get hpa -n <namespace>
+kubectl describe hpa <hpa_name> -n <namespace>
+
+## Metric server (Displays CPU and memory usage)
+kubectl top pods -A
+kubectl top pods -n <namespace>
+kubectl top nodes
+
+kubectl get --raw /api/v1/nodes/{node_name}/proxy/stats/summary
+kubectl get priorityclass
+kubectl get peerauthentication --all-namespaces
+
+## k8s node
+kubectl get node -o wide
+kubectl get nodes
+kubectl describe nodes
+kubectl describe node <node-name>
+
+## Print logs in a pod on pod init state
+kubectl logs first-app-v1-86f6db4f85-zkjsn -n staging -c vault-agent-init
+## Shell into a pod on pod init state
+kubectl exec -it first-app-v1-86f6db4f85-cnpw5 -n staging -c vault-agent-init -- sh
+
+## Edit (via vim)
+kubectl edit deployment <name> -n <namespace>
+
+kubectl edit deployment metrics-server -n kube-system
+
+## Watch pod
+kubectl get po -n <namespace> --watch
+
+## create tls secret
+## Generate cert
+openssl req -new -x509 -nodes -newkey ec:<(openssl ecparam -name secp384r1) \
+  -keyout /path/to/ca.key -out /path/to/ca.crt \
+  -days 365 -subj "/CN=localhost"
+
+kubectl create secret tls <secret-name> --cert=/path/to/ca.crt --key=/path/to/ca.key

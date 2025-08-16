@@ -78,3 +78,19 @@ openssl x509 -noout -fingerprint -md5 -inform pem -in [path/to/certificate-file.
 
 # openssl x509 -noout -fingerprint -sha256 -inform pem -in server.crt
 ```
+
+## Translate domain name to IP address
+``` bash
+ping -c 1 <domain_name>
+
+dig +short <domain_name>
+
+host <domain_name>
+
+nslookup <domain_name>
+```
+
+## Trace
+``` bash
+dig +trace <domain_name>
+```

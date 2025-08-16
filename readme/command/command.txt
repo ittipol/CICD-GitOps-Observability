@@ -13,86 +13,16 @@ htop
 
 ## ===================================
 
-kubectl config current-context
-kubectl cluster-info
-echo $(kubectl get node minikube -o jsonpath='{.status.capacity}')
-kubectl api-versions
-kubectl get apiservices
-kubectl get crd
-kubectl get pod -l app=webapp -o jsonpath="{.items[0].metadata.name}
-kubectl get events -n <namespace>
-kubectl describe quota -n <namespace>
-
-## Horizontal Pod Autoscaler
-kubectl get hpa -n <namespace>
-kubectl describe hpa <hpa_name> -n <namespace>
-
-## Metric server (Displays CPU and memory usage)
-kubectl top pods -A
-kubectl top pods -n <namespace>
-kubectl top nodes
-
-kubectl get --raw /api/v1/nodes/{node_name}/proxy/stats/summary
-kubectl get priorityclass
-kubectl get peerauthentication --all-namespaces
-
-## k8s node
-kubectl get node -o wide
-kubectl get nodes
-kubectl describe nodes
-kubectl describe node <node-name>
-
-## Print logs in a pod on pod init state
-kubectl logs first-app-v1-86f6db4f85-zkjsn -n staging -c vault-agent-init
-## Shell into a pod on pod init state
-kubectl exec -it first-app-v1-86f6db4f85-cnpw5 -n staging -c vault-agent-init -- sh
-
-## Edit (via vim)
-kubectl edit deployment <name> -n <namespace>
-
-kubectl edit deployment metrics-server -n kube-system
-
-## Watch pod
-kubectl get po -n <namespace> --watch
-
-## ===================================
-
-## minikube
-minikube start --driver=parallels
-minikube config
-minikube profile list
-minikube ssh
-
-## Push images
-## Loading directly to in-cluster container runtime
-minikube image load <image_name:tag>
-
-## Building images to in-cluster container runtime
-minikube image build -t <image_name:tag> .
-minikube image build -t <image_name:tag> -f /path/to/your/Dockerfile .
-
 ## Run a specific service in docker-compose
 docker-compose up -d docker-registry && docker-compose up -d nginx
-
-## Copy key from /docker/nginx/certs/ca.crt
-cd /etc/docker/
-sudo mkdir -p certs.d/host.minikube.internal:5000
-cd /etc/docker/certs.d/host.minikube.internal:5000
-sudo touch ca.crt
-sudo vi ca.crt
 
 ## sshpass
 sshpass -p my_password ssh username@hostname
 sshpass -p 'YOUR_PASSWORD_HERE' ssh -o StrictHostKeyChecking=no username@hostname
 
-## minikube ssh
-minikube ssh-key
-cat ~/.minikube/machines/minikube/config.json
-ssh -i ~/.minikube/machines/minikube/id_rsa docker@$(minikube ip)
-
 ## Transfer file
-scp -i $(minikube ssh-key) <local-path> docker@$(minikube ip):<remote-path>
-scp -i $(minikube ssh-key) ./cert/ca.crt docker@$(minikube ip):/home/docker/ca.crt
+scp -i $(minikube ssh-key) <local-path> <user>@<hostname_or_ip>:<remote-path>
+e.g., scp -i $(minikube ssh-key) ./cert/ca.crt docker@$(minikube ip):/home/docker/ca.crt
 
 ## Copy an entire directory
 scp -r ./data/install user@hostname:~/data/install/

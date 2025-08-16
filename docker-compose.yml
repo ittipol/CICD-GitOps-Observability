@@ -17,6 +17,8 @@ services:
       - jenkins-docker-certs:/certs/client:ro     
       - ./docker/docker_registry/tls/server.crt:/docker_registry/cert/server.crt:ro
       - ./kubernetes/docker_registry/tls/server.crt:/docker_registry/kubernetes/cert/server.crt:ro
+      - ./deployment/jenkins/dockerfiles:/dockerfiles:ro
+      - ./unit_test:/unit_test
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:

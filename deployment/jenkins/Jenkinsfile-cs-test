@@ -5,7 +5,7 @@ def newPath(path, newPath) {
 def test(String specificFile, String logger)
 {
 	try {	
-    dotnet test ${specificFile} --no-build --no-restore --logger:"${logger}"
+    sh 'dotnet test ${specificFile} --no-build --no-restore --logger:"${logger}"'
 	}
   catch (Exception ex) {
     throw ex
@@ -51,41 +51,46 @@ pipeline {
         // sh 'dotnet --list-runtimes'
       }
     }
-    // stage('Build') {
-    //   steps {
-    //     echo '::: SCM Checkout ************************************************************'
+    stage('Build') {
+      steps {
+        echo '::: SCM Checkout ************************************************************'
+
+        sh 'cp -r /unit_test/cs/TestProject1/. $WORKSPACE/test'
         
-    //     //  go to unit-test root dir
-    //     sh '''
-    //     cd /source/TestProject
-    //     dotnet restore
-    //     dotnet build        
-    //     '''
+        //  go to unit-test root dir
+        sh '''
+        cd $WORKSPACE/test
+        pwd
+        ls -l
+        dotnet restore
+        dotnet build
+        '''
 
-    //     // dotnet publish ./ '-p:TargetFrameworks=net8.0' '-p:PackTargetFramework=net8.0' -c Release -o "./out" -p:UseAppHost=false
-    //   }
-    // }
-    // stage('SCM Checkout') {
-    //     steps {
-    //         echo '::: SCM Checkout ************************************************************'
-            
-    //         sh '''
-
-    //         cp -r /source/TestProject/. $WORKSPACE
-
-    //         cd $WORKSPACE
-    //         pwd
-    //         ls -la
-    //         echo "AAA ======================================"
-    //         dotnet test --no-build --no-restore --logger:"junit;LogFilePath=test-result.xml" || true
-    //         echo "BBB ======================================"
-    //         ls -la
-    //         '''        
-    //     }
-    // }
+        // publish
+        // dotnet publish ./ '-p:TargetFrameworks=net8.0' '-p:PackTargetFramework=net8.0' -c Release -o "./out" -p:UseAppHost=false
+      }
+    }
     stage('Test') {
       steps {
         echo '::: Test ************************************************************'
+
+        sh '''
+        cd $WORKSPACE/test
+        dotnet test --no-build --no-restore --logger:"junit;LogFilePath=test-result-2.xml" || true
+        ls -l
+        '''
+
+        // script {
+        //   catchError(stageResult: 'SUCCESS') {
+        //     println("Step error!!!")
+        //     sh 'exit 1'
+        //   }
+        // }
+      }
+    }
+    stage('Test2') {
+      steps {
+        echo '::: Test2 ************************************************************'
 
         // Test result format
         // dotnet test --no-build --no-restore --logger "trx;LogFileName=TestResults.trx"
@@ -93,20 +98,22 @@ pipeline {
         // dotnet test --logger "trx;LogFileName=TestResults.trx"
         // dotnet test --logger:"junit;LogFilePath=test-result.xml"
         // dotnet test --logger "xunit;LogFileName=xunit-results.xml"
+
+        // junit format
+        // dotnet test --no-build --no-restore --logger:"junit;LogFilePath=test-result.xml" || true
+
+        // xunit format
+        // dotnet test --no-build --no-restore --logger:"xunit;LogFileName=xunit-results.xml" || true
         
+        // sh 'cp -r /source/. $WORKSPACE'
+        sh 'cp -r /unit_test/cs/TestProject1/. $WORKSPACE'
+
         sh '''
-
-        cp -r /source/. $WORKSPACE
-
-        cd $WORKSPACE
         pwd
+        echo "junit ======================================"
+        dotnet test ./TestProject1.csproj --logger:"junit;LogFilePath=test-result.xml" || true
+        echo "======================================"
         ls -l
-
-        echo "JUnit ======================================"
-        dotnet test ./<path_to_dll_or_csproj> --no-build --no-restore --logger:"junit;LogFilePath=test-result.xml" || true
-        echo "XUnit ======================================"
-        dotnet test ./<path_to_dll_or_csproj> --no-build --no-restore --logger:"xunit;LogFileName=xunit-results.xml" || true
-        echo "End ======================================"
         '''      
       }
     }
@@ -114,8 +121,45 @@ pipeline {
   post {
     always {
       echo '::: POST ************************************************************'
-      // junit '**/*.xml'
-      junit(testResults: '**/test-result.xml', allowEmptyResults: true)
+
+      sh '''
+      pwd
+      ls -l
+      cd test
+      ls -l
+      cat ${WORKSPACE}/test/test-result-2.xml
+      '''
+
+      script {
+        // junit '**/*.xml'
+
+        // Record specific test result xml file
+        def resultPath = "${WORKSPACE}/test/test-result-2.xml"
+        println("[Test] resultPath: ${resultPath}")
+        def junitTestSummary = junit(testResults: "**/test/test-result-2.xml", allowEmptyResults: true, skipMarkingBuildUnstable: true)
+
+        // Record multiple test result xml files
+        // def junitTestSummary = junit(testResults: '**/*.xml', allowEmptyResults: true, skipMarkingBuildUnstable: true)
+        
+        println("[junit] Test total: ${junitTestSummary.totalCount}")
+        
+        // junitTestSummary.[failCount, totalCount, skipCount, passCount]
+        if(junitTestSummary.failCount>0){
+          println("Failing the pipeline. Because, there are ${junitTestSummary.failCount} tests failed")
+          // error("Failing the pipeline. Because, there are ${junitTestSummary.failCount} tests failed")
+        }
+      }
+      
+      // check pipeline result
+      // sh "test ${currentBuild.currentResult} != UNSTABLE"
+
+      // script {
+      //   if (currentBuild.currentResult == 'UNSTABLE') {
+      //     currentBuild.result = "SUCCESS"
+      //     // currentBuild.result = "ERROR"
+      //     sh 'echo "Unstable build, exiting now..."'
+      //   }
+      // }
 
       echo '::: POST ========================= ************************************************************'
 
@@ -123,14 +167,15 @@ pipeline {
       // archiveArtifacts artifacts: '**/test-result.xml', allowEmptyArchive: true
 
       // parser: COBERTURA, CLOVER, GO_COV, JACOCO, JUNIT, METRICS, NUNIT, OPENCOVER, PIT, VECTORCAST, XUNIT
-      recordCoverage(
-        // tools: [[parser: 'JUNIT', pattern: '**/test-result.xml']],
-        tools: [[parser: 'XUNIT', pattern: '**/xunit-results.xml']],
-        qualityGates: [
-            [metric: 'LINE', baseline: 'PROJECT', threshold: 60, criticality: 'UNSTABLE'],
-            [metric: 'BRANCH', baseline: 'PROJECT', threshold: 50, criticality: 'FAILURE']
-        ]
-      )
+      // recordCoverage(
+      //   // xunit
+      //   // tools: [[parser: 'JUNIT', pattern: '**/test-result.xml']],
+      //   tools: [[parser: 'XUNIT', pattern: '**/xunit-results.xml']],
+      //   qualityGates: [
+      //       [metric: 'LINE', baseline: 'PROJECT', threshold: 60, criticality: 'UNSTABLE'],
+      //       [metric: 'BRANCH', baseline: 'PROJECT', threshold: 50, criticality: 'FAILURE']
+      //   ]
+      // )
 
       // Clean after build
       cleanWs(cleanWhenNotBuilt: false,
