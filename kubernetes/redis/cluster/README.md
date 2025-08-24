@@ -22,7 +22,7 @@ kubectl exec -it redis-0 -n redis -- redis-cli --cluster create \
 {POD_IP_3}:6379 {POD_IP_4}:6379 {POD_IP_5}:6379 \
 --cluster-replicas 1
 
-# ex.
+# e.g.,
 kubectl exec -it redis-0 -n redis -- redis-cli --cluster create \
 10.244.6.132:6379 10.244.6.133:6379 10.244.6.134:6379 \
 10.244.6.135:6379 10.244.6.136:6379 10.244.6.137:6379 \

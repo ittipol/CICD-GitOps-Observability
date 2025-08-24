@@ -24,3 +24,9 @@ sudo vi ca.crt
 minikube ssh-key
 cat ~/.minikube/machines/minikube/config.json
 ssh -i ~/.minikube/machines/minikube/id_rsa docker@$(minikube ip)
+
+## Tunnel creates a route to services deployed with type LoadBalancer and sets their Ingress to their ClusterIP
+minikube tunnel
+
+## Alternatively
+minikube service -n <namespace> <service-name> --url | head -1

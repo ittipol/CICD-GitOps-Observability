@@ -17,8 +17,8 @@ git cherry-pick commit1 commit2 commit3 commit4 commit5
 
 **cherry-pick multiple commits example**
 ``` bash
-# Ex.
-git cherry-pick commit1 commit2
+# e.g.,
+git cherry-pick commit n ... commit1 commit2
 
 # After run cherry-pick multiple commits process
 # In working tree

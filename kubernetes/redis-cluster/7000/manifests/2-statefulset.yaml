@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-node0
+  namespace: redis-cluster-node
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: redis
+  replicas: 1 # Require at least 6 nodes for running Redis cluster
+  serviceName: redis-service-node0
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: redis
+    spec:      
+      initContainers:
+      - name: config
+        image: redis:6.2
+        command: [ "sh", "-c" ]
+        args:
+          - |
+            TEST_VALUE="test...."
+            echo $TEST_VALUE
+            env
+
+            echo -n "Config from initContainers" > /etc/redis/test.conf
+        volumeMounts:
+        - name: redis-config
+          mountPath: /etc/redis/
+      containers:
+      - name: redis
+        image: redis:6.2.7
+        imagePullPolicy: "IfNotPresent"
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          runAsNonRoot: true
+          readOnlyRootFilesystem: true
+          runAsUser: 10001
+          runAsGroup: 10001
+          seccompProfile:
+            type: RuntimeDefault
+        ports:
+        - containerPort: 7000
+          name: redis-port
+        resources:
+          limits:
+            cpu: 100m
+            memory: 1Gi
+          requests:
+            cpu: 50m
+            memory: 512Mi
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: redis-secret-node0
+              key: REDIS_PASSWORD
+        # command: ["redis-server"]
+        # args: ["/etc/redis/redis.conf"]
+        command: [ "sh", "-c" ]
+        args:
+          - |
+            cat /etc/redis/test.conf
+            echo $REDIS_PASSWORD
+            # redis-server --requirepass "$REDIS_PASSWORD"
+            redis-server /tmp/redis/redis.conf
+        # args: ["--requirepass", "$(REDIS_PASSWORD)"]
+        volumeMounts:
+        - name: redis-storage
+          mountPath: /data
+        - name: redis-config
+          mountPath: /etc/redis/
+        - name: config
+          mountPath: /tmp/redis/
+          readOnly: false
+      volumes:
+      - name: redis-config
+        emptyDir: {}
+      - name: config
+        configMap:
+          name: redis-cluster-node0
+  volumeClaimTemplates:
+  - metadata:
+      name: redis-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
