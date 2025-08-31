@@ -1,8 +1,10 @@
 ARG BUILD_VERSION=2.494-jdk17
 
 FROM jenkins/jenkins:${BUILD_VERSION}
+
 USER root
-RUN apt-get update && apt-get install -y wget apt-transport-https gnupg lsb-release libicu72
+
+RUN apt-get update && apt-get install -y wget apt-transport-https gnupg lsb-release libicu72 iputils-ping
 
 # docker
 RUN curl -fsSLo /usr/share/keyrings/docker-archive-keyring.asc \
@@ -24,12 +26,12 @@ RUN apt-get update && apt-get install -y docker-ce-cli
 # RUN apt update && apt install vault
 
 # dotnet
-# RUN mkdir -p /dotnet/sdk
-# RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
-# RUN chmod +x ./dotnet-install.sh
-# RUN ./dotnet-install.sh --version 8.0.204 --install-dir /dotnet/sdk
-# ENV DOTNET_ROOT="/dotnet/sdk"
-# ENV PATH="/dotnet/sdk:${PATH}"
+RUN mkdir -p /dotnet/sdk
+RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
+RUN chmod +x ./dotnet-install.sh
+RUN ./dotnet-install.sh --version 8.0.204 --install-dir /dotnet/sdk
+ENV DOTNET_ROOT="/dotnet/sdk"
+ENV PATH="/dotnet/sdk:${PATH}"
 
 USER jenkins
 RUN jenkins-plugin-cli --plugins "blueocean docker-workflow pipeline-stage-view dependency-check-jenkins-plugin ws-cleanup sonar coverage junit"

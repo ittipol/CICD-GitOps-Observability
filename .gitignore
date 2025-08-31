@@ -33,3 +33,5 @@ terraform.*
 .ansible
 
 .vscode
+
+shared_data

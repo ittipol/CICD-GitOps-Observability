@@ -3,8 +3,8 @@ def unitTest(gitlabSourceCodeCredId=null,sonarCredId=null,nexusCredId=null,artif
   sh """
   docker run -i --rm -v "\$(pwd):/src" \
   --entrypoint /build/entrypoint.sh \
-  -e PRODUCT_NAME="2345" \
-  -e BUILDER_CSPROJ="abcdef"	\
+  -e PRODUCT_NAME="api-unit-test" \
+  -e BUILDER_CSPROJ="<path/to/csproj>"	\
   dotnetsdk8-builder:8.0 test
   """
 
@@ -25,7 +25,8 @@ pipeline {
       steps {
         echo '::: Test ************************************************************'
 
-        sh 'cp -r /unit_test/cs/TestProject1/. $WORKSPACE'
+        // clone project
+        sh 'cp -r /unit_test/code/. $WORKSPACE'
         // sh 'env'
         sh 'pwd'
         sh 'ls -l'
@@ -45,7 +46,7 @@ pipeline {
         """
 
         echo '::: Build image ************************************************************'
-        // run shell script for build image
+        // run shell script for building an image
         sh '''
         cp -r /dockerfiles/. $WORKSPACE/dockerfiles
         cd dockerfiles
@@ -56,6 +57,7 @@ pipeline {
 
         echo '::: Call unitTest() ************************************************************'
         unitTest()
+        echo '::: ============================================================================='
       }
     }    
   }
@@ -72,12 +74,12 @@ pipeline {
       // }
 
       // Clean after build
-      cleanWs(cleanWhenNotBuilt: false,
-              deleteDirs: true,
-              disableDeferredWipeout: true,
-              notFailBuild: true,
-              patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
-                          [pattern: '.propsfile', type: 'EXCLUDE']])
+      // cleanWs(cleanWhenNotBuilt: false,
+      //         deleteDirs: true,
+      //         disableDeferredWipeout: true,
+      //         notFailBuild: true,
+      //         patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
+      //                     [pattern: '.propsfile', type: 'EXCLUDE']])
     }
     success {
       echo "Build ID: ${BUILD_ID}, ${JOB_NAME} succeeded"
