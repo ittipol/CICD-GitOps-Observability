@@ -10,6 +10,15 @@ SRC_DIR=$(dirname $SRC_DIR)
 TEST_PROJ="/path/to/test.csproj"
 TEST_DIR=$(dirname $TEST_PROJ)
 
+cd "$TEST_DIR"
+# enable code coverage --collect:"XPlat Code Coverage"
+dotnet add package coverlet.collector --version 6.0.4
+
+# enable code coverage /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$SCAN_DIR/coverage-result/coverage.opencover.xml"
+dotnet add package coverlet.msbuild --version 6.0.4
+
+cd "$SCAN_DIR"
+
 mkdir -p "$SCAN_DIR/coverage-result"
 
 dotnet sonarscanner begin /k:"$PROJECT_KEY" \
@@ -32,7 +41,8 @@ dotnet test $TEST_PROJ -c Release --no-restore \
         /p:CoverletOutputFormat=opencover \
         /p:CoverletOutput="$SCAN_DIR/coverage-result/coverage.opencover.xml"
 
-cp -rf "$(find $TEST_DIR/TestResults/** -name "coverage.opencover.xml" | head -1)" "$SCAN_DIR/coverage-result/coverage.opencover.xml"
+# find latest coverage.opencover.xml and copy to dest folder
+# cp -rf "$(find $TEST_DIR/TestResults/** -name "coverage.opencover.xml" | head -1)" "$SCAN_DIR/coverage-result/coverage.opencover.xml"
 fi
 
 dotnet sonarscanner end /d:sonar.login="squ_e61135a9e0e9ddd0b8d4fcaa27b6f0b0d5a9cded"
