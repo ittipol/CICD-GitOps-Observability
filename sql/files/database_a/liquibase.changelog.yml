@@ -4,4 +4,4 @@ databaseChangeLog:
   # - includeAll:
   #     path: ./release_1.0/
   - includeAll:
-      path: ./project_a/
+      path: ./story_a/

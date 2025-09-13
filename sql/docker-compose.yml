@@ -10,17 +10,17 @@ services:
   #   networks:
   #     - sql-network
 
-  server:
-    build: ./server
-    container_name: server
-    # environment:
-    #   LIQUIBASE_URL: jdbc:postgresql://postgres:5432/database_name
-    #   LIQUIBASE_USERNAME: user
-    #   LIQUIBASE_PASSWORD: password
-    volumes:
-      - ./files:/db
-    networks:
-      - sql-network
+  # server:
+  #   build: ./server
+  #   container_name: server
+  #   # environment:
+  #   #   LIQUIBASE_URL: jdbc:postgresql://postgres:5432/database_name
+  #   #   LIQUIBASE_USERNAME: user
+  #   #   LIQUIBASE_PASSWORD: password
+  #   volumes:
+  #     - ./files:/db
+  #   networks:
+  #     - sql-network
 
   jenkins:
     build: ../docker/dockerfiles/jenkins
@@ -30,7 +30,7 @@ services:
       - 50000:50000
     volumes:
       - jenkins-data:/var/jenkins_home
-      - ./files:/var/jenkins_home/db
+      # - ./files:/var/jenkins_home/liquibase      
     networks:
       - sql-network
 

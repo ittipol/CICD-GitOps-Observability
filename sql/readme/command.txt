@@ -31,7 +31,6 @@ liquibase future-rollback-sql --output-file migration-sprint-11-rollback.review.
 
 liquibase rollback-sql --label-filter sprint-11 --output-file migration-sprint-11-rollback.preview.sql --url="jdbc:postgresql://postgres:5432/database_a" --changeLogFile=/files/liquibase.changelog.yml --username=postgres --password=1234 --tag 1.0.0
 
-liquibase tag exampletag
 liquibase --changeLogFile=/files/liquibase.changelog.yml tag --tag <git Tag version>
 
 
@@ -39,24 +38,29 @@ liquibase --changeLogFile=/files/liquibase.changelog.yml tag --tag <git Tag vers
 
 liquibase history
 
-liquibase tag “sprint01_start”
-liquibase rollback “sprint01_start”
-liquibase rollback sprint01_start
-liquibase rollback sprint02_start
+liquibase status && liquibase validate
 
-liquibase tag sprint01_start && liquibase update --log-level flag --log-file=update.log
-liquibase tag sprint02_start && liquibase update --log-level flag --log-file=update.log
-liquibase tag release_1.0 && liquibase update --log-level flag --log-file=update.log
+liquibase tag-exists --tag=1.0.0
+liquibase tag 1.0.0
+liquibase rollback 1.0.0
 
-liquibase rollback spring01_01 --log-file=rollbackTag.log --log-level=DEBUG
-liquibase rollback sprint02_start
-liquibase rollback release_1.0 --log-file=rollbackTag.log --log-level=flag
+liquibase update --log-level DEBUG --log-file=update.log
+liquibase update --log-level DEBUG --log-file=update.log && liquibase tag "1.0.0"
+
+liquibase rollback 1.0.0 --log-file=rollbackTag.log --log-level=DEBUG
 
 liquibase rollback --tag=release_1.0
+liquibase rollback --tag=1.0.0
 
-liquibase rollbackCount 1 --label-filter init
+liquibase rollbackCount 1 --label-filter <card-no>
+liquibase rollbackCount 1 --label-filter="card-456 AND 20250915 AND database_name AND 01-1"
 
-liquibase rollback-sql --output-file migration-sprint-11-rollback.preview.sql --tag 1.2.0
+liquibase rollback-sql --output-file migration-sprint-11-rollback.preview.sql --tag 1.0.0
+
+liquibase rollback-count-sql --count=2 --label-filter="card-456"
+
+liquibase update-count --label-filter="card-456"
+liquibase update-count --label-filter="release_1.0 AND feature_X"
 
 ====================================
 
