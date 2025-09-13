@@ -1,0 +1,7 @@
+databaseChangeLog:
+  # - includeAll:
+  #     path: ./migrations/
+  # - includeAll:
+  #     path: ./release_1.0/
+  - includeAll:
+      path: ./project_a/

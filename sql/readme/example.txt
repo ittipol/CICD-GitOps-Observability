@@ -1,0 +1,56 @@
+Example JDBC URLs
+MS SQL Server: jdbc:sqlserver://<IP OR HOSTNAME>:1433;database=<DATABASE>
+PostgreSQL: jdbc:postgresql://<IP OR HOSTNAME>:5432/<DATABASE>?currentSchema=<SCHEMA NAME>
+MySQL: jdbc:mysql://<IP OR HOSTNAME>:3306/<DATABASE>
+MariaDB: jdbc:mariadb://<IP OR HOSTNAME>:3306/<DATABASE>
+DB2: jdbc:db2://<IP OR HOSTNAME>:50000/<DATABASE>
+Snowflake: jdbc:snowflake://<IP OR HOSTNAME>/?db=<DATABASE>&schema=<SCHEMA NAME>
+Sybase: jdbc:jtds:sybase://<IP OR HOSTNAME>:/<DATABASE>
+SQLite: jdbc:sqlite:/tmp/<DB FILE NAME>.db
+
+------------------
+การตั้งค่าใน liquibase.properties
+
+variable ที่จำเป็นในการรัน Liquibase
+    1. changelogFile: บอกว่าให้ไปหยิบ changelog จากไหน
+    2. url: คือ database connection string แบบ jdbc
+    3. username: คือ database username
+    4. password: คือ database password
+
+variable อื่นๆ ที่ไม่มีก็รันได้ แต่ถ้าใส่ก็จะดีกว่า
+    liquibase.hub.mode: off เพื่อไม่ส่งข้อมูลการใช้งานของเราให้ Liquibase
+    liquibase.showBanner: false เพื่อไม่แสดง Liquibase banner ตอนรัน CLI
+    liquibase.command.defaultSchemaName: public เพื่อบอกว่า default database
+
+
+------------------
+ในกรณี run liquibase ใน ci จะไม่ใส่ liquibase.properties จะใช้เป็น environment variables
+
+format: LIQUIBASE_<option-name> เช่น
+    - LIQUIBASE_URL
+    - LIQUIBASE_USERNAME
+    - LIQUIBASE_PASSWORD
+
+
+------------------
+Download
+wget https://github.com/liquibase/liquibase/releases/download/v4.32.0/liquibase-4.32.0.tar.gz
+
+Extract
+tar -xvzf liquibase-4.32.0.tar.gz
+
+Move the extracted files to a desired location
+sudo mv liquibase /db/
+
+Update command to PATH
+1. create shell script
+echo "export PATH=$PATH:/db/liquibase/" > export-liquibase.sh
+
+2. Make the “export-liquibase.sh” file executable:
+chmod +x export-liquibase.sh
+
+3. Reload the environment
+source export-liquibase.sh
+
+4. Verify the installation
+liquibase --version

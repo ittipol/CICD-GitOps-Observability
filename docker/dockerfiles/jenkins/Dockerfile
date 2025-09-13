@@ -26,12 +26,20 @@ RUN apt-get update && apt-get install -y docker-ce-cli
 # RUN apt update && apt install vault
 
 # dotnet
-RUN mkdir -p /dotnet/sdk
-RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
-RUN chmod +x ./dotnet-install.sh
-RUN ./dotnet-install.sh --version 8.0.204 --install-dir /dotnet/sdk
-ENV DOTNET_ROOT="/dotnet/sdk"
-ENV PATH="/dotnet/sdk:${PATH}"
+# RUN mkdir -p /dotnet/sdk
+# RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
+# RUN chmod +x ./dotnet-install.sh
+# RUN ./dotnet-install.sh --version 8.0.204 --install-dir /dotnet/sdk
+# ENV DOTNET_ROOT="/dotnet/sdk"
+# ENV PATH="/dotnet/sdk:${PATH}"
+
+# liquibase
+RUN wget -O- https://repo.liquibase.com/liquibase.asc | gpg --dearmor > liquibase-keyring.gpg
+RUN cat liquibase-keyring.gpg | tee /usr/share/keyrings/liquibase-keyring.gpg > /dev/null
+RUN echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/liquibase-keyring.gpg] https://repo.liquibase.com stable main' | tee /etc/apt/sources.list.d/liquibase.list
+
+RUN apt update
+RUN apt install liquibase
 
 USER jenkins
 RUN jenkins-plugin-cli --plugins "blueocean docker-workflow pipeline-stage-view dependency-check-jenkins-plugin ws-cleanup sonar coverage junit"

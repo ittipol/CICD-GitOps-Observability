@@ -1,0 +1,55 @@
+## Formatted SQL
+
+### Changeset
+**Folder structure**
+- migrations (root folder)
+  - database_a
+    - <project\-name> or <story\-card\-number>
+      - <task\-id> or <card\-number>
+        - <execution\-order>\-YYYYMMDD\-<card\-number>.sql (changeset)
+  - database_b
+    - project_name_a
+      - card-456
+        - 01-20251025-card-456.sql
+        - 02-20251025-card-456.sql
+        - 03-20251028-card-456.sql
+    - project_name_b
+      - card-789
+        - 01-20251205-card-789.sql
+        - 02-20251207-card-789.sql
+  - <database\-name>
+    - ...
+      - ...
+        - ...
+
+**File naming convention**
+- <execution\-order>\-YYYYMMDD\-<card\-number>.sql
+- e.g., 01-20250915-card-1.sql
+
+
+**Changeset infomation**
+``` sql
+-- e.g.,
+-- changeset <author-name>:<changeset-id> labels:<release-number>,<team-number>,<card-number>,<01...n> contexts:dev,test
+
+-- changeset <author-name>:<changeset-id> labels:<project-name>,<team-number>,<card-number>,<01...n> contexts:production
+```
+
+- changeset id = YYYYMMDD\-<execution\-order>\-<changeset\-order>
+- label patterns
+  - start with release\-number
+    - <release\-number>,<team\-number>,<card\-number>,<01...n>
+    - <release\-number>,<team\-number>,<card\-number>,<01...n>
+  - start with project\-name
+    - <project\-name>,<team\-number>,<card\-number>,<01...n>
+    - <project\-name>,<team\-number>,<card\-number>,<01...n>
+  - start with story\-card\-number
+    - <story\-card\-number>,<team\-number>,<card\-number>,<01...n>
+    - <story\-card\-number>,<team\-number>,<card\-number>,<01...n>
+
+
+### Programming Naming
+- Camel Case: projectName
+- Pascal Case: ProjectName
+- Snake Case: project_name
+- Kebab Case: project-name

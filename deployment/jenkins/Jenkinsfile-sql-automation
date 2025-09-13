@@ -1,0 +1,42 @@
+pipeline {
+  agent any
+  environment {
+    DB_URL = "jdbc:postgresql://postgres:5432/database_a"
+    DB_USERNAME = "postgres"
+    DB_PASSWORD = "1234"
+    CHANGELOG_FILE = "/var/jenkins_home/db/liquibase.changelog.yml" // Path to your changelog
+  }
+  options {
+    // This is required if you want to clean before build
+    skipDefaultCheckout(true)
+  }
+  stages {
+      stage('Status') {
+        steps {
+          sh "liquibase --url='${DB_URL}' --username='${DB_USERNAME}' --password='${DB_PASSWORD}' --changeLogFile='${CHANGELOG_FILE}' status"
+        }
+      }
+      stage('Validate Changelog') {
+        steps {
+          sh "liquibase --url='${DB_URL}' --username='${DB_USERNAME}' --password='${DB_PASSWORD}' --changeLogFile='${CHANGELOG_FILE}' validate"
+        }
+      }
+      stage('Update Database') {
+        steps {
+          sh "liquibase --url='${DB_URL}' --username='${DB_USERNAME}' --password='${DB_PASSWORD}' --changeLogFile='${CHANGELOG_FILE}' update"
+        }
+      }
+  }
+  post {
+    always {
+      cleanWs() // Clean up workspace after build
+    }
+    failure {
+        // Optional: Implement rollback on failure
+      script {
+        echo "Liquibase update failed. Consider rolling back."
+        // sh "liquibase rollback-count 1 --url='${DB_URL}' --username='${DB_USERNAME}' --password='${DB_PASSWORD}' --changeLogFile='${CHANGELOG_FILE}'"
+      }
+    }
+  }
+}

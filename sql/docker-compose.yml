@@ -1,0 +1,70 @@
+services:
+
+  # liquibase:
+  #   image: liquibase/liquibase:4.33
+  #   container_name: postgresql
+  #   command: --changeLogFile=changelog.xml update
+  #   volumes:
+  #     - ./changelog:/liquibase/changelog
+  #     # - ./script:/script
+  #   networks:
+  #     - sql-network
+
+  server:
+    build: ./server
+    container_name: server
+    # environment:
+    #   LIQUIBASE_URL: jdbc:postgresql://postgres:5432/database_name
+    #   LIQUIBASE_USERNAME: user
+    #   LIQUIBASE_PASSWORD: password
+    volumes:
+      - ./files:/db
+    networks:
+      - sql-network
+
+  jenkins:
+    build: ../docker/dockerfiles/jenkins
+    container_name: jenkins
+    ports:
+      - 8080:8080
+      - 50000:50000
+    volumes:
+      - jenkins-data:/var/jenkins_home
+      - ./files:/var/jenkins_home/db
+    networks:
+      - sql-network
+
+  postgres:
+    image: postgres:17.6-alpine3.22
+    container_name: postgresql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: database_a
+    ports:
+      - 5432:5432
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+    networks:
+      - sql-network
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8082:8080
+    networks:
+      - sql-network
+
+networks:
+  sql-network:
+    driver: bridge
+
+volumes:
+  jenkins-data:
+    external: false
+  postgresql:
+    external: false
+  postgresql_data:
+    external: false

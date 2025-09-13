@@ -1,0 +1,63 @@
+Common Liquibase Commands:
+Once installed, you can use various Liquibase commands to manage your database migrations. Some frequently used commands include:
+
+liquibase update: Applies all pending database changes defined in your changelog file.
+liquibase updateSQL: Generates the SQL scripts for pending changes without executing them, allowing for review.
+liquibase rollback <tag|count|date>: Rolls back changes to a specific tag, a certain number of changesets, or a specific date.
+liquibase status: Displays the status of pending and applied changesets in the database. 
+liquibase validate: Checks the changelog file for syntax errors and inconsistencies.
+liquibase clearCheckSums: Resets the checksums of all changesets in the changelog, which can be useful after manual modifications to a changeset.
+liquibase --version: Verifies the installed Liquibase version.
+
+===========================
+
+liquibase status --url="jdbc:postgresql://postgres:5432/database_a" --changeLogFile=/files/liquibase.changelog.yml --username=postgres --password=1234
+
+liquibase validate --url="jdbc:postgresql://postgres:5432/database_a" --changeLogFile=/files/liquibase.changelog.yml --username=postgres --password=1234
+
+liquibase update --url="jdbc:postgresql://postgres:5432/database_a" --changeLogFile=/files/liquibase.changelog.yml --username=postgres --password=1234
+
+liquibase --url="jdbc:postgresql://postgres:5432/database_a" --changeLogFile=/files/liquibase.changelog.yml --username=postgres --password=1234 tag 1.0.0
+
+liquibase changelog-sync --label-filter init --url="jdbc:postgresql://postgres:5432/database_a" --changeLogFile=/files/liquibase.changelog.yml --username=postgres --password=1234
+
+liquibase changelog-sync-sql --label-filter init --output-file dump.sql --url="jdbc:postgresql://postgres:5432/database_a" --changeLogFile=/files/liquibase.changelog.yml --username=postgres --password=1234
+
+liquibase history --format text --url="jdbc:postgresql://postgres:5432/database_a" --username=postgres --password=1234
+
+liquibase update-sql --output-file migration-sprint-11.review.sql --url="jdbc:postgresql://postgres:5432/database_a" --changeLogFile=/files/liquibase.changelog.yml --username=postgres --password=1234
+
+liquibase future-rollback-sql --output-file migration-sprint-11-rollback.review.sql  --url="jdbc:postgresql://postgres:5432/database_a" --changeLogFile=/files/liquibase.changelog.yml --username=postgres --password=1234
+
+liquibase rollback-sql --label-filter sprint-11 --output-file migration-sprint-11-rollback.preview.sql --url="jdbc:postgresql://postgres:5432/database_a" --changeLogFile=/files/liquibase.changelog.yml --username=postgres --password=1234 --tag 1.0.0
+
+liquibase tag exampletag
+liquibase --changeLogFile=/files/liquibase.changelog.yml tag --tag <git Tag version>
+
+
+=================================
+
+liquibase history
+
+liquibase tag “sprint01_start”
+liquibase rollback “sprint01_start”
+liquibase rollback sprint01_start
+liquibase rollback sprint02_start
+
+liquibase tag sprint01_start && liquibase update --log-level flag --log-file=update.log
+liquibase tag sprint02_start && liquibase update --log-level flag --log-file=update.log
+liquibase tag release_1.0 && liquibase update --log-level flag --log-file=update.log
+
+liquibase rollback spring01_01 --log-file=rollbackTag.log --log-level=DEBUG
+liquibase rollback sprint02_start
+liquibase rollback release_1.0 --log-file=rollbackTag.log --log-level=flag
+
+liquibase rollback --tag=release_1.0
+
+liquibase rollbackCount 1 --label-filter init
+
+liquibase rollback-sql --output-file migration-sprint-11-rollback.preview.sql --tag 1.2.0
+
+====================================
+
+docker volume rm $(docker volume ls -qf dangling=true)
