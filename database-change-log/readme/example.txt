@@ -26,10 +26,10 @@ variable อื่นๆ ที่ไม่มีก็รันได้ แต
 ------------------
 ในกรณี run liquibase ใน ci จะไม่ใส่ liquibase.properties จะใช้เป็น environment variables
 
-format: LIQUIBASE_<option-name> เช่น
-    - LIQUIBASE_URL
-    - LIQUIBASE_USERNAME
-    - LIQUIBASE_PASSWORD
+format: LIQUIBASE_COMMAND_<option-name> เช่น
+    - LIQUIBASE_COMMAND_URL
+    - LIQUIBASE_COMMAND_USERNAME
+    - LIQUIBASE_COMMAND_PASSWORD
 
 
 ------------------

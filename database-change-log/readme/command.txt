@@ -50,7 +50,7 @@ liquibase update --log-level DEBUG --log-file=update.log && liquibase tag "1.0.0
 liquibase rollback 1.0.0 --log-file=rollbackTag.log --log-level=DEBUG
 
 liquibase rollback --tag=release_1.0
-liquibase rollback --tag=1.0.0
+liquibase rollback --tag=1.0.0 --log-file=rollbackTag.log --log-level=DEBUG
 
 liquibase rollbackCount 1 --label-filter <card-no>
 liquibase rollbackCount 1 --label-filter="card-456 AND 20250915 AND database_name AND 01-1"

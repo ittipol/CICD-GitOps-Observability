@@ -7,12 +7,11 @@ pipeline {
 
     // env config
     DB_PATH = "./src/non-prod/sit/database_b"
-
-    // parameters
-    // PROJECT_PATH = "project_name_b/card-2"
   }
   parameters {
-    string(name: 'PROJECT_PATH', defaultValue: '', description: 'Project path')
+    choice(name: 'DB_ENV', choices:['sit', 'uat'])
+    booleanParam(name: 'SHOW_TAGS', defaultValue: false, description: 'Only shows tagged changeset')
+    string(name: 'FILTER_TAG_VERSION', defaultValue: '2.0.0', description: 'Filter tags (Use when SHOW_TAGS is checked) \n e.g., 1.0.0')
   }
   options {
     // This is required if you want to clean before build
@@ -26,18 +25,26 @@ pipeline {
         cleanWs()
         echo "Building ${env.JOB_NAME}..."
 
+        sh "mkdir -p $WORKSPACE/liquibase"
+        sh 'cp -rf /var/jenkins_home/db/. $WORKSPACE/src'        
+
         script {
-          if(params.PROJECT_PATH.isEmpty() || params.PROJECT_PATH.endsWith("/")) {
-            error("PROJECT_PATH parameter is not valid")
+          if(params.SHOW_TAGS && params.FILTER_TAG_VERSION.isEmpty()) {
+            error("FILTER_TAG_VERSION parameter is not valid")
+          }
+          
+          switch (params.DB_ENV) {
+            case 'sit':
+                echo "SIT"
+                break
+            case 'uat':
+                echo "UAT"
+                break
+            // default:
+            //     sh './default_env.sh'
+            //     break
           }
         }
-
-        // echo -e "\n\nchangelogFile: liquibase.changelog.yml" >> liquibase.properties
-
-        sh "mkdir -p $WORKSPACE/liquibase"
-        sh 'cp -rf /var/jenkins_home/db/. $WORKSPACE/src'
-
-        // sh 'env'
       }
     }
     // stage('SCM Checkout') {
@@ -49,7 +56,7 @@ pipeline {
     //     git branch: 'main', changelog: false, credentialsId: env.GIT_CREDENTIAL, poll: false, url: env.GIT_URL
     //   }
     // }
-    stage('Check For Folder Existence') {
+    stage('Check for folder existence') {
       steps {
         script {
           if (fileExists(DB_PATH)) {
@@ -60,43 +67,13 @@ pipeline {
           }
         }
       }
-    }
-    stage('Check SQL migrations') {
-      steps {
-        script {
-
-          def sqlMigrationPath = "${DB_PATH}/migrations/${PROJECT_PATH}"
-          echo sqlMigrationPath
-
-          if (fileExists(sqlMigrationPath)) {
-            echo "Folder '$sqlMigrationPath' found in the workspace!"
-
-            sh """
-            cp -rf $sqlMigrationPath/. $WORKSPACE/liquibase/migrations
-            """
-
-          } else {
-            // echo "Folder '$sqlMigrationPath' not found"
-            error("Folder '$sqlMigrationPath' not found")
-          }
-
-          def filesInFolder = sh(script: "ls -A ${sqlMigrationPath}", returnStdout: true).trim()
-
-          if (filesInFolder == "") {
-              // echo "Folder '${sqlMigrationPath}' is empty"
-              error("Folder '${sqlMigrationPath}' is empty")
-          } else {
-              echo "Folder '${sqlMigrationPath}' is not empty. Contains: ${filesInFolder}"
-          }
-        }
-      }
-    }
+    }    
     stage('Check configs') {
       steps {
         script {
 
           def changeLogPath = "${DB_PATH}/config/liquibase.changelog.yml"
-          echo changeLogPath
+          echo "${changeLogPath}"
 
           if (fileExists(changeLogPath)) {
             echo "File '$changeLogPath' found!"
@@ -111,7 +88,7 @@ pipeline {
           }
 
           def liquibasePropertyPath = "${DB_PATH}/config/liquibase.properties"
-          echo liquibasePropertyPath
+          echo "${liquibasePropertyPath}"
 
           if (fileExists(liquibasePropertyPath)) {
             echo "File '$liquibasePropertyPath' found!"
@@ -124,39 +101,6 @@ pipeline {
             // echo "File '$liquibasePropertyPath' not found"
             error("File '$liquibasePropertyPath' not found")
           }
-        }
-      }
-    }    
-    stage('Create') {
-      steps {
-        echo '::: Create ************************************************************'
-
-        // project-root/
-        //   - migrations/
-        //       - <execution-order>-YYYYMMDD-<card-number>.sql
-        //       - <execution-order>-YYYYMMDD-<card-number>.sql
-        //       - ...
-        //   - liquibase.properties
-        //   - liquibase.changelog.xml
-
-        sh """
-
-        cd $WORKSPACE/liquibase/migrations
-        ls -l
-
-        """
-      }      
-    }
-    stage('Status') {      
-      steps {
-        sh """
-        cd $WORKSPACE/liquibase && liquibase status
-        """
-      }
-      post {
-        failure {
-          echo "Build stage failed!"
-          error("Build stage failed!")
         }
       }
     }
@@ -173,9 +117,26 @@ pipeline {
         }
       }
     }
-    stage('Update Database') {
+    stage('Generate history') {
       steps {
-        sh "cd $WORKSPACE/liquibase && liquibase update --log-level DEBUG --log-file=$WORKSPACE/update.log"
+        script {
+          dir("$WORKSPACE/liquibase") {
+
+            echo "params.SHOW_TAGS: ${params.SHOW_TAGS}"
+
+            if (params.SHOW_TAGS) {
+              sh '''
+              liquibase history --format=TABULAR --show-tags=true --output-file $WORKSPACE/history.tag.log
+              liquibase history --format=TEXT --show-tags=true --tag-filter="${FILTER_TAG_VERSION}" --output-file $WORKSPACE/history.filter-tag.log
+              '''
+            } else {
+              sh '''          
+              liquibase history --format=TEXT --output-file $WORKSPACE/history.text.log
+              liquibase history --format=TABULAR --output-file $WORKSPACE/history.tabular.log
+              '''            
+            }            
+          }
+        }
       }
     }
   }

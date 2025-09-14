@@ -1,0 +1,232 @@
+pipeline {
+  agent any
+  environment {
+    GIT_URL = "https://github.com/ittipol/Database-Change-Log.git"
+    GIT_CREDENTIAL = "git-cred"
+    GIT_PATH = "./non-prod/sit"
+
+    // env config
+    DB_PATH = "./src/non-prod/sit/database_b"
+
+    // parameters
+    // PROJECT_PATH = "project_name_b/card-2"
+  }
+  parameters {
+    choice(name: 'DB_ENV', choices:['sit', 'uat'])
+    string(name: 'PROJECT_PATH', defaultValue: 'project_name_b/card-2', description: 'Project path')
+    booleanParam(name: 'DRY_RUN', defaultValue: true, description: 'Preview rollback sql script before running rollback')
+    string(name: 'ROLLBACK_COUNT', defaultValue: '1', description: 'Number of changeset rollback')
+    string(name: 'CHANGESET_LABEL', defaultValue: '', description: 'Changeset label,\n e.g., card-123 \n e.g., card-123 AND card-123-01 (for multiple labels)')
+  }
+  options {
+    // This is required if you want to clean before build
+    skipDefaultCheckout(true)
+  }
+  stages {
+    stage('Init') {
+      steps {
+        echo '::: Init ************************************************************'
+        // Clean before build
+        cleanWs()
+        echo "Building ${env.JOB_NAME}..."
+
+        script {
+          if(params.PROJECT_PATH.isEmpty() || params.PROJECT_PATH.endsWith("/")) {
+            error("PROJECT_PATH parameter is not valid")
+          }
+
+          if (params.ROLLBACK_COUNT.isEmpty() || !params.ROLLBACK_COUNT.isNumber()) {
+            error("ROLLBACK_COUNT parameter is not valid")
+          }
+        }
+
+        // echo -e "\n\nchangelogFile: liquibase.changelog.yml" >> liquibase.properties
+
+        sh "mkdir -p $WORKSPACE/liquibase"
+        sh 'cp -rf /var/jenkins_home/db/. $WORKSPACE/src'
+
+        // sh 'env'
+      }
+    }
+    // stage('SCM Checkout') {
+    //   steps {
+    //     echo '::: SCM Checkout ************************************************************'
+    //     // We need to explicitly checkout from SCM here
+    //     // ‘checkout scm’ is only available when using “Multibranch Pipeline” or “Pipeline script from SCM”
+    //     // checkout scm
+    //     git branch: 'main', changelog: false, credentialsId: env.GIT_CREDENTIAL, poll: false, url: env.GIT_URL
+    //   }
+    // }
+    stage('Check For Folder Existence') {
+      steps {
+        script {
+          if (fileExists(DB_PATH)) {
+            echo "Folder '$DB_PATH' found in the workspace!"
+          } else {
+            // echo "Folder '$DB_PATH' not found"
+            error("Folder '$DB_PATH' not found")
+          }
+        }
+      }
+    }
+    stage('Check SQL migrations') {
+      steps {
+        script {
+
+          def sqlMigrationPath = "${DB_PATH}/changesets/${PROJECT_PATH}"
+          echo "${sqlMigrationPath}"
+
+          if (fileExists(sqlMigrationPath)) {
+            echo "Folder '$sqlMigrationPath' found in the workspace!"            
+          } else {
+            // echo "Folder '$sqlMigrationPath' not found"
+            error("Folder '$sqlMigrationPath' not found")
+          }
+
+          def filesInFolder = sh(script: "ls -A ${sqlMigrationPath}", returnStdout: true).trim()
+
+          if (filesInFolder == "") {
+              // echo "Folder '${sqlMigrationPath}' is empty"
+              error("Folder '${sqlMigrationPath}' is empty")
+          } else {
+              echo "Folder '${sqlMigrationPath}' is not empty. Contains: ${filesInFolder}"
+
+              dir(sqlMigrationPath) {
+                sh '''
+                mkdir -p "$WORKSPACE/liquibase/migrations/${PROJECT_PATH}"
+                cp -rf . "$WORKSPACE/liquibase/migrations/${PROJECT_PATH}"
+                '''
+              }
+          }
+        }
+      }
+    }
+    stage('Check configs') {
+      steps {
+        script {
+
+          def changeLogPath = "${DB_PATH}/config/liquibase.changelog.yml"
+          echo changeLogPath
+
+          if (fileExists(changeLogPath)) {
+            echo "File '$changeLogPath' found!"
+
+            sh """
+            cp $changeLogPath $WORKSPACE/liquibase/liquibase.changelog.yml
+            """
+
+          } else {
+            // echo "File '$changeLogPath' not found"
+            error("File '$changeLogPath' not found")
+          }
+
+          def liquibasePropertyPath = "${DB_PATH}/config/liquibase.properties"
+          echo liquibasePropertyPath
+
+          if (fileExists(liquibasePropertyPath)) {
+            echo "File '$liquibasePropertyPath' found!"
+
+            sh """
+            cp $liquibasePropertyPath $WORKSPACE/liquibase/liquibase.properties
+            """
+
+          } else {
+            // echo "File '$liquibasePropertyPath' not found"
+            error("File '$liquibasePropertyPath' not found")
+          }
+        }
+      }
+    }
+    // stage('Status') {      
+    //   steps {
+    //     sh """
+    //     cd $WORKSPACE/liquibase && liquibase status
+    //     """
+    //   }
+    //   post {
+    //     failure {
+    //       echo "Build stage failed!"
+    //       error("Build stage failed!")
+    //     }
+    //   }
+    // }
+    stage('Validate Changelog') {
+      steps {
+        sh """
+        cd $WORKSPACE/liquibase && liquibase validate
+        """
+      }
+      post {
+        failure {
+          echo "Build stage failed!"
+          error("Build stage failed!")
+        }
+      }
+    }
+    stage('Dry run') {
+      when {
+        expression {
+          params.DRY_RUN == true
+        }
+      }
+      steps {
+        echo '::: Dry run ************************************************************'
+
+        script {
+          if(CHANGESET_LABEL.isEmpty()) {
+            sh 'cd $WORKSPACE/liquibase && liquibase rollback-count-sql --count="$ROLLBACK_COUNT" --output-file $WORKSPACE/sql-rollback.preview.sql'
+          } else {
+            sh 'cd $WORKSPACE/liquibase && liquibase rollback-count-sql --count="$ROLLBACK_COUNT" --output-file $WORKSPACE/sql-rollback.preview.sql --label-filter="${CHANGESET_LABEL}"'
+          }
+        }        
+        
+      }
+    }
+    stage('Rollback Database') {
+      when {
+        expression {
+          params.DRY_RUN == false
+        }
+      }
+      steps {
+
+        script {
+          if(CHANGESET_LABEL.isEmpty()) {
+            sh 'cd $WORKSPACE/liquibase && liquibase rollback-count --count="$ROLLBACK_COUNT"'
+          } else {
+            sh 'cd $WORKSPACE/liquibase && liquibase rollback-count --count="$ROLLBACK_COUNT" --label-filter="${CHANGESET_LABEL}"'
+          }
+        }        
+        
+      }
+    }
+  }
+  post {
+    always {
+      echo '::: Post ************************************************************'
+
+      cleanWs(cleanWhenNotBuilt: false,
+              deleteDirs: true, // Set to true if you want to delete empty directories after cleanup
+              disableDeferredWipeout: true,
+              notFailBuild: true, // Set to true to prevent the build from failing if cleanup encounters issues
+              patterns: [
+                [pattern: '.git/**', type: 'INCLUDE'], // INCLUDE the entire .git directory and its contents
+                [pattern: 'src/**', type: 'INCLUDE'],
+                [pattern: 'liquibase/**', type: 'INCLUDE'],
+                // [pattern: 'liquibase/migrations/**', type: 'INCLUDE'],
+                // [pattern: 'liquibase/liquibase.*', type: 'INCLUDE'],
+                // [pattern: 'liquibase/*.sql', type: 'EXCLUDE'], // Exclude all .sql files within the 'target' directory
+                // [pattern: 'liquibase/update.log', type: 'EXCLUDE'] // Exclude a specific file
+              ]
+            )
+    }
+    failure {
+      // Optional: Implement rollback on failure
+      // script {
+      //   echo "Liquibase update failed. Consider rolling back."
+      //   // sh "liquibase rollback-count 1 --label-filter $CARD_NUMBER"
+      // }
+      echo "Build ID: ${BUILD_ID}, ${JOB_NAME} failed"
+    }
+  }
+}
