@@ -110,10 +110,12 @@ pipeline {
     stage('Check for tag version existence') {
       steps {
 
-        dir("$WORKSPACE/liquibase") {
-          sh '''
-          liquibase history --format=TEXT --show-tags=true --tag-filter="${TAG_VERSION}" | grep -i "Applied 1 changeset" && { echo "The tag '${TAG_VERSION}' already exist"; exit 1; } || echo "The tag '${TAG_VERSION}' does NOT exist"
-          '''
+        script {
+          dir("$WORKSPACE/liquibase") {
+            sh '''
+            liquibase history --format=TEXT --show-tags=true --tag-filter="${TAG_VERSION}" | grep -i "Applied 1 changeset" && { echo "The tag '${TAG_VERSION}' already exist"; exit 1; } || echo "The tag '${TAG_VERSION}' does NOT exist"
+            '''
+          }
         }
 
         // sh '''

@@ -185,7 +185,15 @@ pipeline {
       }
       steps {
         echo '::: Dry run ************************************************************'
-        sh "cd $WORKSPACE/liquibase && liquibase update-sql --output-file $WORKSPACE/sql-migration.review.sql"
+
+        script {
+          dir("$WORKSPACE/liquibase") {
+            sh '''
+            liquibase update-sql --output-file $WORKSPACE/sql-migration.review.sql
+            liquibase future-rollback-sql --output-file $WORKSPACE/sql-rollback.review.sql
+            '''
+          }
+        }          
       }
     }
     stage('Update Database') {
