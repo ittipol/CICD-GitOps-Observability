@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: sql/project_name_xyz/changelog.yml
+      errorIfMissing: false
+  - include:
+      file: sql/project_name_123/changelog.yml
+      errorIfMissing: false

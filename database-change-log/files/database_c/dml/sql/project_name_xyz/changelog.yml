@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: card-2.20250917_164738_463365642
+      author: user-aaa
+      labels: card-2,card-2.20250917_164738_463365642
+      comment: create products table
+      changes:
+        - sqlFile:
+            dbms: 'postgresql'
+            endDelimiter: \nGO
+            splitStatements: true
+            path: card-2/script/card-2.20250917_164738_463365642.sql
+            relativeToChangelogFile: true
+            stripComments: true
+      rollback:
+        - sqlFile:
+            dbms: 'postgresql'
+            endDelimiter: \nGO
+            splitStatements: true
+            path: card-2/rollback/card-2.20250917_164738_463365642.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: true

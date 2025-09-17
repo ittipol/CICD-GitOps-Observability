@@ -1,14 +1,15 @@
 databaseChangeLog:
   - changeSet:
-      id: 20251218-card-1234-01-1
-      author: liquibase-docs
-      labels: card-1234,card-1234-01,card-1234-01-1
+      id: card-1.20250917_164738_463365642
+      author: user-aaa
+      labels: card-1,card-1.20250917_164738_463365642
+      comment: Comment...
       changes:
         - sqlFile:
             dbms: 'postgresql'
             endDelimiter: \nGO
             splitStatements: true
-            path: script/01.sql
+            path: card-1/script/card-1.20250917_164738_463365642.sql
             relativeToChangelogFile: true
             stripComments: true
       rollback:
@@ -16,6 +17,6 @@ databaseChangeLog:
             dbms: 'postgresql'
             endDelimiter: \nGO
             splitStatements: true
-            path: rollback/01.sql
+            path: card-1/rollback/card-1.20250917_164738_463365642.rollback.sql
             relativeToChangelogFile: true
             stripComments: true
