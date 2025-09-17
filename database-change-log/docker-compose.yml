@@ -10,29 +10,30 @@ services:
   #   networks:
   #     - sql-network
 
-  # server:
-  #   build: ./server
-  #   container_name: server
-  #   # environment:
-  #   #   LIQUIBASE_COMMAND_URL: jdbc:postgresql://postgres:5432/database_name
-  #   #   LIQUIBASE_COMMAND_USERNAME: user
-  #   #   LIQUIBASE_COMMAND_PASSWORD: password
-  #   volumes:
-  #     - ./files:/db
-  #   networks:
-  #     - sql-network
-
-  jenkins:
-    build: ../docker/dockerfiles/jenkins
-    container_name: jenkins
-    ports:
-      - 8080:8080
-      - 50000:50000
+  server:
+    build: ./server
+    container_name: server
+    # environment:
+    #   LIQUIBASE_COMMAND_URL: jdbc:postgresql://postgres:5432/database_name
+    #   LIQUIBASE_COMMAND_USERNAME: user
+    #   LIQUIBASE_COMMAND_PASSWORD: password
     volumes:
-      - jenkins-data:/var/jenkins_home
-      # - ./files:/var/jenkins_home/liquibase      
+      - ./files:/db
     networks:
       - sql-network
+
+  # jenkins:
+  #   build: ../docker/dockerfiles/jenkins
+  #   container_name: jenkins
+  #   ports:
+  #     - 8080:8080
+  #     - 50000:50000
+  #   volumes:
+  #     - jenkins-data:/var/jenkins_home
+  #     - ./files:/var/jenkins_home/liquibase
+  #     # - /Users/11356904/Downloads/jenkins/Database-Change-Log:/var/jenkins_home/db  
+  #   networks:
+  #     - sql-network
 
   postgres:
     image: postgres:17.6-alpine3.22

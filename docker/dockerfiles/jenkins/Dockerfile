@@ -42,4 +42,6 @@ RUN apt update
 RUN apt install liquibase
 
 USER jenkins
-RUN jenkins-plugin-cli --plugins "blueocean docker-workflow pipeline-stage-view dependency-check-jenkins-plugin ws-cleanup sonar coverage junit"
+RUN jenkins-plugin-cli --plugins "blueocean docker-workflow pipeline-stage-view dependency-check-jenkins-plugin ws-cleanup sonar"
+
+# RUN jenkins-plugin-cli --plugins "blueocean docker-workflow pipeline-stage-view dependency-check-jenkins-plugin ws-cleanup sonar coverage junit kubernetes-cli"

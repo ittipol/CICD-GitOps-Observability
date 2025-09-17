@@ -61,22 +61,6 @@ pipeline {
     stage('Check configs') {
       steps {
         script {
-
-          def changeLogPath = "${DB_PATH}/config/liquibase.changelog.yml"
-          echo "${changeLogPath}"
-
-          if (fileExists(changeLogPath)) {
-            echo "File '$changeLogPath' found!"
-
-            sh """
-            cp $changeLogPath $WORKSPACE/liquibase/liquibase.changelog.yml
-            """
-
-          } else {
-            // echo "File '$changeLogPath' not found"
-            error("File '$changeLogPath' not found")
-          }
-
           def liquibasePropertyPath = "${DB_PATH}/config/liquibase.properties"
           echo "${liquibasePropertyPath}"
 
@@ -91,19 +75,6 @@ pipeline {
             // echo "File '$liquibasePropertyPath' not found"
             error("File '$liquibasePropertyPath' not found")
           }
-        }
-      }
-    }
-    stage('Validate Changelog') {
-      steps {
-        sh """
-        cd $WORKSPACE/liquibase && liquibase validate
-        """
-      }
-      post {
-        failure {
-          echo "Build stage failed!"
-          error("Build stage failed!")
         }
       }
     }

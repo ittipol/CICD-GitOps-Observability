@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20251218-card-1234-01-1
+      author: liquibase-docs
+      labels: card-1234,card-1234-01,card-1234-01-1
+      changes:
+        - sqlFile:
+            dbms: 'postgresql'
+            endDelimiter: \nGO
+            splitStatements: true
+            path: script/01.sql
+            relativeToChangelogFile: true
+            stripComments: true
+      rollback:
+        - sqlFile:
+            dbms: 'postgresql'
+            endDelimiter: \nGO
+            splitStatements: true
+            path: rollback/01.sql
+            relativeToChangelogFile: true
+            stripComments: true

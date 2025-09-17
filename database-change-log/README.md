@@ -8,7 +8,7 @@
     - config
       - liquibase.changelog.yml
       - liquibase.properties
-    - migrations
+    - changesets
       - <project\-name> or <story\-card\-number>
         - <task\-id> or <card\-number> (task in story or task in project)
           - <execution\-order>\-YYYYMMDD\-<card\-number>.sql (changeset)
@@ -16,7 +16,7 @@
     - config
       - liquibase.changelog.yml
       - liquibase.properties
-    - migrations
+    - changesets
       - project_name_a
         - card-456
           - 01-20251025-card-456.sql
@@ -30,7 +30,7 @@
     - config
       - liquibase.changelog.yml
       - liquibase.properties
-    - migrations
+    - changesets
       - ...
         - ...
           - ...

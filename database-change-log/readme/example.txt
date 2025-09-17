@@ -30,6 +30,7 @@ format: LIQUIBASE_COMMAND_<option-name> เช่น
     - LIQUIBASE_COMMAND_URL
     - LIQUIBASE_COMMAND_USERNAME
     - LIQUIBASE_COMMAND_PASSWORD
+    - LIQUIBASE_COMMAND_CHANGELOG_FILE
 
 
 ------------------
@@ -40,13 +41,13 @@ Extract
 tar -xvzf liquibase-4.32.0.tar.gz
 
 Move the extracted files to a desired location
-sudo mv liquibase /db/
+sudo mv liquibase /opt/
 
 Update command to PATH
 1. create shell script
-echo "export PATH=$PATH:/db/liquibase/" > export-liquibase.sh
+echo "export PATH=$PATH:/opt/liquibase/" > export-liquibase.sh
 
-2. Make the “export-liquibase.sh” file executable:
+2. Make the "export-liquibase.sh" file executable:
 chmod +x export-liquibase.sh
 
 3. Reload the environment

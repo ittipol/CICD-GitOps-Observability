@@ -15,3 +15,8 @@
 - checks อัตราที่ checks สำเร็จ
 - vus จำนวน Virtual User ที่ใช้งาน
 - vus_max จำนวน Virtual User สูงสุดที่ถูกจัดสรรสำหรับการทดสอบ
+
+
+
+case การทำ load testing
+- 15 vus ramup15m hold1h rampdown10m
