@@ -1,0 +1,99 @@
+def runDocker(String dbEnv, boolean dryRun, String sqlCommandType) {
+
+  echo ">>>> $dbEnv"
+
+  def command = "update"
+
+  if(dryRun) {
+    command = "update-dryrun"
+  }
+
+  sh """
+  docker run -i --rm -v "\$(pwd)/src:/src" \
+    -v "\$(pwd)/output:/output" \
+    --entrypoint /build/database-changelog.sh \
+    -e DB_ENV="${dbEnv}" \
+    -e DB_NAME="database_b" \
+    --network=host \
+    database-changelog:1.0 ${command} ${sqlCommandType}
+  """
+}
+
+pipeline {
+  agent any
+  options {
+    // This is required if you want to clean before build
+    skipDefaultCheckout(true)
+  }
+  parameters {
+    choice(name: 'DB_ENV', choices:['sit', 'uat'])
+    choice(name: 'TYPE', choices:['DDL', 'DML', 'SP'], description: 'DDL - Data Definition Language\nDML - Data Manipulation Language\nSP - Stored Procedure')
+    string(name: 'PROJECT_PATH', defaultValue: 'project_name_xyz/card-1', description: 'Specific the project path that you want to update\ne.g., <project-name>\ne.g., <project-name>-<card-number>')
+    booleanParam(name: 'DRY_RUN', defaultValue: true, description: 'Preview sql script before running migration')
+  }
+  stages {
+    stage('Init') {
+      steps {
+        echo '::: Init ************************************************************'
+        // Clean before build
+        cleanWs()
+        echo "Building ${env.JOB_NAME}..."
+      }
+    }
+    stage('Update') {
+      steps {
+        echo '::: Update ************************************************************'
+
+        sh "mkdir -p $WORKSPACE/output"
+        sh 'cp -rf /var/jenkins_home/db/. $WORKSPACE/src'        
+
+        echo '::: Remove image ************************************************************'
+        // remove image
+        sh """        
+        # > /dev/null 2>&1 = Discards both the standard output and standard error of a command
+        # docker rmi database-changelog:1.0 > /dev/null 2>&1 && echo "image removed" || true
+
+        # 2>/dev/null = Discard standard error of a command
+        docker rmi database-changelog:1.0 2>/dev/null && echo "image removed" || { echo "image not found"; true; }
+        """
+
+        echo '::: Build image ************************************************************'
+        // run shell script for building an image
+        sh '''
+        cp -r /dockerfiles/. $WORKSPACE/dockerfiles
+
+        cd dockerfiles/build
+        
+        ./build-database-changelog.sh
+
+        cd $WORKSPACE
+        '''
+
+        echo '::: Call runDocker() ************************************************************'
+        runDocker("sit", params.DRY_RUN, params.TYPE.toLowerCase())
+        echo '::: ============================================================================='
+      }
+    }
+  }
+  post {
+    always {
+      echo '::: POST ************************************************************'
+      // Clean after build
+      // cleanWs(cleanWhenNotBuilt: false,
+      //         deleteDirs: true,
+      //         disableDeferredWipeout: true,
+      //         notFailBuild: true,
+      //         patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
+      //                     [pattern: '.propsfile', type: 'EXCLUDE']])
+    }
+    success {
+      echo "Build ID: ${BUILD_ID}, ${JOB_NAME} succeeded"
+    }
+    failure {
+      echo "Build ID: ${BUILD_ID}, ${JOB_NAME} failed"
+    }
+    aborted {
+      echo "Build ID: ${BUILD_ID}, ${JOB_NAME} aborted"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+FROM liquibase/liquibase:4.33
+
+USER root
+
+WORKDIR /db
+
+ENTRYPOINT ["tail"]
+CMD ["-f", "/dev/null"]

@@ -1,4 +1,5 @@
-ARG BUILD_VERSION=2.494-jdk17
+# ARG BUILD_VERSION=2.494-jdk17
+ARG BUILD_VERSION=2.528-jdk21
 
 FROM jenkins/jenkins:${BUILD_VERSION}
 
@@ -42,6 +43,6 @@ RUN apt update
 RUN apt install liquibase
 
 USER jenkins
-RUN jenkins-plugin-cli --plugins "blueocean docker-workflow pipeline-stage-view dependency-check-jenkins-plugin ws-cleanup sonar"
+RUN jenkins-plugin-cli --plugins "blueocean docker-workflow pipeline-stage-view dependency-check-jenkins-plugin ws-cleanup sonar kubernetes-cli"
 
 # RUN jenkins-plugin-cli --plugins "blueocean docker-workflow pipeline-stage-view dependency-check-jenkins-plugin ws-cleanup sonar coverage junit kubernetes-cli"

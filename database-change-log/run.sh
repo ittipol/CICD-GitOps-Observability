@@ -109,7 +109,11 @@ minikube_start() {
   # minikube start --cpus 2 --memory 4g --driver=hyperkit
   # minikube start --cpus $cpu --memory $memory --driver=parallels
   minikube status
-  minikube ip
+  # minikube ip
+
+  kubectl cluster-info
+  kubectl config current-context
+  kubectl config get-contexts
 }
 
 minikube_stop() {

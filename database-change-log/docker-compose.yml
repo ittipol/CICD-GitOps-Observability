@@ -2,7 +2,7 @@ services:
 
   # liquibase:
   #   image: liquibase/liquibase:4.33
-  #   container_name: postgresql
+  #   container_name: liquibase
   #   command: --changeLogFile=changelog.xml update
   #   volumes:
   #     - ./changelog:/liquibase/changelog
@@ -10,30 +10,70 @@ services:
   #   networks:
   #     - sql-network
 
-  server:
-    build: ./server
-    container_name: server
-    # environment:
-    #   LIQUIBASE_COMMAND_URL: jdbc:postgresql://postgres:5432/database_name
-    #   LIQUIBASE_COMMAND_USERNAME: user
-    #   LIQUIBASE_COMMAND_PASSWORD: password
+  # server:
+  #   build: ./server
+  #   container_name: server
+  #   # environment:
+  #   #   LIQUIBASE_COMMAND_URL: jdbc:postgresql://postgres:5432/database_name
+  #   #   LIQUIBASE_COMMAND_USERNAME: user
+  #   #   LIQUIBASE_COMMAND_PASSWORD: password
+  #   extra_hosts:
+  #     - "host.docker.internal:host-gateway"
+  #   volumes:
+  #     - ./files:/db
+  #   networks:
+  #     - sql-network
+
+  # liquibase:
+  #   build:
+  #     context: .
+  #     dockerfile: ./server/Dockerfile.database-changelog
+  #   container_name: liquibase
+  #   # environment:
+  #   #   LIQUIBASE_COMMAND_URL: jdbc:postgresql://postgres:5432/database_name
+  #   #   LIQUIBASE_COMMAND_USERNAME: user
+  #   #   LIQUIBASE_COMMAND_PASSWORD: password
+  #   extra_hosts:
+  #     - "host.docker.internal:host-gateway"
+  #   volumes:
+  #     - ./files:/db
+  #   networks:
+  #     - sql-network
+
+  jenkins:
+    build: ../docker/dockerfiles/jenkins
+    container_name: jenkins
+    ports:
+      - 8080:8080
+      - 50000:50000
+    environment:
+      DOCKER_HOST: "tcp://docker:2376"
+      DOCKER_CERT_PATH: "/certs/client"
+      DOCKER_TLS_VERIFY: 1
     volumes:
-      - ./files:/db
+      - jenkins-data:/var/jenkins_home
+      - jenkins-docker-certs:/certs/client:ro
+      - ../docker/docker_registry/tls/server.crt:/docker_registry/cert/server.crt:ro
+      - ../deployment/jenkins/dockerfiles:/dockerfiles:ro
+      - ./files:/var/jenkins_home/liquibase
+      - /Users/11356904/Downloads/jenkins/Database-Change-Log:/var/jenkins_home/db  
     networks:
       - sql-network
 
-  # jenkins:
-  #   build: ../docker/dockerfiles/jenkins
-  #   container_name: jenkins
-  #   ports:
-  #     - 8080:8080
-  #     - 50000:50000
-  #   volumes:
-  #     - jenkins-data:/var/jenkins_home
-  #     - ./files:/var/jenkins_home/liquibase
-  #     # - /Users/11356904/Downloads/jenkins/Database-Change-Log:/var/jenkins_home/db  
-  #   networks:
-  #     - sql-network
+  docker-dind:
+    build: ../docker/dockerfiles/dind
+    container_name: docker-in-docker
+    privileged: true
+    volumes:
+      - jenkins-data:/var/jenkins_home
+      - jenkins-docker-certs:/certs/client
+      - ../docker/dockerfiles:/dockerfiles:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      sql-network:
+        aliases:
+          - docker
 
   postgres:
     image: postgres:17.6-alpine3.22
@@ -64,6 +104,8 @@ networks:
 
 volumes:
   jenkins-data:
+    external: false
+  jenkins-docker-certs:
     external: false
   postgresql:
     external: false

@@ -1,0 +1,21 @@
+FROM liquibase/liquibase:4.33
+
+USER root
+
+WORKDIR /build
+
+COPY ./shell_script/. .
+
+ENV DB_ENV=
+ENV LIQUIBASE_COMMAND_URL=
+ENV LIQUIBASE_COMMAND_USERNAME=
+ENV LIQUIBASE_COMMAND_PASSWORD=
+
+RUN chmod +x ./database-changelog.sh
+
+WORKDIR /src
+
+# docker run --entrypoint <new_entrypoint_command> <image_name> [arguments_for_new_entrypoint]
+# e.g., docker run --entrypoint <entrypoint.sh> <image:tag> <arg1> <arg2> <arg3>
+ENTRYPOINT ["./database-changelog.sh"]
+# CMD ["arg1", "arg2"] # These are arguments to the ENTRYPOINT

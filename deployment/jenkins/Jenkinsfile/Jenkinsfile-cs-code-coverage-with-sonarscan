@@ -1,36 +1,60 @@
-def unitTest(gitlabSourceCodeCredId=null,sonarCredId=null,nexusCredId=null,artifactVersion=null,pipelineConfig=null,checkoutVer=null,currentBuildContext=null) {
+def unitTest(gitlabSourceCodeCredId=null,sonarCredId=null) {
 
+  // use nuget from host
+  sh 'cp -r /var/jenkins_home/.nuget/. $WORKSPACE/nuget'
   sh """
-  docker run -i --rm -v "\$(pwd):/src" \
-  --entrypoint /build/entrypoint.sh \
-  -e PRODUCT_NAME="api-unit-test" \
-  -e BUILDER_CSPROJ="<path/to/csproj>"	\
-  dotnetsdk8-builder:8.0 test
+  docker run -i --rm -v "\$(pwd)/src:/src" \
+    -v "\$(pwd)/nuget:/nuget" \
+    --entrypoint /build/entrypoint.sh \
+    -e PRODUCT_NAME="api-unit-test" \
+    -e BUILDER_CSPROJ="TestProject"	\
+    -e NUGET_PACKAGES="/nuget/packages" \
+    --network=host \
+    dotnetsdk8-builder:8.0 test
   """
 
-  script {
-    junit(testResults: "**/test-result.xml", allowEmptyResults: true, skipMarkingBuildUnstable: true)
-  }
+  // sh """
+  // docker run -i --rm -v "\$(pwd)/src:/src" \
+  //   --entrypoint /build/entrypoint.sh \
+  //   -e PRODUCT_NAME="api-unit-test" \
+  //   -e BUILDER_CSPROJ="TestProject"	\
+  //   --network=host \
+  //   dotnetsdk8-builder:8.0 test
+  // """
 
 }
 
 pipeline {
   agent any
+  environment {
+    // dotnet tools
+    PATH = "/var/jenkins_home/.dotnet/tools:$PATH"
+  }
   options {
     // This is required if you want to clean before build
     skipDefaultCheckout(true)
   }
-  stages {    
+  stages {
+    stage('Init') {
+      steps {
+        echo '::: Init ************************************************************'
+        // Clean before build
+        cleanWs()
+        echo "Building ${env.JOB_NAME}..."        
+      }
+    }
     stage('Test') {
       steps {
         echo '::: Test ************************************************************'
 
+        // sh 'ping -c 1 sonarqube'
+
         // clone project
-        sh 'cp -r /unit_test/code/. $WORKSPACE'
-        // sh 'env'
-        sh 'pwd'
-        sh 'ls -l'
-        sh 'docker images'
+        sh 'cp -r /shared/. $WORKSPACE/src'
+        
+        // sh 'env'        
+
+        // sh 'docker images'
 
         // To remove all images
         // docker rmi $(docker images -q)
@@ -50,7 +74,7 @@ pipeline {
         sh '''
         cp -r /dockerfiles/. $WORKSPACE/dockerfiles
         cd dockerfiles
-        ./build.sh
+        ./build/build-dotnetsdk8-builder.sh
 
         cd ..
         '''
@@ -60,19 +84,29 @@ pipeline {
         echo '::: ============================================================================='
       }
     }
+    // stage('Scan') {
+    //   steps {
+    //     echo '::: Scan ************************************************************'
+
+    //     // clone project
+    //     sh 'cp -r /shared/. $WORKSPACE'
+    //     sh 'env'
+    //     sh 'pwd'
+    //     sh 'ls -l'
+
+    //     // sh '''      
+    //     // dotnet restore -p:TargetFrameworks=net8.0 -p:PackTargetFramework=net8.0
+    //     // dotnet build --no-restore        
+    //     // '''
+
+    //     // run --> cs-sonarscan.sh
+        
+    //   }
+    // }
   }
   post {
     always {
       echo '::: POST ************************************************************'
-
-      // sh '''
-      // pwd
-      // ls -l
-      // '''
-      // script {
-      //   junit(testResults: "**/test-result.xml", allowEmptyResults: true, skipMarkingBuildUnstable: true)
-      // }
-
       // Clean after build
       // cleanWs(cleanWhenNotBuilt: false,
       //         deleteDirs: true,

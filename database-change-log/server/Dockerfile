@@ -1,7 +1,3 @@
-# ARG BUILD_VERSION=2.494-jdk17
-
-# FROM jenkins/jenkins:${BUILD_VERSION}
-
 FROM openjdk:26-jdk-slim
 # FROM openjdk:26-jdk-bookworm
 # FROM openjdk:26-jdk
