@@ -1,8 +1,39 @@
-def runDocker(String dbEnv, String dbName, boolean checkVersion, String tag) {
+def copyData() {
+  sh "mkdir -p $WORKSPACE/output"
+  sh 'cp -rf /var/jenkins_home/db/. $WORKSPACE/src'
+}
+
+def dockerRemove() {
+  echo '::: Remove image ************************************************************'
+  
+  // remove image
+  sh """        
+  # > /dev/null 2>&1 = Discards both the standard output and standard error of a command
+  # docker rmi database-changelog:1.0 > /dev/null 2>&1 && echo "image removed" || true
+
+  # 2>/dev/null = Discard standard error of a command
+  docker rmi database-changelog:1.0 2>/dev/null && echo "image removed" || { echo "image not found"; true; }
+  """
+}
+
+def dockerBuild() {
+  echo '::: Build image ************************************************************'
+  
+  // run shell script for building an image
+  sh '''
+  cp -r /dockerfiles/. $WORKSPACE/dockerfiles
+
+  cd dockerfiles/build
+  
+  ./build-database-changelog.sh
+
+  cd $WORKSPACE
+  '''
+}
+
+def runDocker(String command, String dbEnv, String dbName, boolean checkVersion, String tag) {
 
   echo ">>>> $dbEnv"
-
-  def command = "tag"
 
   def argsName1 = "--tag"
   def argsValue1 = "$tag"
@@ -33,10 +64,10 @@ pipeline {
   }
   parameters {
     choice(name: 'DB_ENV', choices:['SIT', 'UAT'])
-    string(name: 'DATABASE_NAME', defaultValue: 'database_b', description: 'Specific the database name\nr.g., database_b')
+    string(name: 'DATABASE_NAME', defaultValue: 'database_b', description: 'Specific the database name\ne.g., database_b')
     // choice(name: 'TYPE', choices:['DDL', 'DML', 'SP'], description: 'DDL - Data Definition Language\nDML - Data Manipulation Language\nSP - Stored Procedure')
-    string(name: 'TAG_VERSION', defaultValue: '2.0.0', description: 'The tag version which is revert a changesets\ne.g., 1.0.0\ne.g., release_1.0')
-    booleanParam(name: 'CHECK_TAG_VERSION', defaultValue: true, description: 'Only check for tag existence')
+    string(name: 'TAG_VERSION', defaultValue: '2.0.0', description: 'Specific a tag version that changeset will be tagged\ne.g., 1.0.0\ne.g., release_1.0')
+    booleanParam(name: 'CHECK_TAG_VERSION_EXIST', defaultValue: true, description: 'Only check for tag existence')
   }
   stages {
     stage('Init') {
@@ -59,39 +90,18 @@ pipeline {
           }
         }
 
+        copyData()
+        dockerRemove()
+        dockerBuild()
+
       }
     }
     stage('Tag change log') {
       steps {
         echo '::: Tag change log ************************************************************'
-
-        sh "mkdir -p $WORKSPACE/output"
-        sh 'cp -rf /var/jenkins_home/db/. $WORKSPACE/src'        
-
-        echo '::: Remove image ************************************************************'
-        // remove image
-        sh """        
-        # > /dev/null 2>&1 = Discards both the standard output and standard error of a command
-        # docker rmi database-changelog:1.0 > /dev/null 2>&1 && echo "image removed" || true
-
-        # 2>/dev/null = Discard standard error of a command
-        docker rmi database-changelog:1.0 2>/dev/null && echo "image removed" || { echo "image not found"; true; }
-        """
-
-        echo '::: Build image ************************************************************'
-        // run shell script for building an image
-        sh '''
-        cp -r /dockerfiles/. $WORKSPACE/dockerfiles
-
-        cd dockerfiles/build
-        
-        ./build-database-changelog.sh
-
-        cd $WORKSPACE
-        '''
-
+  
         echo '::: Call runDocker() ************************************************************'
-        runDocker(params.DB_ENV.toLowerCase(), params.DATABASE_NAME, params.CHECK_TAG_VERSION, params.TAG_VERSION)
+        runDocker("tag", params.DB_ENV.toLowerCase(), params.DATABASE_NAME, params.CHECK_TAG_VERSION_EXIST, params.TAG_VERSION)
         echo '::: ============================================================================='
       }
     }

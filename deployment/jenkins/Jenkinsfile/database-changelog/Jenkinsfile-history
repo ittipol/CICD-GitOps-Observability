@@ -1,8 +1,39 @@
-def runDocker(String dbEnv, String dbName, boolean showOnlyTag, String filterTagVersion) {
+def copyData() {
+  sh "mkdir -p $WORKSPACE/output"
+  sh 'cp -rf /var/jenkins_home/db/. $WORKSPACE/src'
+}
+
+def dockerRemove() {
+  echo '::: Remove image ************************************************************'
+  
+  // remove image
+  sh """        
+  # > /dev/null 2>&1 = Discards both the standard output and standard error of a command
+  # docker rmi database-changelog:1.0 > /dev/null 2>&1 && echo "image removed" || true
+
+  # 2>/dev/null = Discard standard error of a command
+  docker rmi database-changelog:1.0 2>/dev/null && echo "image removed" || { echo "image not found"; true; }
+  """
+}
+
+def dockerBuild() {
+  echo '::: Build image ************************************************************'
+  
+  // run shell script for building an image
+  sh '''
+  cp -r /dockerfiles/. $WORKSPACE/dockerfiles
+
+  cd dockerfiles/build
+  
+  ./build-database-changelog.sh
+
+  cd $WORKSPACE
+  '''
+}
+
+def runDocker(String command, String dbEnv, String dbName, boolean showOnlyTag, String filterTagVersion) {
 
   echo ">>>> $dbEnv"
-
-  def command = "history"
 
   def argsName1 = ""
   def argsValue1 = ""
@@ -38,7 +69,7 @@ pipeline {
   }
   parameters {
     choice(name: 'DB_ENV', choices:['SIT', 'UAT'])
-    string(name: 'DATABASE_NAME', defaultValue: 'database_b', description: 'Specific the database name\nr.g., database_b')
+    string(name: 'DATABASE_NAME', defaultValue: 'database_b', description: 'Specific the database name\ne.g., database_b')
     // choice(name: 'TYPE', choices:['DDL', 'DML', 'SP'], description: 'DDL - Data Definition Language\nDML - Data Manipulation Language\nSP - Stored Procedure')
     booleanParam(name: 'SHOW_ONLY_TAGS', defaultValue: false, description: 'Only shows tagged changeset list')
     string(name: 'FILTER_TAG_VERSION', defaultValue: '', description: 'To show a specific tag (Used when SHOW_ONLY_TAGS is checked)\ne.g., 1.0.0\ne.g., release_1.0\n*** Empty this field to show all tag list that tagged in database')
@@ -58,11 +89,11 @@ pipeline {
             echo "This is not a valid database name"
             error("Database name is not valid")
           }
-
-          // if(params.SHOW_ONLY_TAGS && params.FILTER_TAG_VERSION.isEmpty()) {
-          //   error("FILTER_TAG_VERSION parameter is not valid")
-          // }
         }
+
+        copyData()
+        dockerRemove()
+        dockerBuild()
 
       }
     }
@@ -70,33 +101,8 @@ pipeline {
       steps {
         echo '::: Generate history ************************************************************'
 
-        sh "mkdir -p $WORKSPACE/output"
-        sh 'cp -rf /var/jenkins_home/db/. $WORKSPACE/src'        
-
-        echo '::: Remove image ************************************************************'
-        // remove image
-        sh """        
-        # > /dev/null 2>&1 = Discards both the standard output and standard error of a command
-        # docker rmi database-changelog:1.0 > /dev/null 2>&1 && echo "image removed" || true
-
-        # 2>/dev/null = Discard standard error of a command
-        docker rmi database-changelog:1.0 2>/dev/null && echo "image removed" || { echo "image not found"; true; }
-        """
-
-        echo '::: Build image ************************************************************'
-        // run shell script for building an image
-        sh '''
-        cp -r /dockerfiles/. $WORKSPACE/dockerfiles
-
-        cd dockerfiles/build
-        
-        ./build-database-changelog.sh
-
-        cd $WORKSPACE
-        '''
-
         echo '::: Call runDocker() ************************************************************'
-        runDocker(params.DB_ENV.toLowerCase(), params.DATABASE_NAME, params.SHOW_ONLY_TAGS, params.FILTER_TAG_VERSION)
+        runDocker("history", params.DB_ENV.toLowerCase(), params.DATABASE_NAME, params.SHOW_ONLY_TAGS, params.FILTER_TAG_VERSION)
         echo '::: ============================================================================='
       }
     }

@@ -1,13 +1,40 @@
-def runDocker(String dbEnv, String dbName, boolean dryRun, String rollbackCount, String labels) {
+def copyData() {
+  sh "mkdir -p $WORKSPACE/output"
+  sh 'cp -rf /var/jenkins_home/db/. $WORKSPACE/src'
+}
+
+def dockerRemove() {
+  echo '::: Remove image ************************************************************'
+  
+  // remove image
+  sh """        
+  # > /dev/null 2>&1 = Discards both the standard output and standard error of a command
+  # docker rmi database-changelog:1.0 > /dev/null 2>&1 && echo "image removed" || true
+
+  # 2>/dev/null = Discard standard error of a command
+  docker rmi database-changelog:1.0 2>/dev/null && echo "image removed" || { echo "image not found"; true; }
+  """
+}
+
+def dockerBuild() {
+  echo '::: Build image ************************************************************'
+  
+  // run shell script for building an image
+  sh '''
+  cp -r /dockerfiles/. $WORKSPACE/dockerfiles
+
+  cd dockerfiles/build
+  
+  ./build-database-changelog.sh
+
+  cd $WORKSPACE
+  '''
+}
+
+def runDocker(String command, String dbEnv, String dbName, boolean dryRun, String rollbackCount, String labels) {
 
   echo "dbEnv >>>> [$dbEnv]"
   echo "dbName >>>> [$dbName]"
-
-  def command = "rollback-count"
-
-  if(dryRun) {
-    command = "rollback-count-dryrun"
-  }
 
   def argsName1 = "--count"
   def argsValue1 = "$rollbackCount"
@@ -38,9 +65,7 @@ pipeline {
   }
   parameters {
     choice(name: 'DB_ENV', choices:['SIT', 'UAT'])
-    string(name: 'DATABASE_NAME', defaultValue: 'database_b', description: 'Specific the database name\nr.g., database_b')
-    // string(name: 'PROJECT_NAME', defaultValue: 'sp_test', description: 'Specific the project name that you want to update\ne.g., <project-name>')
-    // choice(name: 'TYPE', choices:['DDL', 'DML', 'SP'], description: 'DDL - Data Definition Language\nDML - Data Manipulation Language\nSP - Stored Procedure')
+    string(name: 'DATABASE_NAME', defaultValue: 'database_b', description: 'Specific the database name\ne.g., database_b')
     booleanParam(name: 'DRY_RUN', defaultValue: true, description: 'Preview sql script before running migration')
     string(name: 'ROLLBACK_COUNT', defaultValue: '1', description: 'Number of changeset rollback')
     string(name: 'CHANGESET_LABEL', defaultValue: '', description: 'Changeset label,\n e.g., card-123 \n e.g., card-123 AND card-123-01 (for multiple labels)')
@@ -62,39 +87,37 @@ pipeline {
           }
         }
 
+        copyData()
+        dockerRemove()
+        dockerBuild()
+
       }
     }
-    stage('Rollback count') {
+    stage('Dry run') {
+      when {
+        expression {
+          params.DRY_RUN == true
+        }
+      }
+      steps {
+        sh 'echo "Dry run"'
+
+        echo '::: Call runDocker() ************************************************************'
+        runDocker("rollback-count-dryrun", params.DB_ENV.toLowerCase(), params.DATABASE_NAME, params.DRY_RUN, params.ROLLBACK_COUNT, params.CHANGESET_LABEL)
+        echo '::: ============================================================================='
+      }
+    }
+    stage('Rollback by count') {
+      when {
+        expression {
+          params.DRY_RUN == false
+        }
+      }
       steps {
         echo '::: Rollback count ************************************************************'
 
-        sh "mkdir -p $WORKSPACE/output"
-        sh 'cp -rf /var/jenkins_home/db/. $WORKSPACE/src'        
-
-        echo '::: Remove image ************************************************************'
-        // remove image
-        sh """        
-        # > /dev/null 2>&1 = Discards both the standard output and standard error of a command
-        # docker rmi database-changelog:1.0 > /dev/null 2>&1 && echo "image removed" || true
-
-        # 2>/dev/null = Discard standard error of a command
-        docker rmi database-changelog:1.0 2>/dev/null && echo "image removed" || { echo "image not found"; true; }
-        """
-
-        echo '::: Build image ************************************************************'
-        // run shell script for building an image
-        sh '''
-        cp -r /dockerfiles/. $WORKSPACE/dockerfiles
-
-        cd dockerfiles/build
-        
-        ./build-database-changelog.sh
-
-        cd $WORKSPACE
-        '''
-
         echo '::: Call runDocker() ************************************************************'
-        runDocker(params.DB_ENV.toLowerCase(), params.DATABASE_NAME, params.DRY_RUN, params.ROLLBACK_COUNT, params.CHANGESET_LABEL)
+        runDocker("rollback-count", params.DB_ENV.toLowerCase(), params.DATABASE_NAME, params.DRY_RUN, params.ROLLBACK_COUNT, params.CHANGESET_LABEL)
         echo '::: ============================================================================='
       }
     }

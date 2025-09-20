@@ -1,12 +1,39 @@
-def runDocker(String dbEnv, String dbName, boolean dryRun, String tag) {
+def copyData() {
+  sh "mkdir -p $WORKSPACE/output"
+  sh 'cp -rf /var/jenkins_home/db/. $WORKSPACE/src'
+}
+
+def dockerRemove() {
+  echo '::: Remove image ************************************************************'
+  
+  // remove image
+  sh """        
+  # > /dev/null 2>&1 = Discards both the standard output and standard error of a command
+  # docker rmi database-changelog:1.0 > /dev/null 2>&1 && echo "image removed" || true
+
+  # 2>/dev/null = Discard standard error of a command
+  docker rmi database-changelog:1.0 2>/dev/null && echo "image removed" || { echo "image not found"; true; }
+  """
+}
+
+def dockerBuild() {
+  echo '::: Build image ************************************************************'
+  
+  // run shell script for building an image
+  sh '''
+  cp -r /dockerfiles/. $WORKSPACE/dockerfiles
+
+  cd dockerfiles/build
+  
+  ./build-database-changelog.sh
+
+  cd $WORKSPACE
+  '''
+}
+
+def runDocker(String command, String dbEnv, String dbName, boolean dryRun, String tag) {
 
   echo ">>>> $dbEnv"
-
-  def command = "rollback-tag"
-
-  if(dryRun) {
-    command = "rollback-tag-dryrun"
-  }
 
   def argsName1 = "--tag"
   def argsValue1 = "$tag"
@@ -29,11 +56,9 @@ pipeline {
   }
   parameters {
     choice(name: 'DB_ENV', choices:['SIT', 'UAT'])
-    string(name: 'DATABASE_NAME', defaultValue: 'database_b', description: 'Specific the database name\nr.g., database_b')
-    // choice(name: 'TYPE', choices:['DDL', 'DML', 'SP'], description: 'DDL - Data Definition Language\nDML - Data Manipulation Language\nSP - Stored Procedure')
-    // string(name: 'PROJECT_PATH', defaultValue: 'project_name_xyz/card-1', description: 'Specific the project path that you want to update\ne.g., <project-name>\ne.g., <project-name>-<card-number>')
+    string(name: 'DATABASE_NAME', defaultValue: 'database_b', description: 'Specific the database name\ne.g., database_b')
     booleanParam(name: 'DRY_RUN', defaultValue: true, description: 'Preview sql script before running migration')
-    string(name: 'TAG_VERSION', defaultValue: '2.0.0', description: 'The tag version which is revert a changesets\ne.g., 1.0.0\ne.g., release_1.0')
+    string(name: 'TAG_VERSION', defaultValue: '2.0.0', description: 'Specific a tag version that revert a changesets\ne.g., 1.0.0\ne.g., release_1.0')
   }
   stages {
     stage('Init') {
@@ -56,39 +81,37 @@ pipeline {
           }
         }
 
+        copyData()
+        dockerRemove()
+        dockerBuild()
+
       }
     }
-    stage('Rollback tag') {
+    stage('Dry run') {
+      when {
+        expression {
+          params.DRY_RUN == true
+        }
+      }
+      steps {
+        sh 'echo "Dry run"'
+
+        echo '::: Call runDocker() ************************************************************'
+        runDocker("rollback-tag-dryrun", params.DB_ENV.toLowerCase(), params.DATABASE_NAME, params.DRY_RUN, params.TAG_VERSION)
+        echo '::: ============================================================================='
+      }
+    }
+    stage('Rollback by tag version') {
+      when {
+        expression {
+          params.DRY_RUN == false
+        }
+      }
       steps {
         echo '::: Rollback tag ************************************************************'
 
-        sh "mkdir -p $WORKSPACE/output"
-        sh 'cp -rf /var/jenkins_home/db/. $WORKSPACE/src'        
-
-        echo '::: Remove image ************************************************************'
-        // remove image
-        sh """        
-        # > /dev/null 2>&1 = Discards both the standard output and standard error of a command
-        # docker rmi database-changelog:1.0 > /dev/null 2>&1 && echo "image removed" || true
-
-        # 2>/dev/null = Discard standard error of a command
-        docker rmi database-changelog:1.0 2>/dev/null && echo "image removed" || { echo "image not found"; true; }
-        """
-
-        echo '::: Build image ************************************************************'
-        // run shell script for building an image
-        sh '''
-        cp -r /dockerfiles/. $WORKSPACE/dockerfiles
-
-        cd dockerfiles/build
-        
-        ./build-database-changelog.sh
-
-        cd $WORKSPACE
-        '''
-
         echo '::: Call runDocker() ************************************************************'
-        runDocker(params.DB_ENV.toLowerCase(), params.DATABASE_NAME, params.DRY_RUN, params.TAG_VERSION)
+        runDocker("rollback-tag", params.DB_ENV.toLowerCase(), params.DATABASE_NAME, params.DRY_RUN, params.TAG_VERSION)
         echo '::: ============================================================================='
       }
     }

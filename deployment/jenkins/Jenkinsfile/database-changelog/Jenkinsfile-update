@@ -54,7 +54,7 @@ pipeline {
   }
   parameters {
     choice(name: 'DB_ENV', choices:['SIT', 'UAT'])
-    string(name: 'DATABASE_NAME', defaultValue: 'database_b', description: 'Specific the database name\nr.g., database_b')
+    string(name: 'DATABASE_NAME', defaultValue: 'database_b', description: 'Specific the database name\ne.g., database_b')
     string(name: 'PROJECT_NAME', defaultValue: 'sp_test', description: 'Specific the project name that you want to update\ne.g., <project-name>')
     // choice(name: 'TYPE', choices:['DDL', 'DML', 'SP'], description: 'DDL - Data Definition Language\nDML - Data Manipulation Language\nSP - Stored Procedure')
     booleanParam(name: 'DRY_RUN', defaultValue: true, description: 'Preview sql script before running migration')
@@ -83,11 +83,7 @@ pipeline {
           }
         }
 
-        // sh "mkdir -p $WORKSPACE/output"
-        // sh 'cp -rf /var/jenkins_home/db/. $WORKSPACE/src'
-
         copyData()
-
         dockerRemove()
         dockerBuild()
       }
