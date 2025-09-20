@@ -1,21 +1,48 @@
-def runDocker(String dbEnv, boolean dryRun, String sqlCommandType) {
+def copyData() {
+  sh "mkdir -p $WORKSPACE/output"
+  sh 'cp -rf /var/jenkins_home/db/. $WORKSPACE/src'
+}
 
-  echo ">>>> $dbEnv"
+def dockerRemove() {
+  echo '::: Remove image ************************************************************'
+  
+  // remove image
+  sh """        
+  # > /dev/null 2>&1 = Discards both the standard output and standard error of a command
+  # docker rmi database-changelog:1.0 > /dev/null 2>&1 && echo "image removed" || true
 
-  def command = "update"
+  # 2>/dev/null = Discard standard error of a command
+  docker rmi database-changelog:1.0 2>/dev/null && echo "image removed" || { echo "image not found"; true; }
+  """
+}
 
-  if(dryRun) {
-    command = "update-dryrun"
-  }
+def dockerBuild() {
+  echo '::: Build image ************************************************************'
+  
+  // run shell script for building an image
+  sh '''
+  cp -r /dockerfiles/. $WORKSPACE/dockerfiles
+
+  cd dockerfiles/build
+  
+  ./build-database-changelog.sh
+
+  cd $WORKSPACE
+  '''
+}
+
+def runDocker(String command, String dbEnv, String dbName, String projectName, boolean dryRun) {
+
+  echo "dbEnv >>>> [$dbEnv]"
+  echo "dbName >>>> [$dbName]"
 
   sh """
   docker run -i --rm -v "\$(pwd)/src:/src" \
     -v "\$(pwd)/output:/output" \
     --entrypoint /build/database-changelog.sh \
     -e DB_ENV="${dbEnv}" \
-    -e DB_NAME="database_b" \
     --network=host \
-    database-changelog:1.0 ${command} ${sqlCommandType}
+    database-changelog:1.0 ${command} ${dbName} "${projectName}"
   """
 }
 
@@ -26,9 +53,10 @@ pipeline {
     skipDefaultCheckout(true)
   }
   parameters {
-    choice(name: 'DB_ENV', choices:['sit', 'uat'])
-    choice(name: 'TYPE', choices:['DDL', 'DML', 'SP'], description: 'DDL - Data Definition Language\nDML - Data Manipulation Language\nSP - Stored Procedure')
-    string(name: 'PROJECT_PATH', defaultValue: 'project_name_xyz/card-1', description: 'Specific the project path that you want to update\ne.g., <project-name>\ne.g., <project-name>-<card-number>')
+    choice(name: 'DB_ENV', choices:['SIT', 'UAT'])
+    string(name: 'DATABASE_NAME', defaultValue: 'database_b', description: 'Specific the database name\nr.g., database_b')
+    string(name: 'PROJECT_NAME', defaultValue: 'sp_test', description: 'Specific the project name that you want to update\ne.g., <project-name>')
+    // choice(name: 'TYPE', choices:['DDL', 'DML', 'SP'], description: 'DDL - Data Definition Language\nDML - Data Manipulation Language\nSP - Stored Procedure')
     booleanParam(name: 'DRY_RUN', defaultValue: true, description: 'Preview sql script before running migration')
   }
   stages {
@@ -38,39 +66,57 @@ pipeline {
         // Clean before build
         cleanWs()
         echo "Building ${env.JOB_NAME}..."
+
+        script {
+          if (!params.DATABASE_NAME.isEmpty() && params.DATABASE_NAME ==~ /^[a-zA-Z0-9_]+$/) {
+            echo "This is a valid database name"
+          } else {
+            echo "This is not a valid database name"
+            error("Database name is not valid")
+          }
+
+          if (params.PROJECT_NAME.isEmpty() || params.PROJECT_NAME ==~ /^[a-zA-Z0-9_-]+$/) {
+            echo "This is a valid project name"
+          } else {
+            echo "This is not a valid project name"
+            error("Project name is not valid")
+          }
+        }
+
+        // sh "mkdir -p $WORKSPACE/output"
+        // sh 'cp -rf /var/jenkins_home/db/. $WORKSPACE/src'
+
+        copyData()
+
+        dockerRemove()
+        dockerBuild()
+      }
+    }
+    stage('Dry run') {
+      when {
+        expression {
+          params.DRY_RUN == true
+        }
+      }
+      steps {
+        sh 'echo "Dry run"'
+
+        echo '::: Call runDocker() ************************************************************'
+        runDocker("update-dryrun", params.DB_ENV.toLowerCase(), params.DATABASE_NAME, params.PROJECT_NAME, params.DRY_RUN)
+        echo '::: ============================================================================='
       }
     }
     stage('Update') {
+      when {
+        expression {
+          params.DRY_RUN == false
+        }
+      }
       steps {
-        echo '::: Update ************************************************************'
-
-        sh "mkdir -p $WORKSPACE/output"
-        sh 'cp -rf /var/jenkins_home/db/. $WORKSPACE/src'        
-
-        echo '::: Remove image ************************************************************'
-        // remove image
-        sh """        
-        # > /dev/null 2>&1 = Discards both the standard output and standard error of a command
-        # docker rmi database-changelog:1.0 > /dev/null 2>&1 && echo "image removed" || true
-
-        # 2>/dev/null = Discard standard error of a command
-        docker rmi database-changelog:1.0 2>/dev/null && echo "image removed" || { echo "image not found"; true; }
-        """
-
-        echo '::: Build image ************************************************************'
-        // run shell script for building an image
-        sh '''
-        cp -r /dockerfiles/. $WORKSPACE/dockerfiles
-
-        cd dockerfiles/build
-        
-        ./build-database-changelog.sh
-
-        cd $WORKSPACE
-        '''
+        echo '::: Update ************************************************************'            
 
         echo '::: Call runDocker() ************************************************************'
-        runDocker("sit", params.DRY_RUN, params.TYPE.toLowerCase())
+        runDocker("update", params.DB_ENV.toLowerCase(), params.DATABASE_NAME, params.PROJECT_NAME, params.DRY_RUN)
         echo '::: ============================================================================='
       }
     }
@@ -78,13 +124,15 @@ pipeline {
   post {
     always {
       echo '::: POST ************************************************************'
-      // Clean after build
-      // cleanWs(cleanWhenNotBuilt: false,
-      //         deleteDirs: true,
-      //         disableDeferredWipeout: true,
-      //         notFailBuild: true,
-      //         patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
-      //                     [pattern: '.propsfile', type: 'EXCLUDE']])
+      cleanWs(cleanWhenNotBuilt: false,
+        deleteDirs: true,
+        disableDeferredWipeout: true,
+        notFailBuild: true,
+        patterns: [
+          [pattern: 'src/**', type: 'INCLUDE'],
+          [pattern: 'output/**', type: 'EXCLUDE']
+        ]
+      )
     }
     success {
       echo "Build ID: ${BUILD_ID}, ${JOB_NAME} succeeded"

@@ -1,0 +1,122 @@
+def runDocker(String dbEnv, String dbName, boolean checkVersion, String tag) {
+
+  echo ">>>> $dbEnv"
+
+  def command = "tag"
+
+  def argsName1 = "--tag"
+  def argsValue1 = "$tag"
+
+  def argsName2 = ""
+  def argsValue2 = ""
+
+  if (checkVersion) {
+    argsName2 = "--check-version"
+    argsValue2 = "true"
+  }
+
+  sh """
+  docker run -i --rm -v "\$(pwd)/src:/src" \
+    -v "\$(pwd)/output:/output" \
+    --entrypoint /build/database-changelog.sh \
+    -e DB_ENV="${dbEnv}" \
+    --network=host \
+    database-changelog:1.0 ${command} ${dbName} "" "${argsName1}" "${argsValue1}" "${argsName2}" "${argsValue2}" 
+  """
+}
+
+pipeline {
+  agent any
+  options {
+    // This is required if you want to clean before build
+    skipDefaultCheckout(true)
+  }
+  parameters {
+    choice(name: 'DB_ENV', choices:['SIT', 'UAT'])
+    string(name: 'DATABASE_NAME', defaultValue: 'database_b', description: 'Specific the database name\nr.g., database_b')
+    // choice(name: 'TYPE', choices:['DDL', 'DML', 'SP'], description: 'DDL - Data Definition Language\nDML - Data Manipulation Language\nSP - Stored Procedure')
+    string(name: 'TAG_VERSION', defaultValue: '2.0.0', description: 'The tag version which is revert a changesets\ne.g., 1.0.0\ne.g., release_1.0')
+    booleanParam(name: 'CHECK_TAG_VERSION', defaultValue: true, description: 'Only check for tag existence')
+  }
+  stages {
+    stage('Init') {
+      steps {
+        echo '::: Init ************************************************************'
+        // Clean before build
+        cleanWs()
+        echo "Building ${env.JOB_NAME}..."
+
+        script {
+          if (!params.DATABASE_NAME.isEmpty() && params.DATABASE_NAME ==~ /^[a-zA-Z0-9_]+$/) {
+            echo "This is a valid database name"
+          } else {
+            echo "This is not a valid database name"
+            error("Database name is not valid")
+          }
+          
+          if(params.TAG_VERSION.isEmpty()) {
+            error("TAG_VERSION parameter is not valid")
+          }
+        }
+
+      }
+    }
+    stage('Tag change log') {
+      steps {
+        echo '::: Tag change log ************************************************************'
+
+        sh "mkdir -p $WORKSPACE/output"
+        sh 'cp -rf /var/jenkins_home/db/. $WORKSPACE/src'        
+
+        echo '::: Remove image ************************************************************'
+        // remove image
+        sh """        
+        # > /dev/null 2>&1 = Discards both the standard output and standard error of a command
+        # docker rmi database-changelog:1.0 > /dev/null 2>&1 && echo "image removed" || true
+
+        # 2>/dev/null = Discard standard error of a command
+        docker rmi database-changelog:1.0 2>/dev/null && echo "image removed" || { echo "image not found"; true; }
+        """
+
+        echo '::: Build image ************************************************************'
+        // run shell script for building an image
+        sh '''
+        cp -r /dockerfiles/. $WORKSPACE/dockerfiles
+
+        cd dockerfiles/build
+        
+        ./build-database-changelog.sh
+
+        cd $WORKSPACE
+        '''
+
+        echo '::: Call runDocker() ************************************************************'
+        runDocker(params.DB_ENV.toLowerCase(), params.DATABASE_NAME, params.CHECK_TAG_VERSION, params.TAG_VERSION)
+        echo '::: ============================================================================='
+      }
+    }
+  }
+  post {
+    always {
+      echo '::: POST ************************************************************'
+      cleanWs(cleanWhenNotBuilt: false,
+        deleteDirs: true,
+        disableDeferredWipeout: true,
+        notFailBuild: true,
+        patterns: [
+          [pattern: 'src/**', type: 'INCLUDE'],
+          [pattern: 'output/**', type: 'EXCLUDE']
+        ]
+      )
+    }
+    success {
+      echo "Build ID: ${BUILD_ID}, ${JOB_NAME} succeeded"
+    }
+    failure {
+      echo "Build ID: ${BUILD_ID}, ${JOB_NAME} failed"
+    }
+    aborted {
+      echo "Build ID: ${BUILD_ID}, ${JOB_NAME} aborted"
+    }
+  }
+}

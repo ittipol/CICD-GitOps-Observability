@@ -1,18 +1,13 @@
-def runDocker(String dbEnv, boolean dryRun, String sqlCommandType, String rollbackCount, String labels) {
+def runDocker(String dbEnv, String dbName, boolean dryRun, String rollbackCount, String labels) {
 
-  echo ">>>> $dbEnv"
+  echo "dbEnv >>>> [$dbEnv]"
+  echo "dbName >>>> [$dbName]"
 
   def command = "rollback-count"
 
   if(dryRun) {
     command = "rollback-count-dryrun"
   }
-
-  // def args = "--count ${rollbackCount}"
-
-  // if (!labels.isEmpty()) {
-  //   args = args + " --label " + labels
-  // }
 
   def argsName1 = "--count"
   def argsValue1 = "$rollbackCount"
@@ -30,9 +25,8 @@ def runDocker(String dbEnv, boolean dryRun, String sqlCommandType, String rollba
     -v "\$(pwd)/output:/output" \
     --entrypoint /build/database-changelog.sh \
     -e DB_ENV="${dbEnv}" \
-    -e DB_NAME="database_b" \
     --network=host \
-    database-changelog:1.0 ${command} ${sqlCommandType} "${argsName1}" "${argsValue1}" "${argsName2}" "${argsValue2}" 
+    database-changelog:1.0 ${command} ${dbName} "" "${argsName1}" "${argsValue1}" "${argsName2}" "${argsValue2}" 
   """
 }
 
@@ -43,9 +37,10 @@ pipeline {
     skipDefaultCheckout(true)
   }
   parameters {
-    choice(name: 'DB_ENV', choices:['sit', 'uat'])
-    choice(name: 'TYPE', choices:['DDL', 'DML', 'SP'], description: 'DDL - Data Definition Language\nDML - Data Manipulation Language\nSP - Stored Procedure')
-    // string(name: 'PROJECT_PATH', defaultValue: 'project_name_xyz/card-1', description: 'Specific the project path that you want to update\ne.g., <project-name>\ne.g., <project-name>-<card-number>')
+    choice(name: 'DB_ENV', choices:['SIT', 'UAT'])
+    string(name: 'DATABASE_NAME', defaultValue: 'database_b', description: 'Specific the database name\nr.g., database_b')
+    // string(name: 'PROJECT_NAME', defaultValue: 'sp_test', description: 'Specific the project name that you want to update\ne.g., <project-name>')
+    // choice(name: 'TYPE', choices:['DDL', 'DML', 'SP'], description: 'DDL - Data Definition Language\nDML - Data Manipulation Language\nSP - Stored Procedure')
     booleanParam(name: 'DRY_RUN', defaultValue: true, description: 'Preview sql script before running migration')
     string(name: 'ROLLBACK_COUNT', defaultValue: '1', description: 'Number of changeset rollback')
     string(name: 'CHANGESET_LABEL', defaultValue: '', description: 'Changeset label,\n e.g., card-123 \n e.g., card-123 AND card-123-01 (for multiple labels)')
@@ -59,12 +54,11 @@ pipeline {
         echo "Building ${env.JOB_NAME}..."
 
         script {
-          // if(params.PROJECT_PATH.isEmpty() || params.PROJECT_PATH.endsWith("/")) {
-          //   error("PROJECT_PATH parameter is not valid")
-          // }
-
-          if (params.ROLLBACK_COUNT.isEmpty() || !params.ROLLBACK_COUNT.isNumber()) {
-            error("ROLLBACK_COUNT parameter is not valid")
+          if (!params.DATABASE_NAME.isEmpty() && params.DATABASE_NAME ==~ /^[a-zA-Z0-9_]+$/) {
+            echo "This is a valid database name"
+          } else {
+            echo "This is not a valid database name"
+            error("Database name is not valid")
           }
         }
 
@@ -100,7 +94,7 @@ pipeline {
         '''
 
         echo '::: Call runDocker() ************************************************************'
-        runDocker("sit", params.DRY_RUN, params.TYPE.toLowerCase(), params.ROLLBACK_COUNT, params.CHANGESET_LABEL)
+        runDocker(params.DB_ENV.toLowerCase(), params.DATABASE_NAME, params.DRY_RUN, params.ROLLBACK_COUNT, params.CHANGESET_LABEL)
         echo '::: ============================================================================='
       }
     }
@@ -108,13 +102,15 @@ pipeline {
   post {
     always {
       echo '::: POST ************************************************************'
-      // Clean after build
-      // cleanWs(cleanWhenNotBuilt: false,
-      //         deleteDirs: true,
-      //         disableDeferredWipeout: true,
-      //         notFailBuild: true,
-      //         patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
-      //                     [pattern: '.propsfile', type: 'EXCLUDE']])
+      cleanWs(cleanWhenNotBuilt: false,
+        deleteDirs: true,
+        disableDeferredWipeout: true,
+        notFailBuild: true,
+        patterns: [
+          [pattern: 'src/**', type: 'INCLUDE'],
+          [pattern: 'output/**', type: 'EXCLUDE']
+        ]
+      )
     }
     success {
       echo "Build ID: ${BUILD_ID}, ${JOB_NAME} succeeded"

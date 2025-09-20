@@ -26,7 +26,7 @@ pipeline {
         echo "Building ${env.JOB_NAME}..."
 
         script {
-          if(params.TAG_VERSION.isEmpty() || params.TAG_VERSION.endsWith("/")) {
+          if(params.TAG_VERSION.isEmpty()) {
             error("TAG_VERSION parameter is not valid")
           }
         }

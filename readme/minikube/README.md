@@ -14,13 +14,14 @@ cat ~/.kube/config
 base64 -i <input-file> -o <output-file>
 ```
 
-## Update config
+## kube config file
 
+e.g.,
 ``` yaml
 apiVersion: v1
 clusters:
 - cluster:
-    certificate-authority: /Users/11356904/.minikube/ca.crt
+    certificate-authority: /path/to/.minikube/ca.crt
     extensions:
     - extension:
         last-update: Thu, 18 Sep 2025 08:47:58 +07
@@ -47,6 +48,6 @@ preferences: {}
 users:
 - name: minikube
   user:
-    client-certificate: /Users/11356904/.minikube/profiles/minikube/client.crt
-    client-key: /Users/11356904/.minikube/profiles/minikube/client.key
+    client-certificate: /path/to/.minikube/profiles/minikube/client.crt
+    client-key: /path/to/.minikube/profiles/minikube/client.key
 ```

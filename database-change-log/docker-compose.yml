@@ -56,7 +56,6 @@ services:
       - ../docker/docker_registry/tls/server.crt:/docker_registry/cert/server.crt:ro
       - ../deployment/jenkins/dockerfiles:/dockerfiles:ro
       - ./files:/var/jenkins_home/liquibase
-      - /Users/11356904/Downloads/jenkins/Database-Change-Log:/var/jenkins_home/db  
     networks:
       - sql-network
 
