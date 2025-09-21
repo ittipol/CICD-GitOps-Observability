@@ -16,7 +16,7 @@ destroy() {
 }
 
 start_port_forward() {
-  kubectl port-forward svc/postgresql -n postgresql 5432:5432
+	kubectl port-forward svc/postgresql -n postgresql 5432:5432
 }
 
 case "$1" in

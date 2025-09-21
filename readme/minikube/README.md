@@ -16,6 +16,10 @@ base64 -i <input-file> -o <output-file>
 
 ## kube config file
 
+``` bash
+kubectl config view
+```
+
 e.g.,
 ``` yaml
 apiVersion: v1

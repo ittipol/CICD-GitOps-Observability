@@ -61,9 +61,9 @@ pipeline {
     }
     stage('Test') {
       when {
-          expression {
-              params.executeTest == true
-          }
+        expression {
+          params.executeTest == true
+        }
       }
       steps {
         echo '::: Test ************************************************************'

@@ -8,7 +8,7 @@ services:
   #     - ./changelog:/liquibase/changelog
   #     # - ./script:/script
   #   networks:
-  #     - sql-network
+  #     - database-changelog
 
   # server:
   #   build: ./server
@@ -22,7 +22,7 @@ services:
   #   volumes:
   #     - ./files:/db
   #   networks:
-  #     - sql-network
+  #     - database-changelog
 
   # liquibase:
   #   build:
@@ -38,7 +38,7 @@ services:
   #   volumes:
   #     - ./files:/db
   #   networks:
-  #     - sql-network
+  #     - database-changelog
 
   jenkins:
     build: ../docker/dockerfiles/jenkins
@@ -57,7 +57,7 @@ services:
       - ../deployment/jenkins/dockerfiles:/dockerfiles:ro
       - ./files:/var/jenkins_home/liquibase
     networks:
-      - sql-network
+      - database-changelog
 
   docker-dind:
     build: ../docker/dockerfiles/dind
@@ -70,7 +70,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
-      sql-network:
+      database-changelog:
         aliases:
           - docker
 
@@ -87,7 +87,7 @@ services:
       - postgresql:/var/lib/postgresql
       - postgresql_data:/var/lib/postgresql/data
     networks:
-      - sql-network
+      - database-changelog
 
   adminer:
     image: adminer
@@ -95,10 +95,10 @@ services:
     ports:
       - 8082:8080
     networks:
-      - sql-network
+      - database-changelog
 
 networks:
-  sql-network:
+  database-changelog:
     driver: bridge
 
 volumes:
